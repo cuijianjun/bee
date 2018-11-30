@@ -1,0 +1,67 @@
+<script>
+import wepy from 'wepy';
+
+export default class MyIndex extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的'
+  };
+  config = {};
+
+  data = {
+    userInfo: {
+      nickName: '加载中...',
+      avatarUrl: ''
+    }
+  };
+  methods = {};
+
+  events = {};
+  onLoad() {
+    let self = this;
+    this.$parent.getUserInfo(function(userInfo) {
+      if (userInfo) {
+        self.userInfo = userInfo;
+      }
+      self.$apply();
+    });
+
+    wx.getSystemInfo({
+      success(res) {
+        console.log(res.model);
+        console.log(res.pixelRatio);
+        console.log(res.windowWidth);
+        console.log(res.windowHeight);
+        console.log(res.language);
+        console.log(res.version);
+        console.log(res.platform);
+      }
+    });
+  }
+  // Other properties
+}
+</script>
+
+<template lang="wxml">
+    <view class="top">
+      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+      <view class='nickname'>{{userInfo.nickName}}</view>
+    </view>
+</template>
+
+<style lang="less">
+.top {
+  height: 300rpx;
+  text-align: center;
+  padding-top: 54rpx;
+}
+.nickname {
+  font-size: 30rpx;
+    margin: 0 auto;
+}
+.userinfo-avatar {
+  margin: 0 auto 16rpx;
+  border-radius: 100%;
+  width: 160rpx;
+  height: 160rpx;
+}
+</style>
