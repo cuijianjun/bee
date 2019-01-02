@@ -69,18 +69,24 @@ export default class MyIndex extends wepy.page {
       <view class="title">我的服务</view>
       <view class="inner-list">
         <view class="item">
+          <i class="iconfont icon-wodetiezi"></i>
           <view>我的帖子</view>
         </view>
         <view class="item">
+        <i class="iconfont icon-wodedingdan"></i>
+
           <view>我的订单</view>
         </view>
         <view class="item">
+        <i class="iconfont icon-wodeqiaquanicon"></i>
           <view>我的卡券</view>
         </view>
         <view class="item">
+        <i class="iconfont icon-wodepintuan"></i>
           <view>我的拼团</view>
         </view>
         <view class="item">
+        <i class="iconfont icon-jifenshangcheng"></i>
           <view>积分商城</view>
         </view>
       </view>
@@ -107,7 +113,7 @@ export default class MyIndex extends wepy.page {
         <view class="item">
           <view>商家入口</view>
         </view>
-        
+
       </view>
     </view>
 
@@ -175,13 +181,25 @@ page {
   .inner-list{
     display: flex;
     flex-wrap: wrap;
-    // padding: 40rpx 0;
+    padding: 40rpx 0 0;
     .item{
       flex: 0 0 25%;
       text-align: center;
-      padding-top: 100rpx;
+      /*padding-top: 100rpx;*/
       margin-bottom: 40rpx;
     }
   }
 }
+  .icon-wodetiezi{
+    color: #ff7f47;
+  }
+  .icon-jifenshangcheng{color: #cc4848
+  }
+  .icon-wodepintuan{color: #26ddff
+  }
+  .icon-wodeqiaquanicon{color: #ff6888
+  }
+  .icon-wodedingdan{
+    color: #7f65ff;
+  }
 </style>
