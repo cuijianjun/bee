@@ -1,117 +1,125 @@
 <style lang="less">
-  @import url(static/iconfont.wxss);
+@import url(static/iconfont.wxss);
 
-  .container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-  }
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
 
-  page {
-    box-sizing: border-box;
-    font-size: 28rpx;
-    background: #eee;
-  }
+page {
+  box-sizing: border-box;
+  font-size: 28rpx;
+  background: #eee;
+}
 </style>
 
 <script>
-  import wepy from 'wepy'
-  import 'wepy-async-function'
+import wepy from 'wepy';
+import 'wepy-async-function';
 
-  import {setStore} from 'wepy-redux'
-  import configStore from './store'
+import { setStore } from 'wepy-redux';
+import configStore from './store';
 
-  const store = configStore()
-  setStore(store)
+const store = configStore();
+setStore(store);
 
-  export default class extends wepy.app {
-    config = {
-      pages: [
-        'pages/my/index',
-        'pages/home/index',
-        'pages/infoList/index',
-        'pages/business/index'
-      ],
-      window: {
-        backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#fff',
-        navigationBarTitleText: 'WeChat',
-        navigationBarTextStyle: 'black'
-      },
-      "tabBar": {
-        "backgroundColor": "#fff",
-        "borderStyle": "white",
-        "color": "#222222",
-        "selectedColor": "#FF4B3B",
-        "list": [
-          {
-            "pagePath": "pages/home/index",
-            "text": "首页",
-            "iconPath": "static/images/navigationBar/index.png",
-            "selectedIconPath": "static/images/navigationBar/index-on.png"
-          },
-          {
-            "pagePath": "pages/infoList/index",
-            "text": "分类信息",
-            "iconPath": "static/images/navigationBar/car.png",
-            "selectedIconPath": "static/images/navigationBar/car-on.png"
-          },
-          {
-            "pagePath": "pages/business/index",
-            "text": "商家",
-            "iconPath": "static/images/navigationBar/buyCar.png",
-            "selectedIconPath": "static/images/navigationBar/buyCar-on.png"
-          },
-          {
-            "pagePath": "pages/my/index",
-            "text": "我的",
-            "iconPath": "static/images/navigationBar/my.png",
-            "selectedIconPath": "static/images/navigationBar/my-on.png"
-          }
-        ]
-      }
-    }
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/my/index',
+      'pages/home/index',
+      'pages/infoList/index',
+      'pages/business/index',
+      'pages/release/index'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      backgroundColor: '#fff',
+      borderStyle: 'white',
+      color: '#222222',
+      selectedColor: '#FF4B3B',
+      list: [
+        {
+          pagePath: 'pages/home/index',
+          text: '首页',
+          iconPath: 'static/images/navigationBar/homepage.png',
+          selectedIconPath: 'static/images/navigationBar/homepage_active.png'
+        },
+        {
+          pagePath: 'pages/infoList/index',
+          text: '分类信息',
+          iconPath: 'static/images/navigationBar/manage.png',
+          selectedIconPath: 'static/images/navigationBar/manage_active.png'
+        },
+        {
+          pagePath: 'pages/release/index',
+          text: '发布',
+          iconPath: 'static/images/navigationBar/add.png',
+          selectedIconPath: 'static/images/navigationBar/add_active.png'
+        },
 
-    globalData = {
-      userInfo: null
-    }
-
-    constructor() {
-      super()
-      this.use('requestfix')
-    }
-
-    onLaunch() {
-      this.testAsync()
-    }
-
-    sleep(s) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve('promise resolved')
-        }, s * 1000)
-      })
-    }
-
-    async testAsync() {
-      const data = await this.sleep(3)
-      console.log(data)
-    }
-
-    getUserInfo(cb) {
-      const that = this
-      if (this.globalData.userInfo) {
-        return this.globalData.userInfo
-      }
-      wepy.getUserInfo({
-        success (res) {
-          that.globalData.userInfo = res.userInfo
-          cb && cb(res.userInfo)
+        {
+          pagePath: 'pages/business/index',
+          text: '商家',
+          iconPath: 'static/images/navigationBar/createtask.png',
+          selectedIconPath: 'static/images/navigationBar/createtask_active.png'
+        },
+        {
+          pagePath: 'pages/my/index',
+          text: '我的',
+          iconPath: 'static/images/navigationBar/people.png',
+          selectedIconPath: 'static/images/navigationBar/people_active.png'
         }
-      })
+      ]
     }
+  };
+
+  globalData = {
+    userInfo: null
+  };
+
+  constructor() {
+    super();
+    this.use('requestfix');
   }
+
+  onLaunch() {
+    this.testAsync();
+  }
+
+  sleep(s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved');
+      }, s * 1000);
+    });
+  }
+
+  async testAsync() {
+    const data = await this.sleep(3);
+    console.log(data);
+  }
+
+  getUserInfo(cb) {
+    const that = this;
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo;
+    }
+    wepy.getUserInfo({
+      success(res) {
+        that.globalData.userInfo = res.userInfo;
+        cb && cb(res.userInfo);
+      }
+    });
+  }
+}
 </script>
