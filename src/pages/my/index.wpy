@@ -24,18 +24,6 @@ export default class MyIndex extends wepy.page {
       }
       self.$apply();
     });
-
-    wx.getSystemInfo({
-      success(res) {
-        console.log(res.model);
-        console.log(res.pixelRatio);
-        console.log(res.windowWidth);
-        console.log(res.windowHeight);
-        console.log(res.language);
-        console.log(res.version);
-        console.log(res.platform);
-      }
-    });
   }
   // Other properties
 }
@@ -66,7 +54,7 @@ export default class MyIndex extends wepy.page {
     </view>
 
     <view class="btn-box">
-      <view class="title">我的服务</view>
+      <view class="title"><i class="iconfont icon-star"></i>我的服务</view>
       <view class="inner-list">
         <view class="item">
           <i class="iconfont icon-wodetiezi"></i>
@@ -86,31 +74,39 @@ export default class MyIndex extends wepy.page {
           <view>我的拼团</view>
         </view>
         <view class="item">
-        <i class="iconfont icon-jifenshangcheng"></i>
+          <i class="iconfont icon-jifenshangcheng"></i>
           <view>积分商城</view>
+        </view>
+        <view class="item">
+          <i class="iconfont icon-wode-dizhi"></i>
+          <view>我的地址</view>
         </view>
       </view>
     </view>
 
     <view class="btn-box">
-      <view class="title">平台服务</view>
+      <view class="title"><i class="iconfont icon-star"></i>平台服务</view>
       <view class="inner-list">
-        <view class="item">
+        <view class="item ">
+          <i class="iconfont icon-lianxikefu"></i>
           <view>联系客服</view>
         </view>
         <view class="item">
+          <i class="iconfont icon-bangzhuzhongxin"></i>
           <view>帮助中心</view>
         </view>
         <view class="item">
+          <i class="iconfont icon-guanyuwomen"></i>
           <view>关于我们</view>
         </view>
       </view>
     </view>
 
     <view class="btn-box">
-      <view class="title">商家服务</view>
+      <view class="title"><i class="iconfont icon-star"></i>商家服务</view>
       <view class="inner-list">
         <view class="item">
+          <i class="iconfont icon-shanghu"></i>
           <view>商家入口</view>
         </view>
 
@@ -120,86 +116,5 @@ export default class MyIndex extends wepy.page {
 </template>
 
 <style lang="less">
-page {
-  padding: 40rpx;
-}
-.user {
-  /*height: 300rpx;*/
-  text-align: center;
-  /*padding-top: 54rpx;*/
-  display: flex;
-  align-items: center;
-  .right {
-    .nickname {
-      font-size: 36rpx;
-    }
-    .join {
-      height: 50rpx;
-      border-radius: 50rpx;
-      font-size: 24rpx;
-    }
-  }
-}
-.nickname {
-  font-size: 30rpx;
-  margin-left: 40rpx;
-}
-.userinfo-avatar {
-  border-radius: 100%;
-  width: 120rpx;
-  height: 120rpx;
-}
-.myInfobox {
-  margin-top: 40rpx;
-  margin-bottom: 40rpx;
-  border-radius: 40rpx;
-  background: #fff;
-  padding: 40rpx 100rpx;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  .item {
-    text-align: center;
-    text {
-      &:first-child {
-        color: red;
-      }
-      display: block;
-    }
-  }
-}
-.btn-box {
-  font-size: 30rpx;
-  border-radius: 40rpx;
-  background: #fff;
-  margin-bottom: 40rpx;
-  .title{
-    border-bottom: 1rpx solid #ccc;
-    padding: 20rpx 40rpx 20rpx 80rpx;
-    font-weight: bold
-  }
-  .inner-list{
-    display: flex;
-    flex-wrap: wrap;
-    padding: 40rpx 0 0;
-    .item{
-      flex: 0 0 25%;
-      text-align: center;
-      /*padding-top: 100rpx;*/
-      margin-bottom: 40rpx;
-    }
-  }
-}
-  .icon-wodetiezi{
-    color: #ff7f47;
-  }
-  .icon-jifenshangcheng{color: #cc4848
-  }
-  .icon-wodepintuan{color: #26ddff
-  }
-  .icon-wodeqiaquanicon{color: #ff6888
-  }
-  .icon-wodedingdan{
-    color: #7f65ff;
-  }
+@import 'index';
 </style>

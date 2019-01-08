@@ -31,13 +31,47 @@
     config = {
       pages: [
         'pages/my/index',
-        'pages/index'
+        'pages/home/index',
+        'pages/infoList/index',
+        'pages/business/index'
       ],
       window: {
         backgroundTextStyle: 'light',
         navigationBarBackgroundColor: '#fff',
         navigationBarTitleText: 'WeChat',
         navigationBarTextStyle: 'black'
+      },
+      "tabBar": {
+        "backgroundColor": "#fff",
+        "borderStyle": "white",
+        "color": "#222222",
+        "selectedColor": "#FF4B3B",
+        "list": [
+          {
+            "pagePath": "pages/home/index",
+            "text": "首页",
+            "iconPath": "static/images/navigationBar/index.png",
+            "selectedIconPath": "static/images/navigationBar/index-on.png"
+          },
+          {
+            "pagePath": "pages/infoList/index",
+            "text": "分类信息",
+            "iconPath": "static/images/navigationBar/car.png",
+            "selectedIconPath": "static/images/navigationBar/car-on.png"
+          },
+          {
+            "pagePath": "pages/business/index",
+            "text": "商家",
+            "iconPath": "static/images/navigationBar/buyCar.png",
+            "selectedIconPath": "static/images/navigationBar/buyCar-on.png"
+          },
+          {
+            "pagePath": "pages/my/index",
+            "text": "我的",
+            "iconPath": "static/images/navigationBar/my.png",
+            "selectedIconPath": "static/images/navigationBar/my-on.png"
+          }
+        ]
       }
     }
 
