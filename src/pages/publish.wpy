@@ -1,0 +1,93 @@
+<style lang="less">
+  @import '../style/base.less';
+  @import '../style/publish.less';
+
+</style>
+<template>
+  <view class="container">
+    <!-- 发表类型提醒 -->
+    <view class="publish-hinit">
+      <view>免责声明：平台发布的所有信息（收费、免费），平台只负责发布、展示，与平台本身无关，平台不负任何责任。</view>
+      <view>温馨提示：本平台可以发布各种二手售卖信息</view>
+    </view>
+
+    <!-- 发布按钮 -->
+    <view class="publish-btn center-flex">
+      我要发布信息
+      <button wx:if="{{isShowBtn}}" class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  // import testMixin from '../mixins/test'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '首页'
+    }
+    components = {
+
+    }
+
+    // mixins = [testMixin]
+
+    data = {
+      isShowBtn:false,
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+      //跳转详情页
+      returnToPublishDetail() {
+        wepy.navigateTo({ url: '/pages/publish-detail'});
+      },
+
+      //获取用户信息
+      getUserInfo(e){
+        console.log('e',e);
+        if(e.detail.userInfo){
+          this.isShowBtn=false;
+          this.$parent.globalData.userInfo=e.detail.userInfo;
+          wepy.navigateTo({ url: '/pages/publish-detail'});
+        }else {
+          this.isShowBtn=true;
+          wepy.showModal({
+            title: '温馨提示', //提示的标题,
+            content: '授权后才可以发布信息', //提示的内容,
+            showCancel: false, 
+          });
+            
+        }
+        this.$apply();
+      }
+
+    }
+
+    //分享
+    onShareAppMessage() {
+      return {
+        title: '标题',
+        path: `/pages/detail?id=${123}`
+      }
+    }
+
+    events = {
+
+    }
+
+    onLoad() {
+      let userInfo=  this.$parent.globalData.userInfo;
+      if(!userInfo){
+        this.isShowBtn=true;
+      }else {
+        this.isShowBtn=false;
+      }
+    }
+  }
+
+</script>

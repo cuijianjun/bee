@@ -1,0 +1,1 @@
+export const API_HOST = 'https://nuts-img.ddapp.com'

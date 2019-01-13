@@ -1,254 +1,241 @@
 <style lang="less">
-  .userinfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  @import '../style/index.less';
+  @import '../style/list.less';
 
-  .userinfo-avatar {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 50%;
-  }
-
-  .userinfo-nickname {
-    color: #aaa;
-  }
 </style>
 <template>
   <view class="container">
-    <view class="userinfo" @tap="handleViewTap">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-      <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
+    <!-- 搜索框 -->
+    <view class="search-wrap center-flex">
+      <view class="search-inner-wrap center-flex" @tap="returnToSeach">
+        <image class="search-icon" src="../image/bg/icon-search.png" lazy-load="{{false}}"></image>
+        <view class="search-text">请输入帖子内容搜索</view>
+      </view>
     </view>
 
-    <panel>
-      <view class="title" slot="title">测试数据绑定</view>
+    <!-- swiper -->
+    <view class="swiper-wrap">
+      <swiper class="swiper-inner-wrap" indicator-dots="{{swiperData.indicatorDots}}" autoplay="{{swiperData.autoplay}}"
+        interval="{{swiperData.interval}}" duration="{{swiperData.duration}}" circular="{{swiperData.circular}}">
+        <repeat for="{{swiperData.arr}}" key="index" index="index" item="item">
+          <swiper-item>
+            <image class="swiper-img" src="{{item}}" />
+          </swiper-item>
+        </repeat>
+      </swiper>
+    </view>
 
-      <text class="info">{{normalTitle}}</text>
-      <text class="info">{{setTimeoutTitle}}</text>
-      <text class="info">{{mixin}}</text>
-      <text class="info">{{mynum}}</text>
-      <text class="info">{{now}}</text>
-      <text class="info">{{num}}</text>
-      <text class="info">{{asyncNum}}</text>
-      <text class="info">{{sumNum}}</text>
-      <button @tap="plus('a')" size="mini">  +  </button>
-    </panel>
+    <!-- 信息类型-->
+    <view class="type-container">
+      <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
+        <repeat for="{{type}}" key="index" index="index" item="item">
+            <view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.name}}</view>
+        </repeat>
+      </scroll-view>
+    </view>
 
-    <panel>
-      <view class="title" slot="title">其它测试</view>
-      <button @tap="toast" size="mini">第三方组件</button>
-      <button @tap="communicate" size="mini">组件通信</button>
-      <button @tap="tap" size="mini">混合TAP事件</button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试并发网络请求</view>
-      <view>返回结果: <text>{{netrst}}</text></view>
-      <button @tap="request" size="mini"> 点我发起10个请求 </button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试组件</view>
-
-      <text class="testcounter">计数组件1: </text>
-      <view class="counterview">
-        <counter1 @index-emit.user="counterEmit" />
-      </view>
-
-      <text class="testcounter">计数组件2: </text>
-
-      <view class="counterview">
-        <counter2 :num.sync="mynum"></counter2>
-      </view>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试组件Repeat</view>
-      <repeat for="" index="index" item="item" key="key">
-        <group :grouplist="item" :indexa="index"></group>
+    <!-- 发表内容项 -->
+    <view class="publish-msg-wrap">
+      <repeat for="{{msgList}}" key="index" index="index" item="item">
+        <view class="publish-msg-item">
+          <view class="msg-top-wrap">
+            <view class="user-wrap">
+              <image class="user-photo" src="{{item.photo}}" lazy-load="{{true}}"></image>
+              <view class="user-msg-wrap">
+                <view class="user-name">{{item.name}}</view>
+                <view>
+                  <view class="msg-type">{{item.type}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="msg-tell-wrap center-flex" @tap="makePhone({{item.tell}})">
+              <image class="icon-tell" src="../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
+              拨打电话
+            </view>
+          </view>
+          <view class="msg-content-wrap cutText3" @tap="returnToDetail()">
+            {{item.content}}
+          </view>
+          <view class="msg-img-wrap">
+            <repeat for="{{item.pics}}" key="index" index="index" item="item2">
+              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" @tap="previewImg({{item2}},{{item.pics}})"></image>
+            </repeat>
+          </view>
+          <view class="msg-time-wrap">
+            {{item.time}}发布
+          </view>
+          <view class="msg-see-wrap">
+            <view class="see-count-wrap">
+              <image class="icon-see" src="../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
+              <text style="color: #3aa1c2;">{{item.see}}</text>人浏览
+            </view>
+            <view class="see-detail" @tap="returnToDetail()">查看详情</view>
+          </view>
+        </view>
       </repeat>
-    </panel>
+    </view>
 
-    <panel>
-      <view class="title" slot="title">测试列表</view>
-      <list></list>
-    </panel>
+    <!-- 侧边按钮 -->
+    <view class="contact-wrap center-flex">
+      客服
+      <button class="contact-btn button-cover" open-type="contact"></button>
+    </view>
 
-    <toast />
+    <!-- 返回顶部 -->
+    <view class="return-to-top center-flex" @tap="returnToTop">
+      <image class="icon-to-top" src="../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"></image>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import { connect } from 'wepy-redux'
-  import Panel from '@/components/panel' // alias example
-  import Counter from 'counter' // alias example
-  import List from '../components/list' // aliasFields example
-  import moduleA from 'module-a' // aliasFields ignore module example
-  import Group from '../components/group'
-  import Toast from 'wepy-com-toast'
-  import testMixin from '../mixins/test'
-
-  console.log('moduleA ignored: ', moduleA) // => moduleA ignored: {}
-
-  @connect({
-    num (state) {
-      return state.counter.num
-    },
-    asyncNum (state) {
-      return state.counter.asyncNum
-    },
-    sumNum (state) {
-      return state.counter.num + state.counter.asyncNum
-    }
-  })
+  // import testMixin from '../mixins/test'
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: 'test'
+      navigationBarTitleText: '首页'
     }
     components = {
-      panel: Panel,
-      counter1: Counter,
-      counter2: Counter,
-      list: List,
-      group: Group,
-      toast: Toast
+
     }
 
-    mixins = [testMixin]
+    // mixins = [testMixin]
 
     data = {
-      mynum: 20,
-      userInfo: {
-        nickName: '加载中...'
+      swiperData: { //轮播数据
+        indicatorDots: true,
+        autoplay: true,
+        interval: 3000,
+        duration: 500,
+        circular: true,
+        arr: [
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
+          'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
+        ],
       },
-      normalTitle: '原始标题',
-      setTimeoutTitle: '标题三秒后会被修改',
-      count: 0,
-      netrst: '',
-      groupList: [
-        {
-          id: 1,
-          name: '点击改变',
-          list: [
-            {
-              childid: '1.1',
-              childname: '子项，点我改变'
-            }, {
-              childid: '1.2',
-              childname: '子项，点我改变'
-            }, {
-              childid: '1.3',
-              childname: '子项，点我改变'
-            }
-          ]
+      msgList: [{ //列表信息
+          photo: '../image/upload/photo.jpeg',
+          name: '用户名称用户名称',
+          type: '家电',
+          tell: '14311234567',
+          content: '首先举个身边的例子，大致剧情是：开发团队因为某某原因，感觉测试人员“有些多余”，测试工作可以自己做。于是不再让测试团队跟，于是这么进行了两三次后，实在受不了线上“控制不住的”问题，于是又把测试人员请了回来。',
+          pics: [
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
+            'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
+          ],
+          time: '2018-11-24 10:40',
+          see: '470'
         },
         {
-          id: 2,
-          name: '点击改变',
-          list: [
-            {
-              childid: '2.1',
-              childname: '子项，点我改变'
-            }, {
-              childid: '2.2',
-              childname: '子项，点我改变'
-            }, {
-              childid: '2.3',
-              childname: '子项，点我改变'
-            }
-          ]
-        },
-        {
-          id: 3,
-          name: '点击改变',
-          list: [
-            {
-              childid: '3.1',
-              childname: '子项，点我改变'
-            }
-          ]
+          photo: '../image/upload/photo.jpeg',
+          name: '用户名称',
+          type: '家电',
+          tell: '14311234567',
+          content: '二手物品内容',
+          pics: [
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
+            'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
+          ],
+          time: '2018-11-24 10:40',
+          see: '470'
         }
-      ]
+      ],
+
+      type:[//信息类型
+        {
+          id:'0',
+          name:'家电'
+        },
+        {
+          id:'1',
+          name:'家具'
+        },
+        {
+          id:'2',
+          name:'手机'
+        },
+        {
+          id:'2',
+          name:'自行车'
+        },
+        {
+          id:'3',
+          name:'互联网'
+        },
+        {
+          id:'4',
+          name:'母婴玩具'
+        },
+        {
+          id:'5',
+          name:'展柜'
+        }
+      ],
+      currentTypeIndex:0,//当前信息类型
     }
 
     computed = {
-      now () {
-        return +new Date()
-      }
+
     }
 
     methods = {
-      plus () {
-        this.mynum++
+      //点击拨打电话
+      makePhone(tell) {
+        wepy.makePhoneCall({
+          phoneNumber: tell
+        });
       },
-      toast () {
-        let promise = this.$invoke('toast', 'show', {
-          title: '自定义标题',
-          img: 'https://raw.githubusercontent.com/kiinlam/wetoast/master/images/star.png'
-        })
 
-        promise.then((d) => {
-          console.log('toast done')
-        })
+      //跳转详情页
+      returnToDetail() {
+        wepy.navigateTo({
+          url: '/pages/detail'
+        });
       },
-      tap () {
-        console.log('do noting from ' + this.$name)
-      },
-      communicate () {
-        console.log(this.$name + ' tap')
 
-        this.$invoke('counter2', 'minus', 45, 6)
-        this.$invoke('counter1', 'plus', 45, 6)
+      //预览图片
+      previewImg(current, urls) {
+        wepy.previewImage({
+          current: current,
+          urls: urls,
+        });
+      },
 
-        this.$broadcast('index-broadcast', 1, 3, 4)
+      //返回顶部
+      returnToTop() {
+        wepy.pageScrollTo({
+          scrollTop: 0,
+          duration: 300
+        });
       },
-      request () {
-        let self = this
-        let i = 10
-        let map = ['MA==', 'MQo=', 'Mg==', 'Mw==', 'NA==', 'NQ==', 'Ng==', 'Nw==', 'OA==', 'OQ==']
-        while (i--) {
-          wepy.request({
-            url: 'https://www.madcoder.cn/tests/sleep.php?time=1&t=css&c=' + map[i] + '&i=' + i,
-            success: function (d) {
-              self.netrst += d.data + '.'
-              self.$apply()
-            }
-          })
-        }
+
+      //切换信息类型
+      getCurrentType(idx){
+        this.currentTypeIndex=idx;
       },
-      counterEmit (...args) {
-        let $event = args[args.length - 1]
-        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+
+      //跳转搜索页面
+      returnToSeach(){
+        wepy.navigateTo({ url:`/pages/search`});
+        
       }
+
     }
 
     events = {
-      'index-emit': (...args) => {
-        let $event = args[args.length - 1]
-        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
-      }
+
     }
 
     onLoad() {
-      let self = this
-      this.$parent.getUserInfo(function (userInfo) {
-        if (userInfo) {
-          self.userInfo = userInfo
-        }
-        self.normalTitle = '标题已被修改'
 
-        self.setTimeoutTitle = '标题三秒后会被修改'
-        setTimeout(() => {
-          self.setTimeoutTitle = '到三秒了'
-          self.$apply()
-        }, 3000)
-
-        self.$apply()
-      })
     }
   }
+
 </script>
