@@ -18,13 +18,11 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/search',
-        'pages/publish',
-        'pages/publish-detail',
-        
-        
-        'pages/detail',
         'pages/index',
+        'pages/search',
+        'pages/detail',
+        'pages/publish',
+        'pages/publish-detail',  
         'pages/my',
       ],
       window: {
