@@ -37,10 +37,16 @@
         backgroundColor: '#fff',
         borderStyle: '#e5e5e5',
         list: [{
-            iconPatuh: 'image/index1.png',
+            iconPath: 'image/index1.png',
             selectedIconPath: 'image/index2.png',
             pagePath: 'pages/index',
             text: '首页'
+          },
+          {
+            iconPath: 'image/publish.png',
+            selectedIconPath: 'image/publish.png',
+            pagePath: 'pages/publish',
+            text: '发布'
           },
           {
             iconPath: 'image/my1.png',
