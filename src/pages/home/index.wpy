@@ -1,0 +1,35 @@
+<script>
+import wepy from 'wepy';
+
+export default class HomeIndex extends wepy.page {
+  config = {
+    navigationBarTitleText: '首页'
+  };
+  config = {
+
+  };
+
+  data = {
+
+  };
+  methods = {
+
+  };
+
+  events = {
+
+  };
+  onLoad() {
+    let self = this;
+  }
+}
+</script>
+
+<template lang="wxml">
+    <view>首页</view>
+
+</template>
+
+<style lang="less">
+@import 'index';
+</style>

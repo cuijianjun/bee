@@ -1,11 +1,25 @@
 <style lang="less">
- 
+@import url(static/iconfont.wxss);
 
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+page {
+  box-sizing: border-box;
+  font-size: 28rpx;
+  background: #eee;
+}
 </style>
 
 <script>
-  import wepy from 'wepy'
-  import 'wepy-async-function'
+import wepy from 'wepy'
+import 'wepy-async-function'
 
   import {
     setStore
@@ -14,6 +28,8 @@
 
   const store = configStore()
   setStore(store)
+const store = configStore();
+setStore(store);
 
   export default class extends wepy.app {
     config = {
@@ -22,8 +38,11 @@
         'pages/search',
         'pages/detail',
         'pages/publish',
-        'pages/publish-detail',  
-        'pages/my',
+        'pages/publish-detail',
+        'pages/my/index',
+        'pages/infoList/index',
+        'pages/business/index',
+        'pages/release/index',
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -37,21 +56,21 @@
         backgroundColor: '#fff',
         borderStyle: '#e5e5e5',
         list: [{
-            iconPath: 'image/index1.png',
-            selectedIconPath: 'image/index2.png',
             pagePath: 'pages/index',
-            text: '首页'
+            text: '首页',
+            iconPath: 'static/images/navigationBar/homepage.png',
+            selectedIconPath: 'static/images/navigationBar/homepage_active.png'
           },
           {
-            iconPath: 'image/publish.png',
-            selectedIconPath: 'image/publish.png',
+            iconPath: 'static/images/navigationBar/add.png',
+            selectedIconPath: 'static/images/navigationBar/add_active.png',
             pagePath: 'pages/publish',
             text: '发布'
           },
           {
-            iconPath: 'image/my1.png',
-            selectedIconPath: 'image/my2.png',
-            pagePath: 'pages/my',
+            iconPath: 'static/images/navigationBar/people.png',
+            selectedIconPath: 'static/images/navigationBar/people_active.png',
+            pagePath: 'pages/my/index',
             text: '我的'
           }
         ]
@@ -62,7 +81,7 @@
       userInfo: null,
     }
 
-     constructor() {
+    constructor() {
       super()
       this.use('promisify');
       this.use('requestfix');
@@ -171,3 +190,4 @@
   }
 
 </script>
+

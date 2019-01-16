@@ -1,0 +1,35 @@
+<script>
+import wepy from 'wepy';
+
+export default class InfoListIndex extends wepy.page {
+  config = {
+    navigationBarTitleText: '分类信息'
+  };
+  config = {
+
+  };
+
+  data = {
+
+  };
+  methods = {
+
+  };
+
+  events = {
+
+  };
+  onLoad() {
+    let self = this;
+  }
+}
+</script>
+
+<template lang="wxml">
+    <view>分类信息</view>
+
+</template>
+
+<style lang="less">
+@import 'index';
+</style>

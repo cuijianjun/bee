@@ -1,0 +1,35 @@
+<script>
+import wepy from 'wepy';
+
+export default class BusinessIndex extends wepy.page {
+  config = {
+    navigationBarTitleText: '商家'
+  };
+  config = {
+
+  };
+
+  data = {
+
+  };
+  methods = {
+
+  };
+
+  events = {
+
+  };
+  onLoad() {
+    let self = this;
+  }
+}
+</script>
+
+<template lang="wxml">
+    <view>商家</view>
+
+</template>
+
+<style lang="less">
+@import 'index';
+</style>
