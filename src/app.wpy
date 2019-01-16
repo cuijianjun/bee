@@ -1,35 +1,24 @@
 <style lang="less">
-@import url(static/iconfont.wxss);
+  @import url(static/iconfont.wxss);
 
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
-
-page {
-  box-sizing: border-box;
-  font-size: 28rpx;
-  background: #eee;
-}
+  page {
+    box-sizing: border-box;
+    font-size: 28 rpx;
+    background: #eee;
+  }
 </style>
 
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
+  import wepy from 'wepy'
+  import 'wepy-async-function'
 
   import {
     setStore
   } from 'wepy-redux'
   import configStore from './store'
 
-  const store = configStore()
-  setStore(store)
-const store = configStore();
-setStore(store);
+  const store = configStore();
+  setStore(store);
 
   export default class extends wepy.app {
     config = {
@@ -56,11 +45,11 @@ setStore(store);
         backgroundColor: '#fff',
         borderStyle: '#e5e5e5',
         list: [{
-            pagePath: 'pages/index',
-            text: '首页',
-            iconPath: 'static/images/navigationBar/homepage.png',
-            selectedIconPath: 'static/images/navigationBar/homepage_active.png'
-          },
+          pagePath: 'pages/index',
+          text: '首页',
+          iconPath: 'static/images/navigationBar/homepage.png',
+          selectedIconPath: 'static/images/navigationBar/homepage_active.png'
+        },
           {
             iconPath: 'static/images/navigationBar/add.png',
             selectedIconPath: 'static/images/navigationBar/add_active.png',
@@ -78,7 +67,7 @@ setStore(store);
     }
 
     globalData = {
-      userInfo: null,
+      userData: null,
     }
 
     constructor() {
@@ -129,20 +118,7 @@ setStore(store);
       })
     }
 
-    // async login() {
-    //   let self = this;
-    //   if (self.globalData.loginInfo) {
-    //     return self.globalData.loginInfo;
-    //   }
-    //   var code = await wepy.login();
-    //   let d = await request.login(code.code);
-    //   if (d) {
-    //     self.globalData.loginInfo = d;
-    //     return d;
-    //   } else {
-    //     console.log('登录失败');
-    //   }
-    // }
+
 
     //更新小程序
     uploadApp() {
@@ -180,11 +156,17 @@ setStore(store);
       let system_info = self.globalData.system_info;
     }
 
+    async onLoad() {
+      await wepy.login();
+      this.globalData.userData = await wepy.getUserInfo();
+    }
+
     onLaunch(options) {
-      let self=this;
-      self.globalData.scene=options.scene;//保存场景值
+      let self = this;
+      self.globalData.scene = options.scene;//保存场景值
       self.uploadApp() //更新小程序
       self.getSystemInfo() //获取设备信息
+      self.onLoad()  //登陆，获取用户信息
     }
 
   }

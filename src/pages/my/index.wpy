@@ -18,12 +18,10 @@ export default class MyIndex extends wepy.page {
   events = {};
   onLoad() {
     let self = this;
-    this.$parent.getUserInfo(function(userInfo) {
-      if (userInfo) {
-        self.userInfo = userInfo;
-      }
-      self.$apply();
-    });
+    console.log('his.$parent',this.$parent)
+    self.userInfo = this.$parent.globalData.userData.userInfo;
+    self.$apply();
+
   }
   // Other properties
 }
