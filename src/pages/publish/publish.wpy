@@ -1,7 +1,6 @@
 <style lang="less">
-  @import '../style/base.less';
-  @import '../style/publish.less';
-
+  @import '../../style/base.less';
+  @import './publish.less';
 </style>
 <template>
   <view class="container">
@@ -34,7 +33,7 @@
     // mixins = [testMixin]
 
     data = {
-      isShowBtn:false,
+      isShowBtn: false,
     }
 
     computed = {
@@ -44,24 +43,28 @@
     methods = {
       //跳转详情页
       returnToPublishDetail() {
-        wepy.navigateTo({ url: '/pages/publish-detail'});
+        wepy.navigateTo({
+          url: '/pages/publish-detail'
+        });
       },
 
       //获取用户信息
-      getUserInfo(e){
-        console.log('e',e);
-        if(e.detail.userInfo){
-          this.isShowBtn=false;
-          this.$parent.globalData.userInfo=e.detail.userInfo;
-          wepy.navigateTo({ url: '/pages/publish-detail'});
-        }else {
-          this.isShowBtn=true;
+      getUserInfo(e) {
+        console.log('e', e);
+        if (e.detail.userInfo) {
+          this.isShowBtn = false;
+          this.$parent.globalData.userInfo = e.detail.userInfo;
+          wepy.navigateTo({
+            url: '/pages/publish-detail'
+          });
+        } else {
+          this.isShowBtn = true;
           wepy.showModal({
             title: '温馨提示', //提示的标题,
             content: '授权后才可以发布信息', //提示的内容,
-            showCancel: false, 
+            showCancel: false,
           });
-            
+
         }
         this.$apply();
       }
@@ -81,11 +84,11 @@
     }
 
     onLoad() {
-      let userInfo=  this.$parent.globalData.userInfo;
-      if(!userInfo){
-        this.isShowBtn=true;
-      }else {
-        this.isShowBtn=false;
+      let userInfo = this.$parent.globalData.userInfo;
+      if (!userInfo) {
+        this.isShowBtn = true;
+      } else {
+        this.isShowBtn = false;
       }
     }
   }

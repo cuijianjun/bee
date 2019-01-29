@@ -23,11 +23,11 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/index',
-        'pages/search',
-        'pages/detail',
-        'pages/publish',
-        'pages/publish-detail',
+        'pages/index/index',
+        'pages/search/search',
+        'pages/detail/detail',
+        'pages/publish/publish',
+        'pages/publish-detail/publish-detail',
         'pages/my/index',
         'pages/infoList/index',
         'pages/business/index',
@@ -45,7 +45,7 @@
         backgroundColor: '#fff',
         borderStyle: '#e5e5e5',
         list: [{
-          pagePath: 'pages/index',
+          pagePath: 'pages/index/index',
           text: '首页',
           iconPath: 'static/images/navigationBar/homepage.png',
           selectedIconPath: 'static/images/navigationBar/homepage_active.png'
@@ -53,7 +53,7 @@
           {
             iconPath: 'static/images/navigationBar/add.png',
             selectedIconPath: 'static/images/navigationBar/add_active.png',
-            pagePath: 'pages/publish',
+            pagePath: 'pages/publish/publish',
             text: '发布'
           },
           {

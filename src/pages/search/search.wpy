@@ -1,8 +1,7 @@
 <style lang="less">
-  @import '../style/base.less';
-  @import '../style/list.less';
-  @import '../style/search.less';
-
+  @import '../../style/base.less';
+  @import '../../style/list.less';
+  @import './search.less';
 </style>
 <template>
   <view class="container">
@@ -132,7 +131,7 @@
             showCancel: false,
           });
         } else {
-          this.keyword=keyword;
+          this.keyword = keyword;
           this.resultList = [{ //列表信息
               photo: '../image/upload/photo.jpeg',
               name: '用户名称用户名称',

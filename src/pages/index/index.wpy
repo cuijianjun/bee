@@ -1,7 +1,7 @@
 <style lang="less">
-  @import '../style/index.less';
-  @import '../style/list.less';
-
+  @import '../../style/base.less';
+  @import '../../style/list.less';
+  @import './index.less';
 </style>
 <template>
   <view class="container">
@@ -29,7 +29,7 @@
     <view class="type-container">
       <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
         <repeat for="{{type}}" key="index" index="index" item="item">
-            <view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.name}}</view>
+          <view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.name}}</view>
         </repeat>
       </scroll-view>
     </view>
@@ -148,37 +148,37 @@
         }
       ],
 
-      type:[//信息类型
+      type: [ //信息类型
         {
-          id:'0',
-          name:'家电'
+          id: '0',
+          name: '家电'
         },
         {
-          id:'1',
-          name:'家具'
+          id: '1',
+          name: '家具'
         },
         {
-          id:'2',
-          name:'手机'
+          id: '2',
+          name: '手机'
         },
         {
-          id:'2',
-          name:'自行车'
+          id: '2',
+          name: '自行车'
         },
         {
-          id:'3',
-          name:'互联网'
+          id: '3',
+          name: '互联网'
         },
         {
-          id:'4',
-          name:'母婴玩具'
+          id: '4',
+          name: '母婴玩具'
         },
         {
-          id:'5',
-          name:'展柜'
+          id: '5',
+          name: '展柜'
         }
       ],
-      currentTypeIndex:0,//当前信息类型
+      currentTypeIndex: 0, //当前信息类型
     }
 
     computed = {
@@ -217,14 +217,16 @@
       },
 
       //切换信息类型
-      getCurrentType(idx){
-        this.currentTypeIndex=idx;
+      getCurrentType(idx) {
+        this.currentTypeIndex = idx;
       },
 
       //跳转搜索页面
-      returnToSeach(){
-        wepy.navigateTo({ url:`/pages/search`});
-        
+      returnToSeach() {
+        wepy.navigateTo({
+          url: `/pages/search`
+        });
+
       }
 
     }
