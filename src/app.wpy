@@ -37,13 +37,13 @@
         backgroundTextStyle: 'light',
         navigationBarBackgroundColor: '#ea444e',
         navigationBarTitleText: 'WeChat',
-        navigationBarTextStyle: '#fff'
+        navigationBarTextStyle: 'white'
       },
       tabBar: {
         color: '#7F8389',
         selectedColor: '#F94545',
         backgroundColor: '#fff',
-        borderStyle: '#e5e5e5',
+        borderStyle: 'white',
         list: [{
           pagePath: 'pages/index',
           text: '首页',
