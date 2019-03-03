@@ -13,7 +13,14 @@ export default class MyIndex extends wepy.page {
       avatarUrl: ''
     }
   };
-  methods = {};
+  methods = {
+    navigateTo(url) {
+      wepy.navigateTo({
+        url: url,
+      });
+    },
+
+  };
 
   events = {};
   onLoad() {
@@ -54,28 +61,27 @@ export default class MyIndex extends wepy.page {
     <view class="btn-box">
       <view class="title"><i class="iconfont icon-star"></i>我的服务</view>
       <view class="inner-list">
-        <view class="item">
+        <view class="item" @tap="navigateTo('/pages/my/myPublish')">
           <i class="iconfont icon-wodetiezi"></i>
-          <view>我的帖子</view>
+          <view>我发布的</view>
         </view>
-        <view class="item">
+        <view class="item" @tap="navigateTo('/pages/my/myOrder')">
         <i class="iconfont icon-wodedingdan"></i>
-
           <view>我的订单</view>
         </view>
-        <view class="item">
+        <view class="item" hidden='true'>
         <i class="iconfont icon-wodeqiaquanicon"></i>
           <view>我的卡券</view>
         </view>
-        <view class="item">
+        <view class="item" hidden='true'>
         <i class="iconfont icon-wodepintuan"></i>
           <view>我的拼团</view>
         </view>
-        <view class="item">
+        <view class="item" hidden='true'>
           <i class="iconfont icon-jifenshangcheng"></i>
           <view>积分商城</view>
         </view>
-        <view class="item">
+        <view class="item" hidden='true'>
           <i class="iconfont icon-wode-dizhi"></i>
           <view>我的地址</view>
         </view>
@@ -100,7 +106,7 @@ export default class MyIndex extends wepy.page {
       </view>
     </view>
 
-    <view class="btn-box">
+    <view class="btn-box" hidden='true'>
       <view class="title"><i class="iconfont icon-star"></i>商家服务</view>
       <view class="inner-list">
         <view class="item">

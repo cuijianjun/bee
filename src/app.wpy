@@ -29,6 +29,8 @@
         'pages/publish',
         'pages/publish-detail',
         'pages/my/index',
+        'pages/my/myPublish',
+        'pages/my/myOrder',
         'pages/infoList/index',
         'pages/business/index',
         'pages/release/index',
