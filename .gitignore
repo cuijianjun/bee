@@ -1,5 +1,7 @@
-node_modules
+node_modules/
+dist/
 .DS_Store
+package-lock.json
+.editorconfig
+.idea
 .wepycache
-.idea/
-dist
