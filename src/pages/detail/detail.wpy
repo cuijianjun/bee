@@ -18,7 +18,7 @@
             </view>
           </view>
           <!-- <view class="msg-tell-wrap center-flex" @tap="makePhone({{item.tell}})">
-            <image class="icon-tell" src="../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
+            <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
             拨打电话
           </view> -->
         </view>
@@ -45,7 +45,7 @@
     <!-- 底部固定按钮组 -->
     <view class="footer-btns-wrap">
       <view class="btn btn-index" @tap="reurnToIndex">
-        <image class="icon" src="../image/bg/icon_index.png" mode="widthFix" lazy-load="false"></image>
+        <image class="icon" src="../../image/bg/icon_index.png" mode="widthFix" lazy-load="false"></image>
         <view class="txt"> 首页</view>
       </view>
       <view class="btn btn-collect" @tap="collect">
@@ -104,7 +104,7 @@
 
     data = {
       info: {
-        photo: '../image/upload/photo.jpeg',
+        photo: '../../image/upload/photo.jpeg',
         name: '用户名称',
         type: '家电',
         tell: '14311234567',
@@ -120,7 +120,7 @@
         collect: false, //收藏状态
       },
 
-      collectIcon: '../image/bg/icon_collect1.png',
+      collectIcon: '../../image/bg/icon_collect1.png',
       collectTxt: '收藏',
       wexinCode: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1547390030685&di=68c97a35daf128bb8e7f9e373edbc98b&imgtype=0&src=http%3A%2F%2Fimg1.doubanio.com%2Fimg%2Fbiz%2Fposter-1416277929.jpg',
       pageCode: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1547390115754&di=b10820734194c68c4b12b8097c8b9049&imgtype=0&src=http%3A%2F%2Fpic.qqtn.com%2Fup%2F2018-4%2F2018040318142365848.jpg',
@@ -172,10 +172,10 @@
         this.info.collect = !this.info.collect;
         if (this.info.collect) {
           this.collectTxt = '已收藏';
-          this.collectIcon = '../image/bg/icon_collect2.png';
+          this.collectIcon = '../../image/bg/icon_collect2.png';
         } else {
           this.collectTxt = '收藏';
-          this.collectIcon = '../image/bg/icon_collect1.png';
+          this.collectIcon = '../../image/bg/icon_collect1.png';
         }
       },
 

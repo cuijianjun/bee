@@ -8,7 +8,7 @@
     <!-- 搜索框 -->
     <view class="search-wrap center-flex">
       <view class="search-inner-wrap center-flex" @tap="returnToSeach">
-        <image class="search-icon" src="../image/bg/icon-search.png" lazy-load="{{false}}"></image>
+        <image class="search-icon" src="../../image/bg/icon-search.png" lazy-load="{{false}}"></image>
         <view class="search-text">请输入帖子内容搜索</view>
       </view>
     </view>
@@ -49,7 +49,7 @@
               </view>
             </view>
             <view class="msg-tell-wrap center-flex" @tap="makePhone({{item.tell}})">
-              <image class="icon-tell" src="../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
+              <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
               拨打电话
             </view>
           </view>
@@ -83,13 +83,14 @@
 
     <!-- 返回顶部 -->
     <view class="return-to-top center-flex" @tap="returnToTop">
-      <image class="icon-to-top" src="../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"></image>
+      <image class="icon-to-top" src="../../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"></image>
     </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import request from '../../lib/api/request'
   // import testMixin from '../mixins/test'
 
   export default class Index extends wepy.page {
@@ -117,7 +118,7 @@
         ],
       },
       msgList: [{ //列表信息
-          photo: '../image/upload/photo.jpeg',
+          photo: '../../image/upload/photo.jpeg',
           name: '用户名称用户名称',
           type: '家电',
           tell: '14311234567',
@@ -132,7 +133,7 @@
           see: '470'
         },
         {
-          photo: '../image/upload/photo.jpeg',
+          photo: '../../image/upload/photo.jpeg',
           name: '用户名称',
           type: '家电',
           tell: '14311234567',
@@ -235,9 +236,51 @@
 
     }
 
-    onLoad() {
-
+   async onLoad() {
+      await this.$parent.login(); //获取用户信息
+      this.getListMsg();//获取列表信息
     }
+
+    // 获取列表信息
+    //获取视频列表信息
+    async getListMsg() {
+      let self = this;
+      let page = self.page;
+      let res = await request.getGoodsLists();
+      console.log('res',res);
+      // let ad = res.ad; //广告列表
+      // let list = res.list; //视频列表
+
+      // if (list && list.length > 0) {
+      //   for (let i = 0; i < list.length; i++) { //补全图片路径
+      //     const item = list[i];
+      //     item.avatar = util.sitePic(item.avatar) || '';
+      //     item.pic = util.sitePic(item.pic) || '';
+      //     item.page_num = self.page;
+      //   }
+      // } else {
+      //   wepy.hideLoading();
+      //   return;
+      // }
+
+      // if (ad && ad.length > 0) {
+      //   for (let j = 0; j < ad.length; j++) { //合并广告和视频信息
+      //     const item = ad[j];
+      //     item.type = 'ad';
+      //     list.splice(item.ad_rank, 0, item)
+      //   }
+      // }
+      // if (self.page == 1) {
+      //   self.videoList = list;
+      // } else {
+      //   self.videoList = self.videoList.concat(list);
+      // }
+
+      self.$apply(() => {
+        wepy.hideLoading();
+      });
+    }
+    
   }
 
 </script>

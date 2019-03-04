@@ -11,14 +11,15 @@
 <script>
   import wepy from 'wepy'
   import 'wepy-async-function'
+  import request from './lib/api/request'
 
-  import {
-    setStore
-  } from 'wepy-redux'
-  import configStore from './store'
+  // import {
+  //   setStore
+  // } from 'wepy-redux'
+  // import configStore from './store'
 
-  const store = configStore();
-  setStore(store);
+  // const store = configStore();
+  // setStore(store);
 
   export default class extends wepy.app {
     config = {
@@ -31,19 +32,18 @@
         'pages/my/index',
         'pages/infoList/index',
         'pages/business/index',
-        'pages/release/index',
       ],
       window: {
         backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#ea444e',
+        navigationBarBackgroundColor: 'white',
         navigationBarTitleText: 'WeChat',
-        navigationBarTextStyle: '#fff'
+        navigationBarTextStyle: 'black'
       },
       tabBar: {
         color: '#7F8389',
         selectedColor: '#F94545',
         backgroundColor: '#fff',
-        borderStyle: '#e5e5e5',
+        borderStyle: 'white',
         list: [{
           pagePath: 'pages/index/index',
           text: '首页',
@@ -67,7 +67,7 @@
     }
 
     globalData = {
-      userData: null,
+      loginInfo:{},
     }
 
     constructor() {
@@ -118,8 +118,6 @@
       })
     }
 
-
-
     //更新小程序
     uploadApp() {
       const updateManager = wx.getUpdateManager ? wx.getUpdateManager() : null;
@@ -141,6 +139,24 @@
           }, 2000)
 
         })
+      }
+    }
+
+    //执行login方法获取用户登录信息
+    async login() {
+     
+      // let self = this;
+      // if (self.globalData.loginInfo) {
+      //   return self.globalData.loginInfo;
+      // }
+      var code = await wepy.login();
+      let d = await request.login(code.code);
+       console.log('执行登录',d);
+      if (d) {
+        console.log('d',d);
+        return d;
+      } else {
+        console.log('登录失败');
       }
     }
 

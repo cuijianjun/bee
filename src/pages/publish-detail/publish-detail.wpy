@@ -18,10 +18,10 @@
           <repeat for="{{pics}}" key="index" index="index" item="item">
             <view class="pic-wrap">
               <image class="add_img" src="{{item}}" lazy-load="false"></image>
-              <image class="close-img" @tap="deleteImg({{index}})" src="../image/bg/icon_close.png" lazy-load="false"></image>
+              <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png" lazy-load="false"></image>
             </view>      
           </repeat>
-          <image class="add_img" @tap="addImg" src="../image/bg/icon_add_img.png" lazy-load="false"></image>
+          <image class="add_img" @tap="addImg" src="../../image/bg/icon_add_img.png" lazy-load="false"></image>
         </view>
       </view>
 
@@ -112,7 +112,8 @@
             showCancel: false, 
           });
         }else {
-          self.uploadInfo();
+          this.uploadInfo(e.detail.value);
+          console.log('e',e);
         }
         wepy.hideLoading();
       },
@@ -124,7 +125,7 @@
           success(res) {
             console.log('res',res);
             let pics=res.tempFilePaths;
-            self.pics=pics;
+            self.pics=pics; 
             self.$apply();
           }
         })
@@ -137,9 +138,8 @@
     }
 
      // 上传信息
-    async uploadInfo(){
-      let res=request.publishInfo();
-      console.log(res);
+    async uploadInfo(msg){
+      let res=request.publishGoodsMsg(msg);
     }
 
     events = {
@@ -148,7 +148,7 @@
 
     onLoad() {
       let userInfo= this.$parent.globalData.userInfo;
-      this.name=userInfo.nickName||'';
+      // this.name=userInfo.nickName||'';
       this.$apply();
     }
   }
