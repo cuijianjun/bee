@@ -1,6 +1,6 @@
 <style lang="less">
-  @import '../style/base.less';
-  @import '../style/publish-detail.less';
+  @import '../../style/base.less';
+  @import './publish-detail.less';
 
 </style>
 <template>
@@ -18,10 +18,10 @@
           <repeat for="{{pics}}" key="index" index="index" item="item">
             <view class="pic-wrap">
               <image class="add_img" src="{{item}}" lazy-load="false"></image>
-              <image class="close-img" @tap="deleteImg({{index}})" src="../image/bg/icon_close.png" lazy-load="false"></image>
+              <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png" lazy-load="false"></image>
             </view>      
           </repeat>
-          <image class="add_img" @tap="addImg" src="../image/bg/icon_add_img.png" lazy-load="false"></image>
+          <image class="add_img" @tap="addImg" src="../../image/bg/icon_add_img.png" lazy-load="false"></image>
         </view>
       </view>
 
@@ -53,9 +53,11 @@
 
 <script>
   import wepy from 'wepy'
+  import request from '../../lib/api/request.js'
+
   // import testMixin from '../mixins/test'
 
-  export default class Index extends wepy.page {
+  export default class PublishDetail extends wepy.page {
     config = {
       navigationBarTitleText: '发布信息页'
     }
@@ -109,6 +111,9 @@
             content: '联系方式不能为空', 
             showCancel: false, 
           });
+        }else {
+          this.uploadInfo(e.detail.value);
+          console.log('e',e);
         }
         wepy.hideLoading();
       },
@@ -120,7 +125,7 @@
           success(res) {
             console.log('res',res);
             let pics=res.tempFilePaths;
-            self.pics=pics;
+            self.pics=pics; 
             self.$apply();
           }
         })
@@ -132,13 +137,18 @@
       }
     }
 
+     // 上传信息
+    async uploadInfo(msg){
+      let res=request.publishGoodsMsg(msg);
+    }
+
     events = {
 
     }
 
     onLoad() {
       let userInfo= this.$parent.globalData.userInfo;
-      this.name=userInfo.nickName||'';
+      // this.name=userInfo.nickName||'';
       this.$apply();
     }
   }

@@ -11,35 +11,35 @@
 <script>
   import wepy from 'wepy'
   import 'wepy-async-function'
+  import request from './lib/api/request'
 
-  import {
-    setStore
-  } from 'wepy-redux'
-  import configStore from './store'
+  // import {
+  //   setStore
+  // } from 'wepy-redux'
+  // import configStore from './store'
 
-  const store = configStore();
-  setStore(store);
+  // const store = configStore();
+  // setStore(store);
 
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/index',
-        'pages/search',
-        'pages/detail',
-        'pages/publish',
-        'pages/publish-detail',
+        'pages/index/index',
+        'pages/search/search',
+        'pages/detail/detail',
+        'pages/publish/publish',
+        'pages/publish-detail/publish-detail',
         'pages/my/index',
         'pages/my/myPublish',
         'pages/my/myOrder',
         'pages/infoList/index',
         'pages/business/index',
-        'pages/release/index',
       ],
       window: {
         backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#ea444e',
+        navigationBarBackgroundColor: 'white',
         navigationBarTitleText: 'WeChat',
-        navigationBarTextStyle: 'white'
+        navigationBarTextStyle: 'black'
       },
       tabBar: {
         color: '#7F8389',
@@ -47,7 +47,7 @@
         backgroundColor: '#fff',
         borderStyle: 'white',
         list: [{
-          pagePath: 'pages/index',
+          pagePath: 'pages/index/index',
           text: '首页',
           iconPath: 'static/images/navigationBar/homepage.png',
           selectedIconPath: 'static/images/navigationBar/homepage_active.png'
@@ -55,7 +55,7 @@
           {
             iconPath: 'static/images/navigationBar/add.png',
             selectedIconPath: 'static/images/navigationBar/add_active.png',
-            pagePath: 'pages/publish',
+            pagePath: 'pages/publish/publish',
             text: '发布'
           },
           {
@@ -69,7 +69,7 @@
     }
 
     globalData = {
-      userData: null,
+      loginInfo:{},
     }
 
     constructor() {
@@ -120,8 +120,6 @@
       })
     }
 
-
-
     //更新小程序
     uploadApp() {
       const updateManager = wx.getUpdateManager ? wx.getUpdateManager() : null;
@@ -143,6 +141,24 @@
           }, 2000)
 
         })
+      }
+    }
+
+    //执行login方法获取用户登录信息
+    async login() {
+     
+      // let self = this;
+      // if (self.globalData.loginInfo) {
+      //   return self.globalData.loginInfo;
+      // }
+      var code = await wepy.login();
+      let d = await request.login(code.code);
+       console.log('执行登录',d);
+      if (d) {
+        console.log('d',d);
+        return d;
+      } else {
+        console.log('登录失败');
       }
     }
 
