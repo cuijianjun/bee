@@ -4,6 +4,7 @@ page {
 
 // 搜索框
 .search-wrap {
+  display: flex;
   width: 100%;
   height: 114rpx;
   background-color: #ea444e;
@@ -11,8 +12,20 @@ page {
   box-sizing: border-box;
 }
 
+.location-wrap {
+  position: relative;
+  font-size: 30rpx;
+  color: #fff;
+  margin-right: 20rpx;
+}
+
+.more-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
 .search-inner-wrap {
-  width: 100%;
+  flex: 1;
   height:80rpx; 
   border-radius: 40rpx;
   font-size: 26rpx;
@@ -42,6 +55,19 @@ page {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.banner-item {
+  position: relative;
+}
+
+.banner-brief {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 20rpx;
+  font-size: 30rpx;
+  color: #fff;
 }
 
 //信息类型
