@@ -12,6 +12,7 @@
   import wepy from 'wepy'
   import 'wepy-async-function'
   import request from './lib/api/request'
+  import util from './lib/util.js'
 
   // import {
   //   setStore
@@ -69,7 +70,7 @@
     }
 
     globalData = {
-      loginInfo:{},
+      userInfo:{},
     }
 
     constructor() {
@@ -145,17 +146,29 @@
     }
 
     //执行login方法获取用户登录信息
-    async login() {
-     
-      // let self = this;
-      // if (self.globalData.loginInfo) {
-      //   return self.globalData.loginInfo;
-      // }
+    async login(userInfo) {
+      let self = this;
+      let data={};
+      if (self.globalData.loginInfo) {
+        return self.globalData.loginInfo;
+      }
       var code = await wepy.login();
-      let d = await request.login(code.code);
+      // console.log('code',code);
+      data.code=code.code;
+      if(userInfo){
+        data.nickName=userInfo.nickName;
+        data.avatarUrl=userInfo.avatarUrl;
+        data.gender=userInfo.nickName;
+        data.country=userInfo.country;
+        data.city=userInfo.city;
+        console.log('用户信息',userInfo);
+      }
+      let d = await request.login(data);
        console.log('执行登录',d);
       if (d) {
-        console.log('d',d);
+        d.userInfo.avatarUrl = util.sitePic( d.userInfo.avatarUrl) || '';
+        self.globalData.userInfo.openid = d.userInfo.openid;
+        self.globalData.userInfo.token = d.token;
         return d;
       } else {
         console.log('登录失败');
@@ -172,19 +185,22 @@
         }
       }
       let system_info = self.globalData.system_info;
+      return system_info;
     }
 
-    async onLoad() {
-      await wepy.login();
-      this.globalData.userData = await wepy.getUserInfo();
-    }
+    // async onLoad() {
+    //   await wepy.login();
+    //   this.globalData.userData = await wepy.getUserInfo();
+    //   console.log('用户信息'，this.globalData.userData);
+    // }
 
     onLaunch(options) {
       let self = this;
       self.globalData.scene = options.scene;//保存场景值
       self.uploadApp() //更新小程序
       self.getSystemInfo() //获取设备信息
-      self.onLoad()  //登陆，获取用户信息
+
+      // self.onLoad()  //登陆，获取用户信息
     }
 
   }
