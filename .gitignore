@@ -5,3 +5,5 @@ package-lock.json
 .editorconfig
 .idea
 .wepycache
+.vscode
+.wepyignore
