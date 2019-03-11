@@ -1,0 +1,150 @@
+<style lang="less">
+  @import 'myPublish.less';
+</style>
+<template lang="wxml">
+    <!-- 信息类型-->
+    <!--<view class="type-container-publish">-->
+        <!--<repeat for="{{type}}" key="index" index="index" item="item">-->
+            <!--<view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.name}}</view>-->
+        <!--</repeat>-->
+    <!--</view>-->
+
+    <!-- 发表内容项 -->
+    <view class="publish-msg-wrap">
+      <repeat for="{{msgList}}" key="index" index="index" item="item">
+        <view class="publish-msg-item">
+          <view class="msg-top-wrap">
+            <view class="user-wrap">
+              <image class="user-photo" src="{{item.photo}}" lazy-load="{{true}}"></image>
+              <view class="user-msg-wrap">
+                <view class="user-name">{{item.name}}</view>
+                <view>
+                  <view class="msg-type">{{item.type}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="btn-warp">
+              <view  @tap="modify()" class='cfn-btn-item modify'>修改</view>
+              <view  @tap="removehandeler()" class='cfn-btn-item remove'>删除</view>
+            </view>
+          </view>
+          <view class="msg-content-wrap cutText3" @tap="returnToDetail()">
+            {{item.content}}
+          </view>
+          <view class="msg-img-wrap">
+            <repeat for="{{item.pics}}" key="index" index="index" item="item2">
+              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" @tap="previewImg({{item2}},{{item.pics}})"></image>
+            </repeat>
+          </view>
+          <view class="msg-time-wrap">
+            {{item.time}}发布
+          </view>
+          <view class="msg-see-wrap">
+            <view class="see-count-wrap">
+              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
+              <text style="color: #3aa1c2;">{{item.see}}</text>人浏览
+            </view>
+            <view class="see-detail" @tap="returnToDetail()">查看详情</view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+
+
+</template>
+<script>
+  import wepy from 'wepy';
+
+  export default class MyPublish extends wepy.page {
+    config = {
+      navigationBarTitleText: '我发布的'
+    };
+    config = {};
+
+    data = {
+      currentTypeIndex:0,
+      type:[//信息类型
+        {
+          id:'0',
+          name:'全部'
+        },
+        {
+          id:'1',
+          name:'审核中'
+        },
+        {
+          id:'2',
+          name:'已通过'
+        },
+        {
+          id:'2',
+          name:'已拒绝'
+        }
+      ],
+      msgList: [{ //列表信息
+        photo: '../../image/upload/photo.jpeg',
+        name: '用户名称用户名称',
+        type: '家电',
+        tell: '14311234567',
+        content: '首先举个身边的例子，大致剧情是：开发团队因为某某原因，感觉测试人员“有些多余”，测试工作可以自己做。于是不再让测试团队跟，于是这么进行了两三次后，实在受不了线上“控制不住的”问题，于是又把测试人员请了回来。',
+        pics: [
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
+          'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
+        ],
+        time: '2018-11-24 10:40',
+        see: '470'
+      },
+        {
+          photo: '../../image/upload/photo.jpeg',
+          name: '用户名称',
+          type: '家电',
+          tell: '14311234567',
+          content: '二手物品内容',
+          pics: [
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
+            'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
+            'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
+          ],
+          time: '2018-11-24 10:40',
+          see: '470'
+        }
+      ],
+    };
+    methods = {
+      //跳转详情页
+      navigateTo() {
+        wepy.navigateTo({
+          url: '/pages/my/myPublish/myPublish',
+        });
+      },
+
+      removehandeler(id){
+
+        wx.showModal({
+          title: '温馨提示',
+          content: '确认删除这条信息吗？',
+          success(res) {
+            if (res.confirm) {
+              wepy.request(`http://yapi.pplu.vip/api/product_list/delete/:${id}`).then((d) => console.log(d));
+            } else if (res.cancel) {
+
+            }
+          }
+        })
+
+
+      }
+    };
+
+    events = {};
+
+    onLoad() {
+    }
+
+
+    // Other properties
+  }
+</script>

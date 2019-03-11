@@ -1,0 +1,306 @@
+<style lang="less">
+  @import '../../style/base.less';
+  @import '../../style/list.less';
+  @import './index.less';
+
+</style>
+<template>
+  <view class="container">
+    <!-- 搜索框 -->
+    <view class="search-wrap center-flex">
+      <view class="location-wrap center-flex">
+        {{region[1]}}
+        <image class="more-icon" src="../../image/bg/icon_more.png" lazy-load="{{false}}"></image>
+        <picker class="button-cover"  mode="region" @change="regionChange" value="{{region}}" custom-item="{{customItem}}">
+          <view class="picker">
+            当前选择：{{region[0]}}，{{region[1]}}，{{region[2]}}
+          </view>
+        </picker>
+      </view>
+      <view class="search-inner-wrap center-flex" @tap="returnToSeach">
+        <image class="search-icon" src="../../image/bg/icon-search.png" lazy-load="{{false}}"></image>
+        <view class="search-text">请输入帖子内容搜索</view>
+      </view>
+    </view>
+
+    <!-- swiper -->
+    <view class="swiper-wrap" wx:if="{{swiperData.arr.length>0}}">
+      <swiper class="swiper-inner-wrap" indicator-dots="{{swiperData.indicatorDots}}" autoplay="{{swiperData.autoplay}}"
+        interval="{{swiperData.interval}}" duration="{{swiperData.duration}}" circular="{{swiperData.circular}}">
+        <repeat for="{{swiperData.arr}}" key="{{index}}" index="index" item="item">
+          <swiper-item class="banner-item">
+            <image class="swiper-img" src="{{item.imageUrl}}" />
+            <view class="banner-brief">
+              {{item.description}}
+            </view>
+          </swiper-item>
+        </repeat>
+      </swiper>
+    </view>
+
+    <!-- 信息类型-->
+    <view class="type-container">
+      <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
+        <repeat for="{{type}}" key="index" index="index" item="item">
+          <view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.msg}}</view>
+        </repeat>
+      </scroll-view>
+    </view>
+
+    <!-- 发表内容项 -->
+    <view class="publish-msg-wrap">
+      <repeat for="{{msgList}}" key="index" index="index" item="item">
+        <view class="publish-msg-item">
+          <view class="msg-top-wrap">
+            <view class="user-wrap">
+              <image class="user-photo" src="{{item.avatar}}" lazy-load="{{true}}"></image>
+              <view class="user-msg-wrap">
+                <view class="user-name">{{item.weChatName}}</view>
+                <view>
+                  <view class="msg-type">{{item.label}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="msg-tell-wrap center-flex" @tap="makePhone({{item.phoneNumber}})">
+              <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
+              拨打电话
+            </view>
+          </view>
+          <view class="msg-content-wrap cutText3" @tap="returnToDetail()">
+            {{item.description}}
+          </view>
+          <view class="msg-img-wrap">
+            <repeat for="{{item.pics}}" key="index" index="index" item="item2">
+              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" @tap="previewImg({{item2}},{{item.pics}})"></image>
+            </repeat>
+          </view>
+          <view class="msg-time-wrap">
+            {{item.updated_at}}发布
+          </view>
+          <view class=" address-wrap">
+            <image class="address-icon" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false">
+            </image>
+            <text class="address-text">{{item.address}}</text>
+          </view>
+          <view class="msg-see-wrap">
+            <view class="see-count-wrap">
+              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
+              <text style="color: #3aa1c2;">{{item.pageView}}</text>人浏览
+            </view>
+            <view class="see-detail" @tap="returnToDetail()">查看详情</view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+
+    <!-- 侧边按钮 -->
+    <view class="contact-wrap center-flex">
+      客服
+      <button class="contact-btn button-cover" open-type="contact"></button>
+    </view>
+
+    <!-- 返回顶部 -->
+    <view class="return-to-top center-flex" @tap="returnToTop">
+      <image class="icon-to-top" src="../../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import request from '../../lib/api/request'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '首页'
+    }
+    components = {
+
+    }
+
+    data = {
+      region: ['北京', '北京市', '海淀区'],
+      customItem:'全部',
+      swiperData: { //轮播数据
+        indicatorDots: true,
+        autoplay: true,
+        interval: 3000,
+        duration: 500,
+        circular: true,
+        arr: [{
+          'imageUrl': 'https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=3001514975,3770592348&fm=173&app=49&f=JPEG?w=218&h=146&s=1FE6C704423B242529A9E1C30300E092',
+          "description": '开发微信全家桶项目Vue/Node/MongoDB高级技术栈全覆盖'
+        }],
+      },
+      msgList: [{ //列表信息
+        avatar: '../../image/upload/photo.jpeg',
+        weChatName: '用户名称用户名称',
+        label: '家电',
+        phoneNumber: '14311234567',
+        description: '首先举个身边的例子，大致剧情是：开发团队因为某某原因，感觉测试人员“有些多余”，测试工作可以自己做。于是不再让测试团队跟，于是这么进行了两三次后，实在受不了线上“控制不住的”问题，于是又把测试人员请了回来。',
+        productImage: [
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
+          'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
+        ],
+        updated_at: '2018-11-24 10:40',
+        pageView: '470',
+        address: '地址'
+      }],
+
+      type: [ //信息类型
+        {
+          id: '0',
+          name: '家电'
+        },
+        {
+          id: '1',
+          name: '家具'
+        },
+        {
+          id: '2',
+          name: '手机'
+        },
+        {
+          id: '2',
+          name: '自行车'
+        },
+        {
+          id: '3',
+          name: '互联网'
+        },
+        {
+          id: '4',
+          name: '母婴玩具'
+        },
+        {
+          id: '5',
+          name: '展柜'
+        }
+      ],
+      currentTypeIndex: 0, //当前信息类型
+      page: 1,
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+      //点击拨打电话
+      makePhone(tell) {
+        wepy.makePhoneCall({
+          phoneNumber: tell
+        });
+      },
+
+      //跳转详情页
+      returnToDetail() {
+        wepy.navigateTo({
+          url: '/pages/detail/detail'
+        });
+      },
+
+      //预览图片
+      previewImg(current, urls) {
+        wepy.previewImage({
+          current: current,
+          urls: urls,
+        });
+      },
+
+      //返回顶部
+      returnToTop() {
+        wepy.pageScrollTo({
+          scrollTop: 0,
+          duration: 300
+        });
+      },
+
+      //切换信息类型
+      getCurrentType(idx) {
+        this.currentTypeIndex = idx;
+        this.page = 1;
+        this.getListMsg(1, idx)
+      },
+
+      //跳转搜索页面
+      returnToSeach() {
+        wepy.navigateTo({
+          url: `/pages/search/search?location=${this.region}`
+        });
+
+      },
+
+      //选择地址
+      regionChange(e) {
+        console.log('选择地址', e.detail.value)
+        this.region = e.detail.value;
+      }
+
+    }
+
+    events = {
+
+    }
+
+    async onShow() {
+      // wepy.showLoading({
+      //   title: '加载中', 
+      //   mask: true, 
+      // });
+
+      await this.$parent.login(); //获取用户信息
+      // this.getBanner();//获取banner和类型
+      // this.getListMsg(1,1);//获取列表信息
+    }
+
+    // 获取banner和类型
+    async getBanner() {
+      let res = await request.getBanner();
+      if (res) {
+        console.log('banner', res);
+        this.swiperData.arr = res.rows;
+        this.type = res.type;
+        this.$apply();
+      }
+    }
+
+    // 获取列表信息
+    async getListMsg(page, type) {
+      let list = await request.getGoodsLists(page, type);
+      console.log('列表信息', list);
+
+      if (list && list.length > 0) {
+        this.msgList = list;
+      } else {
+        wepy.hideLoading();
+        return;
+      }
+
+      if (this.page == 1) {
+        this.msgList = list;
+      } else {
+        this.msgList = this.msgList.concat(list);
+      }
+      this.$apply();
+      wepy.hideLoading();
+    }
+
+    //滑动到底部加载更多
+    onReachBottom() {
+      this.page++;
+      wepy.showLoading({
+        title: '加载中...',
+        mask: true,
+      });
+
+      this.getListMsg(this.page).then(() => {
+        wepy.hideLoading();
+      })
+    }
+
+  }
+
+</script>

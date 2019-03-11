@@ -1,0 +1,203 @@
+<style lang="less">
+  @import '../../style/base.less';
+  @import './detail.less';
+</style>
+<template>
+  <view class="container">
+    <!-- 发表内容项 -->
+    <view class="publish-msg-wrap">
+      <view class="publish-msg-item">
+        <view class="msg-top-wrap">
+          <view class="user-wrap">
+            <image class="user-photo" src="{{info.avatar}}" lazy-load="{{true}}"></image>
+            <view class="user-msg-wrap">
+              <view class="user-name">{{info.weChatName}}</view>
+              <view>
+                <view class="msg-type">{{info.label}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="msg-content-wrap cutText3" @tap="returnToDetail()">
+          {{info.description}}
+        </view>
+        <view class="msg-img-wrap">
+          <repeat for="{{info.productImage}}" key="index" index="index" item="item">
+            <image class="msg-img" src="{{item}}" lazy-load="{{true}}" @tap="previewImg({{item}},{{info.pics}})"></image>
+          </repeat>
+        </view>
+
+      </view>
+      <view class="gray-space"></view>
+      <view class="footer-wrap">
+        <view class="see-count-wrap">
+          <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
+          <text style="color: #3aa1c2;">{{info.pageView}}</text>人浏览
+        </view>
+        <view class=" address-wrap">
+          <image class="address-icon" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false"> </image>
+          <text class="address-text">{{info.address}}</text>
+        </view>
+        <view class="time">
+          发布时间：{{info.updated_at}}发布
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部固定按钮组 -->
+    <view class="footer-btns-wrap">
+      <view class="btn btn-index" @tap="reurnToIndex">
+        <image class="icon" src="../../image/bg/icon_index.png" mode="widthFix" lazy-load="false"></image>
+        <view class="txt"> 首页</view>
+      </view>
+      <view class="btn btn-collect" @tap="collect">
+        <image class="icon" src="{{collectIcon}}" mode="widthFix" lazy-load="false"></image>
+        <view class="txt {{info.collect.isCollect?'collectColor':''}}"> {{collectTxt}}</view>
+      </view>
+      <view class="btn btn-tell" @tap="makePhone({{info.phoneNumber}})">
+        <view class="tell-txt">一键拨号</view>
+        <view class="tell-number">{{info.tell}}</view>
+      </view>
+    </view>
+
+    <!-- 侧边按钮 -->
+    <view class="btn-wrap center-flex btn-share1">
+      转发
+      <button class="btn-btn button-cover" open-type="share"></button>
+    </view>
+    <!-- 侧边按钮 -->
+    <view class="btn-wrap center-flex btn-share2" @tap="returnToTop">顶部</view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+ import request from '../../lib/api/request'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '首页'
+    }
+    components = {
+
+    }
+
+    // mixins = [testMixin]
+
+    data = {
+      info: {
+        avatar: '../../image/upload/photo.jpeg',
+        weChatName: '用户名称',
+        label: '家电',
+        address:'地址',
+        phoneNumber: '14311234567',
+        description: '二手物品内容',
+        productImage: [
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
+          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
+          'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
+        ],
+        updated_at: '2018-11-24 10:40',
+        pageView: '470',
+        collect: {isCollect:false}, //收藏状态
+      },
+      collectIcon: '../../image/bg/icon_collect1.png',
+      collectTxt: '收藏', 
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+      //点击拨打电话
+      makePhone(tell) {
+        wepy.makePhoneCall({
+          phoneNumber: tell
+        });
+      },
+
+      //跳转详情页
+      reurnToIndex() {
+        wepy.switchTab({
+          url: '/pages/index'
+        });
+      },
+
+      //预览图片
+      previewImg(current, urls) {
+        wepy.previewImage({
+          current: current,
+          urls: urls,
+        });
+      },
+
+      //返回顶部
+      returnToTop() {
+        wepy.pageScrollTo({
+          scrollTop: 0,
+          duration: 300
+        });
+      },
+
+      //点击收藏
+      collect() {
+        this.info.collect = !this.info.collect;
+        if (this.info.collect) {
+          this.collectTxt = '已收藏';
+          this.collectIcon = '../../image/bg/icon_collect2.png';
+          request.getCollectState(2, product_id,isCollect).then(()=>{
+            wepy.showToast({
+              title: '收藏成功',
+              icon: 'none', 
+              duration: 1000, 
+              mask: true, 
+            });   
+          });
+        } else {
+          this.collectTxt = '收藏';
+          this.collectIcon = '../../image/bg/icon_collect1.png';
+          request.getCollectState(2, product_id,isCollect).then(()=>{
+            wepy.showToast({
+              title: '取消收藏',
+              icon: 'none', 
+              duration: 1000, 
+              mask: true, 
+            });   
+          });
+        }
+      },
+
+    }
+
+    //分享
+    onShareAppMessage() {
+      return {
+        title: '标题',
+        path: `/pages/detail?id=${123}`
+      }
+    }
+
+    events = {
+
+    }
+
+    async onLoad() {
+      await this.$parent.login(); //获取用户信息
+      this.getGoodsDetail();//获取banner和类型
+    }
+
+    //获取信息
+    async getGoodsDetail(){
+      let list = await request.getGoodsLists(1,1);
+      console.log('列表信息',list);
+      if(list){
+        // this.info=list;      
+        this.$apply();
+      }
+    }
+  }
+
+</script>

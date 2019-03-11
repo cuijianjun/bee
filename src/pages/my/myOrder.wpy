@@ -1,0 +1,90 @@
+<style lang="less">
+  @import 'myOrder.less';
+
+</style>
+<script>
+  import wepy from 'wepy';
+
+  export default class MyOrder extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的订单'
+    };
+    config = {};
+
+    data = {
+      currentTypeIndex: 0,
+      //订单类型
+      type: [
+        {
+          id: '0',
+          name: '待付款'
+        },
+        {
+          id: '1',
+          name: '已完成'
+        }
+      ],
+      msgList: [{},
+        {}
+      ],
+    };
+    methods = {
+      //跳转详情页
+      navigateTo() {
+        wepy.navigateTo({
+          url: '/pages/my/myPublish/myPublish',
+        });
+      },
+
+      //切换信息类型
+      getCurrentType(idx) {
+        this.currentTypeIndex = idx;
+      },
+    };
+
+    events = {};
+
+    onLoad() {
+    }
+  }
+</script>
+<template lang="wxml">
+    <view class="type-container-publish">
+        <repeat for="{{type}}" key="index" index="index" item="item">
+            <view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.name}}</view>
+        </repeat>
+    </view>
+
+    <view class='order-list'>
+        <repeat for="{{msgList}}" key="index" index="index" item="item">
+          <view class="item">
+            <view class='top'>
+              <view class='img-box'>
+                <image src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013" alt=""></image>
+              </view>
+              <view class='info-box'>
+                <view class='name'>
+                  vue饿了么项目视频课程全集vue饿了么项目视频课程全集vue饿了么项目视频课程全集
+                </view>
+                <view class='num'>
+                  共2件
+                </view>
+                <view class='price'>
+                  实付：¥19.80（含运费¥0.00）
+                </view>
+              </view>
+            </view>
+            <view class='bottom'>
+              <view class='btn'>取消订单</view>
+              <view class='btn red'>去支付</view>
+            </view>
+          </view>
+        </repeat>
+    </view>
+
+
+
+
+
+
+</template>

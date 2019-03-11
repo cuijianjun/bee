@@ -1,0 +1,209 @@
+<style lang="less">
+  @import url(static/iconfont.wxss);
+
+  page {
+    box-sizing: border-box;
+    font-size: 28 rpx;
+    background: #eee;
+  }
+</style>
+
+<script>
+  import wepy from 'wepy'
+  import 'wepy-async-function'
+  import request from './lib/api/request'
+  import util from './lib/util.js'
+
+  // import {
+  //   setStore
+  // } from 'wepy-redux'
+  // import configStore from './store'
+
+  // const store = configStore();
+  // setStore(store);
+
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/index/index',
+        'pages/search/search',
+        'pages/detail/detail',
+        'pages/publish/publish',
+        'pages/publish-detail/publish-detail',
+        'pages/my/index',
+        'pages/my/myPublish',
+        'pages/my/myOrder',
+        'pages/infoList/index',
+        'pages/business/index',
+      ],
+      window: {
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: 'white',
+        navigationBarTitleText: 'WeChat',
+        navigationBarTextStyle: 'black'
+      },
+      tabBar: {
+        color: '#7F8389',
+        selectedColor: '#F94545',
+        backgroundColor: '#fff',
+        borderStyle: 'white',
+        list: [{
+          pagePath: 'pages/index/index',
+          text: '首页',
+          iconPath: 'static/images/navigationBar/homepage.png',
+          selectedIconPath: 'static/images/navigationBar/homepage_active.png'
+        },
+          {
+            iconPath: 'static/images/navigationBar/add.png',
+            selectedIconPath: 'static/images/navigationBar/add_active.png',
+            pagePath: 'pages/publish/publish',
+            text: '发布'
+          },
+          {
+            iconPath: 'static/images/navigationBar/people.png',
+            selectedIconPath: 'static/images/navigationBar/people_active.png',
+            pagePath: 'pages/my/index',
+            text: '我的'
+          }
+        ]
+      },
+    }
+
+    globalData = {
+      userInfo:{},
+    }
+
+    constructor() {
+      super()
+      this.use('promisify');
+      this.use('requestfix');
+      this.intercept('request', {
+        // 发出请求时的回调函数
+        config(p) {
+
+          let publicParams = this.globalData.public_params;
+          for (let k in publicParams) {
+            p.data[k] = publicParams[k];
+          }
+          // console.log("p", p);
+          return p
+        },
+
+        // 请求成功后的回调函数
+        success(p) {
+          // if (p.data.code != 0) { //请求数据失败
+          //   if (p.data && p.data.msg) {
+          //     wx.showToast({
+          //       title: p.data.msg || "请求失败",
+          //       icon: 'none',
+          //       duration: 2000
+          //     });
+          //   }
+          // }
+          // console.log('请求成功');
+          return p
+        },
+
+        // 请求失败后的回调函数
+        fail(p) {
+          wepy.showToast({
+            title: "网络异常，请稍后再试",
+            icon: 'none'
+          });
+          // console.log('请求失败');
+          return p
+        },
+
+        // 请求完成时的回调函数(请求成功或失败都会被执行)
+        complete(p) {
+          // console.log("请求完成");
+        }
+      })
+    }
+
+    //更新小程序
+    uploadApp() {
+      const updateManager = wx.getUpdateManager ? wx.getUpdateManager() : null;
+
+      if (updateManager) {
+        updateManager.onCheckForUpdate(function (res) {
+          // 请求完新版本信息的回调
+          console.log("hasUpdate", res.hasUpdate);
+        })
+
+        updateManager.onUpdateReady(function () {
+          wx.showToast({
+            title: '检测到新版本，正在更新...',
+            icon: 'none'
+          });
+
+          setTimeout(function () {
+            updateManager.applyUpdate();
+          }, 2000)
+
+        })
+      }
+    }
+
+    //执行login方法获取用户登录信息
+    async login(userInfo) {
+      let self = this;
+      let data={};
+      if (self.globalData.loginInfo) {
+        return self.globalData.loginInfo;
+      }
+      var code = await wepy.login();
+      // console.log('code',code);
+      data.code=code.code;
+      if(userInfo){
+        data.nickName=userInfo.nickName;
+        data.avatarUrl=userInfo.avatarUrl;
+        data.gender=userInfo.nickName;
+        data.country=userInfo.country;
+        data.city=userInfo.city;
+        console.log('用户信息',userInfo);
+      }
+      let d = await request.login(data);
+       console.log('执行登录',d);
+      if (d) {
+        d.userInfo.avatarUrl = util.sitePic( d.userInfo.avatarUrl) || '';
+        self.globalData.userInfo.openid = d.userInfo.openid;
+        self.globalData.userInfo.token = d.token;
+        return d;
+      } else {
+        console.log('登录失败');
+      }
+    }
+
+    //获取设备信息
+    async getSystemInfo() {
+      let self = this;
+      if (!self.globalData.system_info) {
+        let sysinfo = await wepy.getSystemInfo();
+        if (sysinfo) {
+          self.globalData.system_info = sysinfo;
+        }
+      }
+      let system_info = self.globalData.system_info;
+      return system_info;
+    }
+
+    // async onLoad() {
+    //   await wepy.login();
+    //   this.globalData.userData = await wepy.getUserInfo();
+    //   console.log('用户信息'，this.globalData.userData);
+    // }
+
+    onLaunch(options) {
+      let self = this;
+      self.globalData.scene = options.scene;//保存场景值
+      self.uploadApp() //更新小程序
+      self.getSystemInfo() //获取设备信息
+
+      // self.onLoad()  //登陆，获取用户信息
+    }
+
+  }
+
+</script>
+

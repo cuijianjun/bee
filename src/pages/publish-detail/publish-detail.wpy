@@ -1,0 +1,234 @@
+<style lang="less">
+  @import '../../style/base.less';
+  @import './publish-detail.less';
+
+</style>
+<template>
+  <view class="container">
+    <form @submit="formSubmit" style="height:auto;">
+      <view class="publish-wrap">
+        <!-- 内容描述部分 -->
+        <view class="publish-msg-wrap">
+          <view class="product-title">产品简介</view>
+          <view class="product-brief-wrap">
+            <textarea class="brief" maxlength="540" @blur="bindTextAreaBlur" value="{{brief}}" placeholder="请输入产品相关介绍"
+              auto-height="true" name="brief" />
+            </view>
+          <view class="product-pic">
+            <repeat for="{{pics}}" key="index" index="index" item="item">
+              <view class="pic-wrap">
+                <image class="add_img" src="{{item}}" lazy-load="false"></image>
+                <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png" lazy-load="false"></image>
+              </view>      
+            </repeat>
+            <image class="add_img" @tap="addImg" src="../../image/bg/icon_add_img.png" lazy-load="false"></image>
+          </view>
+        </view>
+      </view>
+
+      <!-- 用户信息 -->
+      <view class="publish-user-msg">
+        <view class="user-group-wrap">
+          <view class="title">联系方式:</view>
+          <input name="tell" class="content" placeholder="请输入手机号" value="{{tell}}" type="number" maxlength="11"></input>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">价格:</view>
+          ￥<input name="tell" class="content" placeholder="0.00" value="{{price}}"></input>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">类型:</view>
+          <picker class="content" value="{{typeIndex}}" range="{{typeArr}}">
+            <view class="">{{typeArr[typeIndex]}}</view>
+          </picker>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">地址:</view>
+          <input name="tell" class="content" placeholder="请输入地址" value="{{location}}"></input>
+          <view  class="content2">
+            <view @tap="getLocation" class="location-wrap">
+              <image class="location-img" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false"></image>
+            </view>
+            <button wx:if="{{isAccredit}}" class="button-cover" open-type="openSetting" @opensetting="handleSetting"></button>
+          </view>  
+        </view>
+      </view>
+
+      <!-- 图片信息 -->
+      <input name="pics"  value="{{pics}}" type="text" hidden="{{true}}"></input>
+    
+      <!-- 发布按钮 -->
+      <view class="publish-btn center-flex">
+        我要发布信息
+        <button form-type="submit" class="button-cover"></button>
+        <button wx:if="{{!nickName || !avatarUrl}}" class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
+      </view>
+
+    </form>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import request from '../../lib/api/request'
+
+  export default class PublishDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: '发布信息页'
+    }
+    components = {
+
+    }
+
+    // mixins = [testMixin]
+
+    data = {
+      brief: '',
+      pics: [],
+      name: '',
+      tell: '',
+      nickName: '',
+      avatarUrl: '',
+      typeArr: ['请选择类型', '家具', '电器', '书本'],
+      typeIndex: 0,
+      isAccredit: false,
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+
+      //点击我要发布信息
+      formSubmit(e) {
+        wepy.showLoading({
+          title: '发布中...',
+          mask: true,
+        });
+        let value = e.detail.value;
+        if (!value.brief) {
+          wepy.showModal({
+            title: '提示',
+            content: '产品简介不能为空',
+            showCancel: false,
+          });
+
+        } else if (!value.pics) {
+          wepy.showModal({
+            title: '提示',
+            content: '图片不能为空',
+            showCancel: false,
+          });
+        } else if (!value.tell) {
+          wepy.showModal({
+            title: '提示',
+            content: '联系方式不能为空',
+            showCancel: false,
+          });
+        } else {
+          let d1 = request.publishGoodsMsg(msg);
+          let d2 = request.uploadImg(msg);
+        }
+        wepy.hideLoading();
+      },
+
+      //点击授权按钮也，获取用户信息
+      getUserInfo(e) {
+        if (e.detail.userInfo) {
+          this.isShowBtn = false;
+          this.$parent.globalData.userInfo = e.detail.userInfo;
+          this.nickName = e.detail.userInfo.nickName;
+          this.avatarUrl = e.detail.userInfo.avatarUrl;
+        } else {
+          this.isShowBtn = true;
+          wepy.showModal({
+            title: '温馨提示', //提示的标题,
+            content: '为了更好的为您服务，需要您的授权', //提示的内容,
+            showCancel: false,
+          });
+
+        }
+        this.$apply();
+      },
+
+      //点击上传图片
+      addImg() {
+        let self = this;
+        wx.chooseImage({
+          success(res) {
+            console.log('res', res);
+            let pics = res.tempFilePaths;
+            self.pics = pics;
+            self.$apply();
+          }
+        })
+      },
+
+      //删除图片
+      deleteImg(idx) {
+        this.pics = this.pics.splice(1, idx);
+      },
+
+      // 获取地址
+      getLocation() {
+        let self = this;
+        wx.chooseLocation({
+          success: (res) => {
+            console.log('获取地理位置成功', res);
+          },
+          fail: (res) => {
+            console.log('获取地理位置失败', res);
+            self.isAccredit = true;
+            self.$apply();
+          }
+        })
+      },
+
+      // 设置授权列表
+      handleSetting(e) {
+        console.log('e', e);
+        let self = this;
+        if (!e.detail.authSetting['scope.userLocation']) {
+          wx.showModal({
+            title: '警告',
+            content: '若不打开授权，则无法获取定位！',
+            showCancel: false
+          })
+          self.isAccredit = true;
+          self.$apply();
+
+        } else {
+          wx.showModal({
+            title: '提示',
+            content: '您已授权，可以选择定位！',
+            showCancel: false
+          })
+          self.isAccredit = false;
+          self.$apply();
+        }
+      },
+
+    }
+
+    // 上传信息
+    async uploadInfo(msg) {
+      let res = request.publishGoodsMsg(msg);
+    }
+
+    events = {
+
+    }
+
+    async onLoad() {
+      let userInfo = await this.$parent.login(); //获取用户信息
+      console.log(userInfo);
+      this.nickName = userInfo.nickName;
+      this.avatarUrl = userInfo.avatarUrl;
+      this.$apply();
+    }
+  }
+</script>

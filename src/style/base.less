@@ -1,0 +1,119 @@
+//公共字体、颜色、字体大小
+.container {
+  font-size: 60rpx;
+  color: #333;
+  font-family: '微软雅黑,microsoft yahei,Helvetica';
+}
+
+//隐藏
+.hide {
+  display: none !important;
+}
+
+.opacity0 {
+  opacity: 0 !important;
+}
+
+//显示
+.show {
+  display: block !important;
+}
+
+//去掉button组件默认边框
+button::after {
+  opacity: 0;
+}
+
+//垂直居中
+.center-fixed {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+//button覆盖在标签上
+.button-cover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+}
+
+// 溢出隐藏单行
+.cutText {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  -webkit-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+}
+
+//溢出隐藏多行
+.cutText2 {
+  display: -webkit-box;
+  display: -moz-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+//溢出隐藏多行
+.cutText3 {
+  display: -webkit-box;
+  display: -moz-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+
+//客服按钮
+.contact-wrap {
+  position: fixed;
+  bottom: 140rpx;
+  right: 20rpx;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  font-size: 28rpx;
+  color: #fff;
+  background-color: rgba(0, 0, 0, .5);
+}
+
+
+//返回顶部
+.return-to-top {
+  position: fixed;
+  bottom: 40rpx;
+  right: 20rpx;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  font-size: 28rpx;
+  color: #fff;
+  background-color: rgba(0, 0, 0, .5);
+
+  .icon-to-top {
+    width: 60rpx;
+  }
+}
