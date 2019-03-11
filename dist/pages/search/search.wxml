@@ -12,7 +12,7 @@
     </view>
 
     <!-- 热搜 -->
-    <view class="search-keyword-wrap"  wx:if="{{isShowSearchHinit}}">
+    <view class="search-keyword-wrap"  wx:if="{{noResult}}">
       <view class="title">热搜</view>
       <view class="list-wrap">
         <block wx:for="{{hotSearch}}" wx:for-index="index" wx:for-item="item" wx:key="index">

@@ -182,5 +182,4 @@ page {
   font-size: 30rpx;
   color: #fff;
   background-color: #ee404a;
-  margin-top: 40rpx;
 }
