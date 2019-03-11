@@ -1,0 +1,99 @@
+
+  <view class="container">
+    <!-- 搜索框 -->
+    <view class="search-wrap center-flex">
+      <view class="location-wrap center-flex">
+        {{region[1]}}
+        <image class="more-icon" src="../../image/bg/icon_more.png" lazy-load="{{false}}"/>
+        <picker class="button-cover" mode="region" bindchange="regionChange" value="{{region}}" custom-item="{{customItem}}">
+          <view class="picker">
+            当前选择：{{region[0]}}，{{region[1]}}，{{region[2]}}
+          </view>
+        </picker>
+      </view>
+      <view class="search-inner-wrap center-flex" bindtap="returnToSeach">
+        <image class="search-icon" src="../../image/bg/icon-search.png" lazy-load="{{false}}"/>
+        <view class="search-text">请输入帖子内容搜索</view>
+      </view>
+    </view>
+
+    <!-- swiper -->
+    <view class="swiper-wrap"  wx:if="{{swiperData.arr.length>0}}">
+      <swiper class="swiper-inner-wrap" indicator-dots="{{swiperData.indicatorDots}}" autoplay="{{swiperData.autoplay}}" interval="{{swiperData.interval}}" duration="{{swiperData.duration}}" circular="{{swiperData.circular}}">
+        <block wx:for="{{swiperData.arr}}" wx:for-index="index" wx:for-item="item" wx:key="{{index}}">
+          <swiper-item class="banner-item">
+            <image class="swiper-img" src="{{item.imageUrl}}"/>
+            <view class="banner-brief">
+              {{item.description}}
+            </view>
+          </swiper-item>
+        </block>
+      </swiper>
+    </view>
+
+    <!-- 信息类型-->
+    <view class="type-container">
+      <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
+        <block wx:for="{{type}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+          <view class="type-item {{currentTypeIndex==index?'active-type':''}}" bindtap="getCurrentType" data-wpygetcurrenttype-a="{{index}}">{{item.msg}}</view>
+        </block>
+      </scroll-view>
+    </view>
+
+    <!-- 发表内容项 -->
+    <view class="publish-msg-wrap">
+      <block wx:for="{{msgList}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view class="publish-msg-item">
+          <view class="msg-top-wrap">
+            <view class="user-wrap">
+              <image class="user-photo" src="{{item.avatar}}" lazy-load="{{true}}"/>
+              <view class="user-msg-wrap">
+                <view class="user-name">{{item.weChatName}}</view>
+                <view>
+                  <view class="msg-type">{{item.label}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="msg-tell-wrap center-flex" bindtap="makePhone" data-wpymakephone-a="{{item.phoneNumber}}">
+              <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"/>
+              拨打电话
+            </view>
+          </view>
+          <view class="msg-content-wrap cutText3" bindtap="returnToDetail" data-wpyreturntodetail-a="">
+            {{item.description}}
+          </view>
+          <view class="msg-img-wrap">
+            <block wx:for="{{item.pics}}" wx:for-index="index" wx:for-item="item2" wx:key="index">
+              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" bindtap="previewImg" data-wpypreviewimg-a="{{item2}}" data-wpypreviewimg-b="{{item.pics}}"/>
+            </block>
+          </view>
+          <view class="msg-time-wrap">
+            {{item.updated_at}}发布
+          </view>
+          <view class=" address-wrap">
+            <image class="address-icon" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false">
+            </image>
+            <text class="address-text">{{item.address}}</text>
+          </view>
+          <view class="msg-see-wrap">
+            <view class="see-count-wrap">
+              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"/>
+              <text style="color: #3aa1c2;">{{item.pageView}}</text>人浏览
+            </view>
+            <view class="see-detail" bindtap="returnToDetail" data-wpyreturntodetail-a="">查看详情</view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 侧边按钮 -->
+    <view class="contact-wrap center-flex">
+      客服
+      <button class="contact-btn button-cover" open-type="contact"/>
+    </view>
+
+    <!-- 返回顶部 -->
+    <view class="return-to-top center-flex" bindtap="returnToTop">
+      <image class="icon-to-top" src="../../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"/>
+    </view>
+  </view>

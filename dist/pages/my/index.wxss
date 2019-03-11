@@ -1,0 +1,105 @@
+page {
+  padding: 40rpx;
+}
+.user {
+  /*height: 300rpx;*/
+  text-align: center;
+  /*padding-top: 54rpx;*/
+  display: flex;
+  align-items: center;
+}
+.user .right .nickname {
+  font-size: 36rpx;
+}
+.user .right .join {
+  height: 50rpx;
+  border-radius: 50rpx;
+  font-size: 24rpx;
+}
+.nickname {
+  font-size: 30rpx;
+  margin-left: 40rpx;
+}
+.userinfo-avatar {
+  border-radius: 100%;
+  width: 120rpx;
+  height: 120rpx;
+}
+.myInfobox {
+  margin-top: 40rpx;
+  margin-bottom: 40rpx;
+  border-radius: 40rpx;
+  background: #fff;
+  padding: 40rpx 100rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.myInfobox .item {
+  text-align: center;
+}
+.myInfobox .item text {
+  display: block;
+}
+.myInfobox .item text:first-child {
+  color: red;
+}
+.btn-box {
+  font-size: 30rpx;
+  border-radius: 40rpx;
+  background: #fff;
+  margin-bottom: 40rpx;
+}
+.btn-box .title {
+  border-bottom: 1rpx solid #ccc;
+  padding: 20rpx 40rpx 20rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.btn-box .inner-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 40rpx 0  0;
+}
+.btn-box .inner-list .item {
+  flex: 0 0 25%;
+  text-align: center;
+  /*padding-top: 100rpx;*/
+  margin-bottom: 40rpx;
+}
+.btn-box .inner-list .item view {
+  margin-top: 10rpx;
+}
+.icon-wodetiezi {
+  color: #ff7f47;
+}
+.icon-jifenshangcheng {
+  color: #cc4848;
+}
+.icon-wodepintuan {
+  color: #20b8d4;
+}
+.icon-wodeqiaquanicon {
+  color: #ff6888;
+}
+.icon-wodedingdan {
+  color: #7f65ff;
+}
+.icon-wode-dizhi {
+  color: #54c466;
+}
+.icon-lianxikefu {
+  color: #54c466;
+}
+.icon-bangzhuzhongxin {
+  color: #ff6888;
+}
+.icon-guanyuwomen {
+  color: #3bb4a7;
+}
+.icon-star {
+  font-size: 30rpx;
+  margin-right: 10rpx;
+  color: #e2a944;
+}

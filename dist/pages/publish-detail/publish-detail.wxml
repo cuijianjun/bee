@@ -1,0 +1,65 @@
+
+  <view class="container">
+    <form bindsubmit="formSubmit" style="height:auto;">
+      <view class="publish-wrap">
+        <!-- 内容描述部分 -->
+        <view class="publish-msg-wrap">
+          <view class="product-title">产品简介</view>
+          <view class="product-brief-wrap">
+            <textarea class="brief" maxlength="540" bindblur="bindTextAreaBlur" value="{{brief}}" placeholder="请输入产品相关介绍" auto-height="true" name="brief"/>
+            </view>
+          <view class="product-pic">
+            <block wx:for="{{pics}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+              <view class="pic-wrap">
+                <image class="add_img" src="{{item}}" lazy-load="false"/>
+                <image class="close-img" bindtap="deleteImg" src="../../image/bg/icon_close.png" lazy-load="false" data-wpydeleteimg-a="{{index}}"/>
+              </view>      
+            </block>
+            <image class="add_img" bindtap="addImg" src="../../image/bg/icon_add_img.png" lazy-load="false"/>
+          </view>
+        </view>
+      </view>
+
+      <!-- 用户信息 -->
+      <view class="publish-user-msg">
+        <view class="user-group-wrap">
+          <view class="title">联系方式:</view>
+          <input name="tell" class="content" placeholder="请输入手机号" value="{{tell}}" type="number" maxlength="11"/>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">价格:</view>
+          ￥<input name="tell" class="content" placeholder="0.00" value="{{price}}"/>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">类型:</view>
+          <picker class="content" value="{{typeIndex}}" range="{{typeArr}}">
+            <view class="">{{typeArr[typeIndex]}}</view>
+          </picker>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">地址:</view>
+          <input name="tell" class="content" placeholder="请输入地址" value="{{location}}"/>
+          <view class="content2">
+            <view bindtap="getLocation" class="location-wrap">
+              <image class="location-img" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false"/>
+            </view>
+            <button  wx:if="{{isAccredit}}" class="button-cover" open-type="openSetting" bindopensetting="handleSetting"/>
+          </view>  
+        </view>
+      </view>
+
+      <!-- 图片信息 -->
+      <input name="pics" value="{{pics}}" type="text" hidden="{{true}}"/>
+    
+      <!-- 发布按钮 -->
+      <view class="publish-btn center-flex">
+        我要发布信息
+        <button form-type="submit" class="button-cover"/>
+        <button  wx:if="{{!nickName || !avatarUrl}}" class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"/>
+      </view>
+
+    </form>
+  </view>

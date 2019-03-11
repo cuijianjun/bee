@@ -1,0 +1,71 @@
+
+  <view class="container">
+    <!-- 搜索框 -->
+    <view class="search-wrap ">
+      <view class="search-inner-wrap center-flex">
+        <image class="search-icon" src="../../image/bg/icon-search.png" lazy-load="{{false}}"/>
+        <input placeholder="请输入帖子内容搜索" class="search-text" value="{{keyword}}" bindinput="getSearchKeyword"/>
+      </view>
+      <view class="search-btn center-flex" bindtap="search" data-wpysearch-a="{{keyword}}">
+        搜索
+      </view>
+    </view>
+
+    <!-- 热搜 -->
+    <view class="search-keyword-wrap"  wx:if="{{isShowSearchHinit}}">
+      <view class="title">热搜</view>
+      <view class="list-wrap">
+        <block wx:for="{{hotSearch}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+          <view class="search-item center-flex" bindtap="search" data-wpysearch-a="{{item}}">
+            {{item}}
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 没有搜索结果提示 -->
+    <view class="no-result-hinit center-flex"  wx:if="{{noResultHinit}}">
+      没有您想要的内容
+    </view>
+
+    <!-- 发表内容项 -->
+    <view class="publish-msg-wrap">
+      <block wx:for="{{resultList}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view class="publish-msg-item">
+          <view class="msg-top-wrap">
+            <view class="user-wrap">
+              <image class="user-photo" src="{{item.photo}}" lazy-load="{{true}}"/>
+              <view class="user-msg-wrap">
+                <view class="user-name">{{item.name}}</view>
+                <view>
+                  <view class="msg-type">{{item.type}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="msg-tell-wrap center-flex" bindtap="makePhone" data-wpymakephone-a="{{item.tell}}">
+              <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"/>
+              拨打电话
+            </view>
+          </view>
+          <view class="msg-content-wrap cutText3" bindtap="returnToDetail" data-wpyreturntodetail-a="">
+            {{item.content}}
+          </view>
+          <view class="msg-img-wrap">
+            <block wx:for="{{item.pics}}" wx:for-index="index" wx:for-item="item2" wx:key="index">
+              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" bindtap="previewImg" data-wpypreviewimg-a="{{item2}}" data-wpypreviewimg-b="{{item.pics}}"/>
+            </block>
+          </view>
+          <view class="msg-time-wrap">
+            {{item.time}}发布
+          </view>
+          <view class="msg-see-wrap">
+            <view class="see-count-wrap">
+              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"/>
+              <text style="color: #3aa1c2;">{{item.see}}</text>人浏览
+            </view>
+            <view class="see-detail" bindtap="returnToDetail" data-wpyreturntodetail-a="">查看详情</view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
