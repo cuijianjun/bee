@@ -67,4 +67,6 @@
         <button  wx:if="{{!nickName || !avatarUrl}}" class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"/>
       </view>
     </form>
+
+    <button bindtap="chooseImg">上传</button>
   </view>
