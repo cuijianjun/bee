@@ -170,6 +170,9 @@ page {
   width: 64rpx;
   height: 64rpx;
 }
+.publish-user-msg .type-item {
+  display: block;
+}
 .publish-user-msg .location-wrap,
 .publish-user-msg .location-img {
   width: 90%;

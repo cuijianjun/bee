@@ -17,7 +17,7 @@
         <view class="publish-msg-wrap">
           <view class="product-title">产品简介</view>
           <view class="product-brief-wrap">
-            <textarea class="brief" maxlength="540" value="{{brief}}" placeholder="请输入产品相关介绍" auto-height="true" name="brief" />
+            <textarea class="brief" maxlength="540" value="{{brief}}" placeholder="请输入产品相关介绍" auto-height="true" name="description" />
             </view>
           <view class="product-pic">
             <repeat for="{{pics}}" key="index" index="index" item="item">
@@ -28,7 +28,7 @@
             </repeat>
             <image class="add_img" @tap="addImg" src="../../image/bg/icon_add_img.png" lazy-load="false"></image>
             <!-- 图片信息 -->
-            <input name="pics"  value="{{pics}}" type="text" hidden="{{true}}"></input>
+            <input name="image"  value="{{pics}}" type="text" hidden="{{true}}"></input>
           </view>
         </view>
       </view>
@@ -37,7 +37,7 @@
       <view class="publish-user-msg">
         <view class="user-group-wrap">
           <view class="title">联系方式:</view>
-          <input name="tell" class="content" placeholder="请输入手机号" value="{{tell}}" type="number" maxlength="11"></input>
+          <input name="phoneNumber" class="content" placeholder="请输入手机号" value="{{tell}}" type="number" maxlength="11"></input>
         </view>
 
         <view class="user-group-wrap">
@@ -48,14 +48,14 @@
         <view class="user-group-wrap">
           <view class="title">类型:</view>
           <picker class="content" value="{{typeIndex}}" range="{{typeArr}}" @change="selectType">
-            <view class="">{{typeArr[typeIndex]}}</view>
+            <view class="type-item">{{typeArr[typeIndex]}}</view>
           </picker>
-          <input name="type" class="content"  value="{{type}}" style="display:none;"></input>
+          <input name="label" class="content"  value="{{typeIndex}}" style="display:none;"></input>
         </view>
 
         <view class="user-group-wrap">
           <view class="title">地址:</view>
-          <input name="location" class="content" placeholder="请输入地址" value="{{location}}"></input>
+          <input name="address" class="content" placeholder="请输入地址" value="{{address}}"></input>
           <view  class="content2">
             <view @tap="getLocation" class="location-wrap">
               <image class="location-img" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false"></image>
@@ -98,9 +98,11 @@
       price:null,//价格
       typeArr: ['请选择类型', '家具', '电器', '书本'],//类型
       typeIndex: 0,//类型索引
-      type:'',//类型
-      location:'',//地址
+      label:'',//类型
+      address:'',//地址
       isAccredit: false,//获取位置是否授权
+      token:'',//token
+      user_id:'',
     }
 
     computed = {
@@ -112,31 +114,27 @@
       //点击我要发布信息
       formSubmit(e) {
         console.log('form',e.detail.value);
-        wepy.showLoading({
-          title: '发布中...',
-          mask: true,
-        });
         let value = e.detail.value;
-        if (!value.brief) {
+        if (!value.description) {
           wepy.showModal({
             title: '提示',
             content: '产品简介不能为空',
             showCancel: false,
           });
 
-        } else if (!value.pics) {
+        } else if (!value.image) {
           wepy.showModal({
             title: '提示',
             content: '图片不能为空',
             showCancel: false,
           });
-        } else if (!value.tell) {
+        } else if (!value.phoneNumber) {
           wepy.showModal({
             title: '提示',
             content: '联系方式不能为空',
             showCancel: false,
           });
-        }else if (!(/^1\d{10}$/.test(value.tell))) {
+        }else if (!(/^1\d{10}$/.test(value.phoneNumber))) {
           wepy.showModal({
             title: '提示',
             content: '联系方式有误',
@@ -148,35 +146,46 @@
             content: '价格不能为空',
             showCancel: false,
           });
-        }else if (!value.type) {
+        }else if (!value.label) {
           wepy.showModal({
             title: '提示',
             content: '类型不能为空',
             showCancel: false,
           });
-        }else if (!value.location) {
+        }else if (!value.address) {
           wepy.showModal({
             title: '提示',
             content: '地址不能为空',
             showCancel: false,
           });
         } else {
-          value.nickName=this.nickName;
-          value.avatarUrl=this.avatarUrl;
-          console.log('上传信息',value);
-          let res = request.publishGoodsMsg(value);
+          wepy.showLoading({
+          title: '发布中...',
+          mask: true,
+          });
+
+          value.weChatName=this.nickName;
+          value.avatar=this.avatarUrl;
+          value.user_id=this.user_id;
+          let data={};
+          data.info=value;
+          data.token=this.token;
+          console.log('上传信息',data);
+          let res = request.publishGoodsMsg(data); 
           wepy.hideLoading();
-        }
+        }  
       },
 
       //点击授权按钮，获取用户信息
      async getUserInfo(e) {
         // console.log('用户信息',e);
         if (e.detail.userInfo) {
-          let userInfo = await this.$parent.login(e.detail.userInfo); //获取用户信息
-          // console.log('onload-userinfo',userInfo);
-          // this.nickName = e.detail.userInfo.nickName;
-          // this.avatarUrl = e.detail.userInfo.avatarUrl;
+          let data = await this.$parent.login(e.detail.userInfo); //获取用户信息
+          this.nickName = data.userInfo.nickName;
+          this.avatarUrl = data.userInfo.avatarUrl;
+          this.token=data.token;
+          this.user_id=data.userInfo.id;
+          this.$apply();
         } else {
           wepy.showModal({
             title: '温馨提示', //提示的标题,
@@ -184,8 +193,7 @@
             showCancel: false,
           });
 
-        }
-        this.$apply();
+        }  
       },
 
       //点击上传图片
@@ -209,13 +217,7 @@
       //选择产品类型
       selectType(e){
         console.log('产品类型',e.detail.value);
-        let idx=e.detail.value;
-        if(idx==0){
-          this.type='';
-        }else {
-          this.type=this.typeArr[idx];
-        } 
-        this.typeIndex=idx;
+        this.typeIndex=e.detail.value;
       },
 
       // 获取地址
@@ -224,7 +226,7 @@
         wx.chooseLocation({
           success: (res) => {
             console.log('获取地理位置成功', res);
-            self.location=res.address;
+            self.address=res.address;
             self.$apply();
           },
           fail: (res) => {
