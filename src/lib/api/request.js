@@ -87,18 +87,22 @@ class base {
   }
 
   //发布信息
-  async publishGoodsMsg(value) {
+  async publishGoodsMsg(data) {
     let res = await wepy.request({
       url: this.HOSTURL+'api/product_list/create',
-      data: value,
+      data: data.info,
       method: 'POST',
-      'Content-Type':'application/x-www-form-urlencoded',
+      header:{
+        'Content-Type':'multipart/form-data',
+        Authorization:data.token,
+      }
+      
     })
-    let data = res.data;
-    console.log('res',res);
-    if (data.code == 0) {
-      return data.data;
-    }
+    // let data = res.data;
+    console.log('发布信息',res);
+    // if (data.code == 0) {
+    //   return data.data;
+    // }
   }
 }
 
