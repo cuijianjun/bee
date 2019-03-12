@@ -1,30 +1,112 @@
-.container {
-  padding-top: 30rpx;
+page {
+  background-color: #f2f2f2;
 }
 
-// 发表类型提醒
 .publish-hinit {
-  width: 700rpx;
+  background-color: #EAF4FF;
+  color: #ee404a;
+  font-size: 24rpx;
   padding: 20rpx;
-  font-size: 30rpx;
-  color: #999;
-  color: #f44650;
-  line-height: 50rpx;
-  background-color: #e7f5fe;
-  border-radius: 20rpx;
-  box-sizing: border-box;
-  margin: 0 auto;
+}
+
+//内容描述部分
+.publish-msg-wrap {
+  background-color: #fff;
+  padding: 20rpx;
+
+  .product-title {
+    font-size: 40rpx;
+    color: #333;
+  }
+
+  .product-brief-wrap {
+    padding: 20rpx 0;
+  }
+  
+  .brief {
+    width: 100%;
+    min-height: 100rpx;
+    font-size: 32rpx;
+    color: #333;
+    line-height: 1;
+  }
+}
+
+.product-pic {
+  width: 100%;
+  display: flex;
+  flex-wrap:wrap;
+
+  .pic-wrap,.add_img{
+    position: relative;
+    display: block;
+    width: 170rpx;
+    height: 170rpx;
+    margin-right: 10rpx;
+    margin-bottom: 10rpx;
+  }
+
+  .add_img:nth-child(4n){
+    margin-right: 0;
+  }
+  
+  .close-img {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50rpx;
+    height: 50rpx;
+  }
+
+}
+
+// 用户信息
+.publish-user-msg {
+  background-color: #fff;
+  margin-top: 30rpx;
+
+  .user-group-wrap {
+    height: 84rpx;
+    border-bottom:1rpx solid #f2f2f2;
+    display: flex;
+    align-items: center;
+    font-size: 28rpx;
+    padding: 0 20rpx;
+    color: #333;
+  }
+
+  .title {
+    width: 170rpx;
+  }
+
+  .content {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  // 地址icon
+  .content2 {
+    position: relative;
+    width: 64rpx;
+    height: 64rpx;
+  }
+
+  .location-wrap,.location-img {
+    width: 90%;
+    height: 90%;
+  }
 }
 
 // 发布按钮
 .publish-btn {
   position: relative;
-  width: 500rpx;
-  height: 100rpx;
-  background-color: #f44650;
-  color: #fff;
-  font-size: 40rpx;
-  border-radius: 20rpx;
-  margin: 0 auto;
-  margin-top: 50rpx;
+  width: 100%;
+  height: 80rpx;
+  font-size:30rpx;
+  color: #fff; 
+  background-color: #ee404a;
 }

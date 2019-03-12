@@ -7,79 +7,99 @@ class base {
   }
 
   //登录
-  async login(code) {
+  async login(obj) {
     let res = await wepy.request({
       url: this.HOSTURL+'login',
-      data: {
-        code: code
-      },
+      data: obj,
       method: 'POST',
       header: {
         'content-type': 'application/json' // 默认值
       },
     });
-    // let data = res.data;
-    console.log('res',res);
-    // if (data.code == 0) {
-    //   return data.datas;
-    // }
+    let data = res.data;
+    return data;
+  }
+
+  //banner和类型
+  async getBanner() {
+    let res = await wepy.request({
+      url: this.HOSTURL+'api/banner/get',
+    });
+    let data = res.data;
+    // console.log('banner1',res);
+    if (data.code == 200) {
+      return data.data;
+    }
   }
 
   //列表
-  async getGoodsLists() {
+  async getGoodsLists(page,type) {
     let res = await wepy.request({
       url: this.HOSTURL+'api/product_list/list',
       data: {
-        limit:'10',
-        page:'1',
-        user_id:'3',
-        label:'1',
+        // limit:'10',
+        page:page,
+        // user_id:'2',
+        label:type,
       },
       method: 'POST',
     });
-    // let data = res.data;
+    let data = res.data;
     console.log('列表数据',res);
-    // if (data.code == 0) {
-    //   return data.datas;
-    // }
+    if (data.code == 200) {
+      return data.data;
+    }
+  }
+
+  //详情
+  async getGoodsDetail( product_id,user_id) {
+    let res = await wepy.request({
+      url: this.HOSTURL+'api/product_list/detail',
+      data: {
+        product_id:product_id,
+        user_id:user_id,
+      },
+      method: 'POST',
+    });
+    let data = res.data;
+    console.log('详情数据',res);
+    if (data.code == 200) {
+      return data.data;
+    }
+  }
+
+  //收藏
+  async getCollectState(user_id, product_id,isCollect){
+    let res = await wepy.request({
+      url: this.HOSTURL+'api/collect/collect',
+      data: {
+        product_id:product_id,
+        user_id:user_id,
+        isCollect:isCollect,
+      },
+      method: 'POST',
+    });
+    let data = res.data;
+    console.log('详情数据',res);
+    if (data.code == 200) {
+      return data.data;
+    }
   }
 
   //发布信息
-  async publishGoodsMsg(msg) {
+  async publishGoodsMsg(value) {
     let res = await wepy.request({
-      url: this.HOSTURL+'api/upload',
-      data: msg,
+      url: this.HOSTURL+'api/product_list/create',
+      data: value,
       method: 'POST',
-    });
-    // let data = res.data;
+      'Content-Type':'application/x-www-form-urlencoded',
+    })
+    let data = res.data;
     console.log('res',res);
-    // if (data.code == 0) {
-    //   return data.datas;
-    // }
+    if (data.code == 0) {
+      return data.data;
+    }
   }
-
-
-  /*------------发布详情页------------------*/
-
-  //上传图片
-  async publishInfo(data) {
-    let res = await wepy.request({
-      header: {
-        'content-type': 'multipart/form-data' // 默认值
-      },
-      url: this.HOSTURL+'27/api/upload',
-      data: data
-    });
-
-    return res;
-    console.log(res);
-    // let data = res.data;
-    // if (data.code == 0) {
-    //   return data.datas;
-    // }
-  }
-
-
 }
 
 export default new base(REQUEST_HOST);

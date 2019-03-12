@@ -1,0 +1,48 @@
+
+    <!-- 信息类型-->
+    <!--<view class="type-container-publish">-->
+        <!--<repeat for="{{type}}" key="index" index="index" item="item">-->
+            <!--<view class="type-item {{currentTypeIndex==index?'active-type':''}}" bindtap="getCurrentType({{index}})">{{item.name}}</view>-->
+        <!--</repeat>-->
+    <!--</view>-->
+
+    <!-- 发表内容项 -->
+    <view class="publish-msg-wrap">
+      <block wx:for="{{msgList}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view class="publish-msg-item">
+          <view class="msg-top-wrap">
+            <view class="user-wrap">
+              <image class="user-photo" src="{{item.photo}}" lazy-load="{{true}}"/>
+              <view class="user-msg-wrap">
+                <view class="user-name">{{item.name}}</view>
+                <view>
+                  <view class="msg-type">{{item.type}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="btn-warp">
+              <view bindtap="modify" class="cfn-btn-item modify" data-wpymodify-a="">修改</view>
+              <view bindtap="removehandeler" class="cfn-btn-item remove" data-wpyremovehandeler-a="">删除</view>
+            </view>
+          </view>
+          <view class="msg-content-wrap cutText3" bindtap="returnToDetail" data-wpyreturntodetail-a="">
+            {{item.content}}
+          </view>
+          <view class="msg-img-wrap">
+            <block wx:for="{{item.pics}}" wx:for-index="index" wx:for-item="item2" wx:key="index">
+              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" bindtap="previewImg" data-wpypreviewimg-a="{{item2}}" data-wpypreviewimg-b="{{item.pics}}"/>
+            </block>
+          </view>
+          <view class="msg-time-wrap">
+            {{item.time}}发布
+          </view>
+          <view class="msg-see-wrap">
+            <view class="see-count-wrap">
+              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"/>
+              <text style="color: #3aa1c2;">{{item.see}}</text>人浏览
+            </view>
+            <view class="see-detail" bindtap="returnToDetail" data-wpyreturntodetail-a="">查看详情</view>
+          </view>
+        </view>
+      </block>
+    </view>

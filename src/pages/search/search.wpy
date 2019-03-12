@@ -8,7 +8,7 @@
     <!-- 搜索框 -->
     <view class="search-wrap ">
       <view class="search-inner-wrap center-flex">
-        <image class="search-icon" src="../image/bg/icon-search.png" lazy-load="{{false}}"></image>
+        <image class="search-icon" src="../../image/bg/icon-search.png" lazy-load="{{false}}"></image>
         <input placeholder="请输入帖子内容搜索" class="search-text" value="{{keyword}}" @input="getSearchKeyword"></input>
       </view>
       <view class="search-btn center-flex" @tap="search({{keyword}})">
@@ -17,7 +17,7 @@
     </view>
 
     <!-- 热搜 -->
-    <view class="search-keyword-wrap" wx:if="{{isShowSearchHinit}}">
+    <view class="search-keyword-wrap" wx:if="{{noResult}}">
       <view class="title">热搜</view>
       <view class="list-wrap">
         <repeat for="{{hotSearch}}" key="index" index="index" item="item">
@@ -28,17 +28,9 @@
       </view>
     </view>
 
-    <!-- 搜索历史 -->
-    <!-- 热搜 -->
-    <view class="search-keyword-wrap" wx:if="{{isShowSearchHinit}}">
-      <view class="title">热搜</view>
-      <view class="list-wrap">
-        <repeat for="{{searchHistory}}" key="index" index="index" item="item">
-          <view class="search-item center-flex" @tap="search({{item}})">
-            {{item}}
-          </view>
-        </repeat>
-      </view>
+    <!-- 没有搜索结果提示 -->
+    <view class="no-result-hinit center-flex" wx:if="{{noResultHinit}}">
+      没有您想要的内容
     </view>
 
     <!-- 发表内容项 -->
@@ -56,7 +48,7 @@
               </view>
             </view>
             <view class="msg-tell-wrap center-flex" @tap="makePhone({{item.tell}})">
-              <image class="icon-tell" src="../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
+              <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
               拨打电话
             </view>
           </view>
@@ -73,7 +65,7 @@
           </view>
           <view class="msg-see-wrap">
             <view class="see-count-wrap">
-              <image class="icon-see" src="../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
+              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
               <text style="color: #3aa1c2;">{{item.see}}</text>人浏览
             </view>
             <view class="see-detail" @tap="returnToDetail()">查看详情</view>
@@ -104,11 +96,10 @@
       hotSearch: [
         '家具', '家电', '互联网', '家具', '家电', '互联网', '家具', '家电', '互联网', '家具', '家电', '互联网',
       ], //搜索热词
-      searchHistory: [
-        '家具', '家电', '互联网', '家具', '家电', '互联网', '家具', '家电', '互联网', '家具', '家电', '互联网',
-      ], //搜索历史
-      isShowSearchHinit: true, //是否显示热搜和搜索历史
-      keyword: '', //搜索关键词
+      isShowSearchHinit: true, //是否显示热搜
+      keyword: '', //搜索关键词,
+      location:[],//地址
+      noResultHinit:false,//没有搜索结果时显示
     }
 
     computed = {
@@ -118,6 +109,7 @@
     methods = {
       //点击搜索
       search(keyword) {
+        console.log('点击搜索');
         console.log('keyword', keyword);
         wepy.showLoading({
           title: '搜索中',
@@ -125,15 +117,17 @@
         });
 
         if (!keyword) {
+          this.resultList=[];
+          this.isShowSearchHinit=true;
           wepy.showModal({
             title: '提示',
             content: '搜索关键词不能为空',
             showCancel: false,
           });
         } else {
-          this.keyword = keyword;
+          this.keyword=keyword;
           this.resultList = [{ //列表信息
-              photo: '../image/upload/photo.jpeg',
+              photo: '../../image/upload/photo.jpeg',
               name: '用户名称用户名称',
               type: '家电',
               tell: '14311234567',
@@ -148,7 +142,7 @@
               see: '470'
             },
             {
-              photo: '../image/upload/photo.jpeg',
+              photo: '../../image/upload/photo.jpeg',
               name: '用户名称',
               type: '家电',
               tell: '14311234567',
@@ -175,20 +169,13 @@
       },
     }
 
-    //分享
-    onShareAppMessage() {
-      return {
-        title: '标题',
-        path: `/pages/detail?id=${123}`
-      }
-    }
-
     events = {
 
     }
 
     onLoad(options) {
-      this.keyWord = options.keyWord
+      console.log('onload',options);
+      this.location = options.location
     }
   }
 

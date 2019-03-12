@@ -4,4 +4,7 @@ dist/
 package-lock.json
 .editorconfig
 .idea
+.vscode
+.wepyignore
+.prettierrc
 .wepycache
