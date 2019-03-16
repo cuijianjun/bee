@@ -158,11 +158,11 @@
       // console.log('code',code);
       data.code=code.code;
       if(userInfo){
-        data.nickName=userInfo.nickName;
+        data.nickName =userInfo.nickName;
         data.avatarUrl=userInfo.avatarUrl;
-        data.gender=userInfo.nickName;
-        data.country=userInfo.country;
-        data.city=userInfo.city;
+        data.gender   =userInfo.nickName;
+        data.country  =userInfo.country;
+        data.city     =userInfo.city;
         console.log('用户信息',userInfo);
       }
       let d = await request.login(data);
