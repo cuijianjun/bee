@@ -1,5 +1,6 @@
 <script>
 import wepy from 'wepy';
+import util from '../../lib/util'
 
 export default class MyIndex extends wepy.page {
   config = {
@@ -8,10 +9,7 @@ export default class MyIndex extends wepy.page {
   config = {};
 
   data = {
-    userInfo: {
-      nickName: '加载中...',
-      avatarUrl: ''
-    }
+    isLogin:false, //是否登录
   };
   methods = {
     navigateTo(url) {
@@ -30,14 +28,32 @@ export default class MyIndex extends wepy.page {
     self.$apply();
   }
 
-  async onShow(){
-    await this.$parent.login(); //获取用户信息
+  onShow(){
+    if(!util.checkStorageLogin()){
+      this.data.isLogin = false;
+      // this.$parent.login(); //获取用户信息
+    }else{
+      this.data.isLogin = true;
+      console.log('有缓存，已登陆')
+    }
+
+  }
+
+  bindGetUserInfo(data){
+    this.$parent.login(data.detail.userInfo); //获取用户信息
   }
   // Other properties
 }
 </script>
 
 <template lang="wxml">
+<view wx:if="{{!isLogin}}" class='login-modal'>
+  <button
+    class='login-button'
+
+    open-type="getUserInfo"
+    bindgetuserinfo="bindGetUserInfo"></button>
+</view>
     <view class="user">
       <open-data class="userinfo-avatar" type="userAvatarUrl"></open-data>
       <!--<image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>-->

@@ -3,7 +3,7 @@
 
   page {
     box-sizing: border-box;
-    font-size: 28 rpx;
+    font-size: 28rpx;
     background: #eee;
   }
 </style>
@@ -72,7 +72,7 @@
 
     globalData = {
       userInfo:{},
-      userData:{},//用户微信信息
+      userData:{},//用户业务数据
     }
 
     constructor() {
@@ -147,30 +147,30 @@
       }
     }
 
-    //执行login方法获取用户登录信息
+    /**
+     * 执行login方法获取用户登录信息
+     *
+     * return 登录成功返回数据
+     * */
     async login(userInfo) {
+      debugger;
+      if(!userInfo){return}
       let self = this;
-      let data={};
-      if (self.globalData.loginInfo) {
-        return self.globalData.loginInfo;
-      }
-      var code = await wepy.login();
-      // console.log('code',code);
-      data.code=code.code;
-      if(userInfo){
-        data.nickName =userInfo.nickName;
-        data.avatarUrl=userInfo.avatarUrl;
-        data.gender   =userInfo.nickName;
-        data.country  =userInfo.country;
-        data.city     =userInfo.city;
+      let loginRes = await wepy.login();
+      let data={
+        code      :loginRes.code,
+        nickName  :userInfo.nickName,
+        avatarUrl :userInfo.avatarUrl,
+        gender    :userInfo.nickName,
+        country   :userInfo.country,
+        city      :userInfo.city,
+      };
         console.log('用户信息',userInfo);
-      }
       let d = await request.login(data);
        console.log('执行登录',d);
       if (d) {
-        d.userInfo.avatarUrl = util.sitePic( d.userInfo.avatarUrl) || '';
-        self.globalData.userInfo.openid = d.userInfo.openid;
-        self.globalData.userInfo.token = d.token;
+        self.globalData.userData = d.userInfo;
+        wx.setStorageSync('userData',d.userInfo);
         return d;
       } else {
         console.log('登录失败');
@@ -194,14 +194,25 @@
       this.globalData.userData = await wepy.getUserInfo();
       console.log('用户信息',this.globalData.userData);
     }
+    //检查登录状态
+    loginHandeler(){
+      if(!util.checkStorageLogin()){
+        //未登录
+        console.log('无缓存，未登陆')
+        this.login(); //获取用户信息
+      }else{
+        console.log('有缓存，已登陆')
+        this.globalData.userData = util.checkStorageLogin()
+      }
+    }
 
     onLaunch(options) {
       let self = this;
       self.globalData.scene = options.scene;//保存场景值
-      self.uploadApp() //更新小程序
-      self.getSystemInfo() //获取设备信息
-      self.getWxInfo()
-
+      self.uploadApp(); //更新小程序
+      self.getSystemInfo(); //获取设备信息
+      self.loginHandeler();
+      // self.getWxInfo()
       // self.onLoad()  //登陆，获取用户信息
     }
 

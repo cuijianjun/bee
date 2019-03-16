@@ -69,7 +69,7 @@
       <view class="publish-btn center-flex">
         我要发布信息
         <button form-type="submit" class="button-cover"></button>
-        <button wx:if="{{!nickName || !avatarUrl}}" class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
+        <button wx:if="{{isLogin}}" class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
       </view>
     </form>
 
@@ -80,6 +80,7 @@
 <script>
   import wepy from 'wepy'
   import request from '../../lib/api/request'
+  import util from '../../lib/util'
 
   export default class PublishDetail extends wepy.page {
     config = {
@@ -92,8 +93,9 @@
     // mixins = [testMixin]
 
     data = {
-      nickName: '',//昵称
-      avatarUrl: '',//头像
+      // nickName: '',//昵称
+      // avatarUrl: '',//头像
+      isLogin:false, //是否登录
       brief: '',//产品简介
       pics: [],//产品图片
       tell: '',//联系方式
@@ -169,9 +171,8 @@
           value.weChatName=this.nickName;
           value.avatar=this.avatarUrl;
           value.user_id=this.user_id;
-          let data={};
-          data.info=value;
-          data.token=this.token;
+          data=value;
+          // data.token=this.token;
           console.log('上传信息',data);
           let res = request.publishGoodsMsg(data); 
           wepy.hideLoading();
@@ -183,10 +184,10 @@
         // console.log('用户信息',e);
         if (e.detail.userInfo) {
           let data = await this.$parent.login(e.detail.userInfo); //获取用户信息
-          this.nickName = data.userInfo.nickName;
-          this.avatarUrl = data.userInfo.avatarUrl;
-          this.token=data.token;
-          this.user_id=data.userInfo.id;
+          // this.nickName = data.userInfo.nickName;
+          // this.avatarUrl = data.userInfo.avatarUrl;
+          // this.token=data.token;
+          // this.user_id=data.userInfo.id;
           this.$apply();
         } else {
           wepy.showModal({
@@ -296,6 +297,9 @@
       // console.log('onload-userinfo',userInfo);
       // this.nickName = userInfo.nickName;
       // this.avatarUrl = userInfo.avatarUrl;
+      if(util.checkStorageLogin()){
+        this.data.isLogin = true;
+      }
       this.$apply();
     }
   }

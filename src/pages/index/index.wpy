@@ -269,7 +269,7 @@
     async getListMsg(page, label) {
       let list = await request.getGoodsLists({
         page:page,
-        label:label
+        labelCode:label
       });
       console.log('列表信息', list);
 

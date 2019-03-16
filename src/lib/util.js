@@ -109,7 +109,12 @@ const compareVersion= function(v1, v2) {
   }
 
   return 0
-}
+};
+
+const checkStorageLogin = function(){
+  let data= wx.getStorageSync('userData');
+  return data || false
+};
 
 
 
@@ -121,4 +126,5 @@ module.exports = {
   formatNum,  //格式化数字
   sitePic  ,   //格式化图片地址
   compareVersion,//比较小程序基带版本
+  checkStorageLogin,//检查是否已登陆有用户ID
 }

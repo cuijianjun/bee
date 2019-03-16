@@ -89,18 +89,19 @@ class base {
 
   //发布信息
   async publishGoodsMsg(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'Content-Type':'multipart/form-data',
+    },token);
+
     let res = await wepy.request({
       url: this.HOSTURL+'api/product_list/create',
       data: data.info,
       method: 'POST',
-      header:{
-        'Content-Type':'multipart/form-data',
-        Authorization:data.token,
-      }
-      
+      header:header
     })
     // let data = res.data;
-    console.log('发布信息',res);
+    console.log('发布信息结果',res);
     // if (data.code == 0) {
     //   return data.data;
     // }

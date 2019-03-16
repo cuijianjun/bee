@@ -157,17 +157,17 @@
     async getMyPublishList() {
       console.log('gbdata',wepy.$instance.globalData);
       let self = this;
-      let currentPage = self.currentPage;
+      let currentPage = self.data.currentPage;
       let res = await request.getMyGoodsLists({
-        label:'1',
         limit:'10',
         page:currentPage,
-        user_id:wepy.$instance.globalData.loginInfo.userInfo.openid
+        user_id:wepy.$instance.globalData.userData.id
       });
       console.log('获取我发布的',res);
 
       if(res.length>0){
         self.msgList.concat(res)
+        self.data.currentPage++
       }
 
 
