@@ -22,11 +22,11 @@
           <view class="product-pic">
             <repeat for="{{pics}}" key="index" index="index" item="item">
               <view class="pic-wrap">
-                <image class="add_img" src="{{item}}" lazy-load="false"></image>
-                <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png" lazy-load="false"></image>
+                <image class="add_img" src="{{item.path}}" lazy-load="false"></image>
+                <image class="close-img" @tap="deleteImg({{index}},{{item.id}})" src="../../image/bg/icon_close.png" lazy-load="false"></image>
               </view>      
             </repeat>
-            <image class="add_img" @tap="addImg" src="../../image/bg/icon_add_img.png" lazy-load="false"></image>
+            <image wx:if="{{pics.length<9}}" class="add_img" @tap="addImg" src="../../image/bg/icon_add_img.png" lazy-load="false"></image>
             <!-- 图片信息 -->
             <input name="image"  value="{{pics}}" type="text" hidden="{{true}}"></input>
           </view>
@@ -185,43 +185,86 @@
       },
 
       //选择图片
-      chooseImg(){
-        wx.chooseImage({
-          success(res) {
-            const tempFilePaths = res.tempFilePaths
-            console.log(tempFilePaths);
-            wx.uploadFile({
-              url: 'https://example.weixin.qq.com/upload', // 仅为示例，非真实的接口地址
-              filePath: tempFilePaths[0],
-              name: 'file',
-              formData: {
-                user: 'test'
-              },
-              success(res) {
-                const data = res.data
-                // do something
-              }
-            })
-          }
-        })
-      },
+      // chooseImg(){
+      //   wx.chooseImage({
+      //     success(res) {
+      //       const tempFilePaths = res.tempFilePaths
+      //       console.log(tempFilePaths);
+      //       wx.uploadFile({
+      //         url: 'https://example.weixin.qq.com/upload', // 仅为示例，非真实的接口地址
+      //         filePath: tempFilePaths[0],
+      //         name: 'file',
+      //         formData: {
+      //           user: 'test'
+      //         },
+      //         success(res) {
+      //           const data = res.data
+      //           // do something
+      //         }
+      //       })
+      //     }
+      //   })
+      // },
 
       //点击上传图片
       addImg() {
         let self = this;
+        let pLenght = self.pics.length;
+        if(pLenght>=9){
+          wepy.showModal({
+            title: '提示',
+            content: '最多上传9张图片',
+            showCancel: false,
+          });
+          return
+        }
         wx.chooseImage({
+          count:9 - pLenght, //可以添加的图片数量
           success(res) {
             console.log('res', res);
-            let pics = res.tempFilePaths;
-            self.pics = pics;
+            let pics = res.tempFilePaths;  //选择的图片list
+
+            //上传服务器
+            for(let i = 0;i<pics.length;i++){
+
+              //mock
+              // self.pics.push({
+              //   path:pics[i], //本地地址
+              //   id:i, //图片ID
+              // })
+
+              wx.uploadFile({
+                url: this.HOSTURL+'/api/upload', // 仅为示例，非真实的接口地址
+                filePath: pics[i],
+                name: 'uploadFile',
+                // formData: {
+                //   user: 'test'
+                // },
+                success(res) {
+                  //上传成功应该返回图片ID，本地回显用本地路径
+                  // do something
+                  self.pics.push({
+                    path:pics[i], //本地地址
+                    id:res.picId, //图片ID
+                  })
+                }
+              })
+
+            }
             self.$apply();
+
           }
         })
       },
 
-      //删除图片
-      deleteImg(idx) {
-        this.pics = this.pics.splice(1, idx);
+      /*
+        删除图片
+        idx index
+        ID 图片ID
+      */
+      deleteImg(idx,id) {
+        request.delPic({id:id});  //请求接口
+        this.pics.splice(idx, 1); //更新视图
       },
 
       //选择产品类型

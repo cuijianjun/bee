@@ -107,6 +107,16 @@ class base {
     // }
   }
 
+  //删除图片
+  async delPic(data) {
+    let res = await wepy.request({
+      url: this.HOSTURL+`/api/image/delete/${data.id}`,
+      method: 'GET',
+    });
+    console.log('删除结果',res);
+    return res
+  }
+
 
   /*------------我发布的------------------*/
   async getMyGoodsLists(data) {
