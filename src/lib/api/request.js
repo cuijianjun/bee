@@ -38,15 +38,10 @@ class base {
   }
 
   //列表
-  async getGoodsLists(data) {
+  async getGoodsLists(para) {
     let res = await wepy.request({
       url: this.HOSTURL+'api/product_list/list',
-      data: {
-        // limit:'10',
-        page:page,
-        // user_id:'2',
-        label:type,
-      },
+      data: para,
       method: 'POST',
     });
     let data = res.data;
@@ -55,6 +50,7 @@ class base {
       return data.data;
     }
   }
+
 
   //详情
   async getGoodsDetail( product_id,user_id) {
