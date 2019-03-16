@@ -151,7 +151,7 @@ const creatToken = function(para){
 
   return {
     authorization:MD5,
-    timeStamp :timeStamp
+    timestamp :timeStamp
   }
 }
 
