@@ -24,8 +24,8 @@
               </view>
             </view>
             <view class="btn-warp">
-              <view  @tap="modify()" class='cfn-btn-item modify'>修改</view>
-              <view  @tap="removehandeler()" class='cfn-btn-item remove'>删除</view>
+              <view @tap="modify()" class='cfn-btn-item modify'>修改</view>
+              <view @tap="removehandeler({{item.id}})" class='cfn-btn-item remove'>删除</view>
             </view>
           </view>
           <view class="msg-content-wrap cutText3" @tap="returnToDetail()">
@@ -54,6 +54,7 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import request from '../../lib/api/request'
 
   export default class MyPublish extends wepy.page {
     config = {
@@ -94,7 +95,8 @@
           'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
         ],
         time: '2018-11-24 10:40',
-        see: '470'
+        see: '470',
+        id:'111'
       },
         {
           photo: '../../image/upload/photo.jpeg',
@@ -109,15 +111,17 @@
             'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
           ],
           time: '2018-11-24 10:40',
-          see: '470'
+          see: '470',
+          id:'222'
         }
       ],
+      currentPage:'1',
     };
     methods = {
       //跳转详情页
-      navigateTo() {
+      modify() {
         wepy.navigateTo({
-          url: '/pages/my/myPublish/myPublish',
+          url: '/pages/modify-detail/modify-detail',
         });
       },
 
@@ -128,9 +132,9 @@
           content: '确认删除这条信息吗？',
           success(res) {
             if (res.confirm) {
-              wepy.request(`http://yapi.pplu.vip/api/product_list/delete/:${id}`).then((d) => console.log(d));
+              let res = request.deletePublishInfo(id);
             } else if (res.cancel) {
-
+              console.log('取消删除')
             }
           }
         })
@@ -141,10 +145,35 @@
 
     events = {};
 
-    onLoad() {
+    async onLoad() {
+
     }
 
+    async onShow(){
+      this.getMyPublishList();//获取列表信息
+    }
 
-    // Other properties
+    //获取我发布的
+    async getMyPublishList() {
+      console.log('gbdata',wepy.$instance.globalData);
+      let self = this;
+      let currentPage = self.currentPage;
+      let res = await request.getMyGoodsLists({
+        label:'1',
+        limit:'10',
+        page:currentPage,
+        user_id:wepy.$instance.globalData.loginInfo.userInfo.openid
+      });
+      console.log('获取我发布的',res);
+
+      if(res.length>0){
+        self.msgList.concat(res)
+      }
+
+
+      self.$apply(() => {
+        wepy.hideLoading();
+      });
+    }
   }
 </script>

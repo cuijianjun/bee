@@ -111,6 +111,8 @@ const compareVersion= function(v1, v2) {
   return 0
 }
 
+
+
 module.exports = {
   formatTime, //格式化时间 2018/11/11 10:10:10
   formatTime2, //格式化时间 2018年10月10日

@@ -1,5 +1,8 @@
 import { REQUEST_HOST } from './address'
 import wepy from 'wepy'
+const hexmd5 = require('../MD5.js')
+const JWTSECERT  = 'rainbow'
+
 
 class base {
   constructor(baseurl) {
@@ -8,13 +11,15 @@ class base {
 
   //登录
   async login(obj) {
+    let token = creatToken(obj);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    },token);
     let res = await wepy.request({
       url: this.HOSTURL+'login',
       data: obj,
       method: 'POST',
-      header: {
-        'content-type': 'application/json' // 默认值
-      },
+      header: header,
     });
     let data = res.data;
     return data;
@@ -33,7 +38,7 @@ class base {
   }
 
   //列表
-  async getGoodsLists(page,type) {
+  async getGoodsLists(data) {
     let res = await wepy.request({
       url: this.HOSTURL+'api/product_list/list',
       data: {
@@ -103,6 +108,54 @@ class base {
     // if (data.code == 0) {
     //   return data.data;
     // }
+  }
+
+
+  /*------------我发布的------------------*/
+  async getMyGoodsLists(data) {
+    let res = await wepy.request({
+      url: this.HOSTURL+'api/product_list/list',
+      data: {
+        limit:data.limit,
+        page:data.page,
+        user_id:data.user_id,
+        label:data.label,
+      },
+      method: 'POST',
+    });
+    console.log('列表数据',res);
+    if (res.data.code == 200) {
+      return res.data.data.rows;
+    }
+  }
+
+  async deletePublishInfo(id){
+    console.log('删除发布信息id:',id);
+    let res = await wepy.request({
+      url: this.HOSTURL+`api/product_list/delete/${id}`,
+      method: 'GET',
+      header: {
+        'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJpYXQiOjE1NTE1NDExMTMsImV4cCI6MTU1MjE0NTkxM30.TACfTKtcSXdd6C1l2ylo1_ZBaAvNRgsad7c4a7rwwTY',
+      },
+    });
+    console.log('删除返回',res);
+    return res
+  }
+
+}
+
+const creatToken = function(para){
+  //加密规则
+  let payLoad = JSON.stringify(para) // 转化所有的参数
+  // debugger;
+  let timeStamp = new Date().getTime() // 时间戳
+  let signBuffer = `${JWTSECERT}${payLoad}${timeStamp}`;
+  console.log('signBuffer',signBuffer);
+  const MD5 = hexmd5.MD5(signBuffer);
+
+  return {
+    authorization:MD5,
+    timeStamp :timeStamp
   }
 }
 

@@ -30,6 +30,7 @@
         'pages/detail/detail',
         'pages/publish/publish',
         'pages/publish-detail/publish-detail',
+        'pages/modify-detail/modify-detail',
         'pages/my/index',
         'pages/my/myPublish',
         'pages/my/myOrder',
@@ -71,6 +72,7 @@
 
     globalData = {
       userInfo:{},
+      userData:{},//用户微信信息
     }
 
     constructor() {
@@ -188,17 +190,17 @@
       return system_info;
     }
 
-    // async onLoad() {
-    //   await wepy.login();
-    //   this.globalData.userData = await wepy.getUserInfo();
-    //   console.log('用户信息'，this.globalData.userData);
-    // }
+    async getWxInfo() {
+      this.globalData.userData = await wepy.getUserInfo();
+      console.log('用户信息',this.globalData.userData);
+    }
 
     onLaunch(options) {
       let self = this;
       self.globalData.scene = options.scene;//保存场景值
       self.uploadApp() //更新小程序
       self.getSystemInfo() //获取设备信息
+      self.getWxInfo()
 
       // self.onLoad()  //登陆，获取用户信息
     }

@@ -28,7 +28,10 @@ export default class MyIndex extends wepy.page {
     console.log('his.$parent',this.$parent)
     self.userInfo = this.$parent.globalData.userData.userInfo;
     self.$apply();
+  }
 
+  async onShow(){
+    await this.$parent.login(); //获取用户信息
   }
   // Other properties
 }
@@ -36,9 +39,12 @@ export default class MyIndex extends wepy.page {
 
 <template lang="wxml">
     <view class="user">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+      <open-data class="userinfo-avatar" type="userAvatarUrl"></open-data>
+      <!--<image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>-->
       <view class="right">
-        <view class='nickname'>{{userInfo.nickName}}</view>
+        <open-data class='nickname' type="userNickName"></open-data>
+
+        <!--<view >{{userInfo.nickName}}</view>-->
 
         <view class="join">加盟合伙人</view>
       </view>

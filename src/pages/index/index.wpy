@@ -42,7 +42,7 @@
     <view class="type-container">
       <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
         <repeat for="{{type}}" key="index" index="index" item="item">
-          <view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.msg}}</view>
+          <view class="type-item {{currentTypeIndex==index?'active-type':''}}" @tap="getCurrentType({{index}})">{{item.name}}</view>
         </repeat>
       </scroll-view>
     </view>
@@ -250,8 +250,6 @@
       //   title: '加载中', 
       //   mask: true, 
       // });
-
-      await this.$parent.login(); //获取用户信息
       // this.getBanner();//获取banner和类型
       // this.getListMsg(1,1);//获取列表信息
     }
@@ -268,8 +266,11 @@
     }
 
     // 获取列表信息
-    async getListMsg(page, type) {
-      let list = await request.getGoodsLists(page, type);
+    async getListMsg(page, label) {
+      let list = await request.getGoodsLists({
+        page:page,
+        label:label
+      });
       console.log('列表信息', list);
 
       if (list && list.length > 0) {
