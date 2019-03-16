@@ -23,24 +23,23 @@ export default class MyIndex extends wepy.page {
   events = {};
   onLoad() {
     let self = this;
-    console.log('his.$parent',this.$parent)
-    self.userInfo = this.$parent.globalData.userData.userInfo;
+    console.log('globalData',this.$parent.globalData);
+    self.userInfo = this.$parent.globalData.userData;
     self.$apply();
   }
 
   onShow(){
-    if(!util.checkStorageLogin()){
-      this.data.isLogin = false;
-      // this.$parent.login(); //获取用户信息
-    }else{
-      this.data.isLogin = true;
-      console.log('有缓存，已登陆')
-    }
-
+    let self = this;
+    this.isLogin = this.$parent.globalData.isLogin;
+    self.$apply();
   }
 
-  bindGetUserInfo(data){
-    this.$parent.login(data.detail.userInfo); //获取用户信息
+   async bindGetUserInfo(data){
+     let self = this;
+    await self.$parent.login(data.detail.userInfo); //获取用户信息
+     console.log('islogin',self.$parent.globalData.isLogin)
+     self.isLogin = self.$parent.globalData.isLogin;
+     self.$apply();
   }
   // Other properties
 }

@@ -90,11 +90,7 @@
 
     }
 
-    // mixins = [testMixin]
-
     data = {
-      // nickName: '',//昵称
-      // avatarUrl: '',//头像
       isLogin:false, //是否登录
       brief: '',//产品简介
       pics: [],//产品图片
@@ -105,7 +101,6 @@
       label:'',//类型
       address:'',//地址
       isAccredit: false,//获取位置是否授权
-      token:'',//token
       user_id:'',
     }
 
@@ -167,35 +162,25 @@
           title: '发布中...',
           mask: true,
           });
-
-          value.weChatName=this.nickName;
-          value.avatar=this.avatarUrl;
           value.user_id=this.user_id;
-          data=value;
-          // data.token=this.token;
-          console.log('上传信息',data);
-          let res = request.publishGoodsMsg(data); 
+          console.log('上传信息',value);
+          let res = request.publishGoodsMsg(value);
           wepy.hideLoading();
         }  
       },
 
       //点击授权按钮，获取用户信息
      async getUserInfo(e) {
-        // console.log('用户信息',e);
+        let self = this;
         if (e.detail.userInfo) {
           let data = await this.$parent.login(e.detail.userInfo); //获取用户信息
-          // this.nickName = data.userInfo.nickName;
-          // this.avatarUrl = data.userInfo.avatarUrl;
-          // this.token=data.token;
-          // this.user_id=data.userInfo.id;
-          this.$apply();
+          self.$apply();
         } else {
           wepy.showModal({
             title: '温馨提示', //提示的标题,
             content: '为了更好的为您服务，需要您的授权', //提示的内容,
             showCancel: false,
           });
-
         }  
       },
 

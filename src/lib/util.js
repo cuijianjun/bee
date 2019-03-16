@@ -116,8 +116,6 @@ const checkStorageLogin = function(){
   return data || false
 };
 
-
-
 module.exports = {
   formatTime, //格式化时间 2018/11/11 10:10:10
   formatTime2, //格式化时间 2018年10月10日

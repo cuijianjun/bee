@@ -71,7 +71,7 @@
     }
 
     globalData = {
-      userInfo:{},
+      isLogin:false, //是否登录标示
       userData:{},//用户业务数据
     }
 
@@ -153,7 +153,6 @@
      * return 登录成功返回数据
      * */
     async login(userInfo) {
-      debugger;
       if(!userInfo){return}
       let self = this;
       let loginRes = await wepy.login();
@@ -170,10 +169,12 @@
        console.log('执行登录',d);
       if (d) {
         self.globalData.userData = d.userInfo;
+        self.globalData.isLogin = true;
         wx.setStorageSync('userData',d.userInfo);
-        return d;
+        return true;
       } else {
         console.log('登录失败');
+        return false
       }
     }
 
@@ -194,15 +195,16 @@
       this.globalData.userData = await wepy.getUserInfo();
       console.log('用户信息',this.globalData.userData);
     }
-    //检查登录状态
-    loginHandeler(){
-      if(!util.checkStorageLogin()){
-        //未登录
+    //初始化登录状态
+    loginInit(){
+      let loginStroage  = util.checkStorageLogin()
+      if(!loginStroage){
         console.log('无缓存，未登陆')
-        this.login(); //获取用户信息
+        this.globalData.isLogin = false;
       }else{
         console.log('有缓存，已登陆')
-        this.globalData.userData = util.checkStorageLogin()
+        this.globalData.isLogin = true;
+        this.globalData.userData = loginStroage;
       }
     }
 
@@ -211,7 +213,7 @@
       self.globalData.scene = options.scene;//保存场景值
       self.uploadApp(); //更新小程序
       self.getSystemInfo(); //获取设备信息
-      self.loginHandeler();
+      self.loginInit();
       // self.getWxInfo()
       // self.onLoad()  //登陆，获取用户信息
     }
