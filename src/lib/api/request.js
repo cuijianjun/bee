@@ -90,15 +90,15 @@ class base {
   //发布信息
   async publishGoodsMsg(data) {
     let token = creatToken(data);
-    let header = Object.assign({
-      'Content-Type':'multipart/form-data',
-    },token);
+    // let header = Object.assign({
+    //   'Content-Type':'multipart/form-data',
+    // },token);
 
     let res = await wepy.request({
       url: this.HOSTURL+'api/product_list/create',
-      data: data.info,
+      data: data,
       method: 'POST',
-      header:header
+      header:token
     })
     // let data = res.data;
     console.log('发布信息结果',res);
@@ -110,7 +110,7 @@ class base {
   //删除图片
   async delPic(data) {
     let res = await wepy.request({
-      url: this.HOSTURL+`/api/image/delete/${data.id}`,
+      url: this.HOSTURL+`api/image/delete/${data.id}`,
       method: 'GET',
     });
     console.log('删除结果',res);
