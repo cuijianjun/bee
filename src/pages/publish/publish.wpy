@@ -179,7 +179,7 @@
       async getUserInfo(e) {
         let self = this;
         if (e.detail.userInfo) {
-          await self.$parent.login(data.detail.userInfo); //获取用户信息
+          await self.$parent.login(e.detail.userInfo); //获取用户信息
           console.log('islogin',self.$parent.globalData.isLogin)
           self.isLogin = self.$parent.globalData.isLogin;
           self.$apply();
