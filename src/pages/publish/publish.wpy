@@ -74,13 +74,11 @@
       <!-- 发布按钮 -->
       <view class="publish-btn center-flex">
         我要发布信息
-        <button form-type="submit" class="button-cover"></button>
-        <button wx:if="{{isLogin}}" class="button-cover" open-type="getUserInfo" lang="zh_CN"
+        <button wx:if="{{isLogin}}" form-type="submit" class="button-cover"></button>
+        <button wx:else class="button-cover" open-type="getUserInfo" lang="zh_CN"
                 bindgetuserinfo="getUserInfo"></button>
       </view>
     </form>
-
-    <button @tap="chooseImg">上传</button>
   </view>
 </template>
 
@@ -181,7 +179,9 @@
       async getUserInfo(e) {
         let self = this;
         if (e.detail.userInfo) {
-          let data = await this.$parent.login(e.detail.userInfo); //获取用户信息
+          await self.$parent.login(data.detail.userInfo); //获取用户信息
+          console.log('islogin',self.$parent.globalData.isLogin)
+          self.isLogin = self.$parent.globalData.isLogin;
           self.$apply();
         } else {
           wepy.showModal({
@@ -312,13 +312,11 @@
     events = {}
 
     async onLoad() {
-      // let userInfo = await this.$parent.login(); //获取用户信息
-      // console.log('onload-userinfo',userInfo);
-      // this.nickName = userInfo.nickName;
-      // this.avatarUrl = userInfo.avatarUrl;
-      if (util.checkStorageLogin()) {
-        this.data.isLogin = true;
-      }
+      // if (util.checkStorageLogin()) {
+      //   this.isLogin = true;
+      // }
+      console.log('globalData',this.$parent.globalData);
+      this.isLogin = this.$parent.globalData.isLogin;
       this.$apply();
     }
   }

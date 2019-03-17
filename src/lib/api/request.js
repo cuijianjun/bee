@@ -138,28 +138,63 @@ class base {
 
   async deletePublishInfo(id){
     console.log('删除发布信息id:',id);
+    let header = creatToken({id});
     let res = await wepy.request({
       url: this.HOSTURL+`api/product_list/delete/${id}`,
       method: 'GET',
-      header: {
-        'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJpYXQiOjE1NTE1NDExMTMsImV4cCI6MTU1MjE0NTkxM30.TACfTKtcSXdd6C1l2ylo1_ZBaAvNRgsad7c4a7rwwTY',
-      },
+      header,
     });
     console.log('删除返回',res);
     return res
   }
 
+  /*------支付类------*/
+  /*
+  * 发起商户支付请求
+  * @para data{Object}
+  * @para data.id{Number} 用户业务ID 查找openId
+  *
+  * */
+  async sendPayReq(data){
+    let header = creatToken(data);
+    let res = await wepy.request({
+      url: this.HOSTURL+`发起服务器支付`,
+      method: 'GET',
+      header,
+      data
+    });
+  }
+
+  //发起微信支付请求
+  async reqPayment(){
+    //先请求服务器接口获取五个参数
+    let payPara = await sendPayReq();
+    //再通过五个参数发起微信支付请求
+    let res = await wepy.requestPayment({
+      timeStamp: payPara.timeStamp,
+      nonceStr: payPara.nonceStr,
+      package: payPara.package,
+      signType: 'MD5',
+      paySign: payPara.paySign,
+      success(res) { },
+      fail(res) { }
+    })
+
+    return res
+  }
+
 }
-
+/*
+* 生成加密数据
+* return Object mixtoHeader
+* */
 const creatToken = function(para){
-  //加密规则
-  let payLoad = JSON.stringify(para) // 转化所有的参数
-  // debugger;
-  let timeStamp = new Date().getTime() // 时间戳
+  //加密规则 {secret}{JSON(para)}{timeStrap}
+  let payLoad = JSON.stringify(para); // 转化所有的参数
+  let timeStamp = new Date().getTime(); // 时间戳
   let signBuffer = `${JWTSECERT}${payLoad}${timeStamp}`;
-  console.log('signBuffer',signBuffer);
   const MD5 = hexmd5.MD5(signBuffer);
-
+  console.log('signBuffer：',signBuffer,'；MD5:',MD5);
   return {
     authorization:MD5,
     timestamp :timeStamp
