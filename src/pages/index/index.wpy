@@ -245,18 +245,19 @@
 
     }
 
-    async onShow() {
+    async onLoad() {
       // wepy.showLoading({
       //   title: '加载中', 
       //   mask: true, 
       // });
-      // this.getBanner();//获取banner和类型
+      this.getBanner();//获取banner和类型
       // this.getListMsg(1,1);//获取列表信息
     }
 
     // 获取banner和类型
     async getBanner() {
-      let res = await request.getBanner();
+      let res = await request.getTypeList();
+      console.log(res);
       if (res) {
         console.log('banner', res);
         this.swiperData.arr = res.rows;

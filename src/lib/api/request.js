@@ -32,17 +32,17 @@ class base {
     }  
   }
 
-  //banner和类型
-  async getBanner() {
-    let res = await wepy.request({
-      url: this.HOSTURL + 'api/banner/get',
-    });
-    let data = res.data;
-    // console.log('banner1',res);
-    if (data.code == 200) {
-      return data.data;
-    }
-  }
+  // //banner和类型
+  // async getBanner() {
+  //   let res = await wepy.request({
+  //     url: this.HOSTURL + 'api/banner/get',
+  //   });
+  //   let data = res.data;
+  //   // console.log('banner1',res);
+  //   if (data.code == 200) {
+  //     return data.data;
+  //   }
+  // }
 
   //列表
   async getGoodsLists(para) {
