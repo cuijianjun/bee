@@ -72,7 +72,7 @@
 
     globalData = {
       isLogin:false, //是否登录标示
-      userData:{},//用户业务数据
+      userData:null,//用户业务数据
     }
 
     constructor() {
@@ -93,15 +93,6 @@
 
         // 请求成功后的回调函数
         success(p) {
-          // if (p.data.code != 0) { //请求数据失败
-          //   if (p.data && p.data.msg) {
-          //     wx.showToast({
-          //       title: p.data.msg || "请求失败",
-          //       icon: 'none',
-          //       duration: 2000
-          //     });
-          //   }
-          // }
           // console.log('请求成功');
           return p
         },
@@ -153,25 +144,33 @@
      * return 登录成功返回数据
      * */
     async login(userInfo) {
-      if(!userInfo){return}
       let self = this;
+      if (self.globalData.userData) {
+        return self.globalData.userData;
+      }
       let loginRes = await wepy.login();
-      let data={
-        code      :loginRes.code,
-        nickName  :userInfo.nickName,
-        avatarUrl :userInfo.avatarUrl,
-        gender    :userInfo.nickName,
-        country   :userInfo.country,
-        city      :userInfo.city,
-      };
-        console.log('用户信息',userInfo);
+      let data={};
+      if(userInfo){
+        data={
+          code      :loginRes.code,
+          nickName  :userInfo.nickName || '',
+          avatarUrl :userInfo.avatarUrl ||'' ,
+          gender    :userInfo.gender || '',
+          country   :userInfo.country || '',
+          city      :userInfo.city|| '',
+        };
+      }else {
+        data={
+          code      :loginRes.code,
+        };
+      }
+      
+        // console.log('用户信息',userInfo);
       let d = await request.login(data);
-       console.log('执行登录',d);
+       console.log('执行登录',d.userInfo);
       if (d) {
         self.globalData.userData = d.userInfo;
-        self.globalData.isLogin = true;
-        wx.setStorageSync('userData',d.userInfo);
-        return true;
+        return d.userInfo;
       } else {
         console.log('登录失败');
         return false
