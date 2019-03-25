@@ -24,15 +24,13 @@
           <view class="product-pic">
             <repeat for="{{picsTotal}}" key="index" index="index" item="item">
               <view class="pic-wrap">
-                <image class="add_img" src="{{item.path}}" lazy-load="false"></image>
+                <image class="add_img" src="{{item}}" lazy-load="false"></image>
                 <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png"
                        lazy-load="false"></image>
               </view>
             </repeat>
             <image wx:if="{{picsTotal.length<9}}" class="add-img-btn" @tap="addImg" src="../../image/bg/icon_add_img.png"
                    lazy-load="false"></image>
-            <!-- 图片信息 -->
-            <!-- <input name="image" value="{{picsTotal}}" type="text" hidden="{{true}}"></input> -->
           </view>
         </view>
       </view>
@@ -178,9 +176,10 @@
             mask: true,
           });
           
-          value.user_id = this.id;
-          value.labelCode = (this.typeIndex-0)+1;
-          // value.productImage = this.pics_key;
+          value.user_id = this.id+'';
+          value.labelCode = (this.typeIndex-0)+1+'';
+         console.log(typeof value.user_id); 
+         console.log(typeof  value.labelCode); 
           value.productImage='';
           this.pics_key.forEach(ele => {
             value.productImage=value.productImage+ele+','
@@ -314,20 +313,15 @@
         this.picCount++;
         console.log('key',res);
         this.pics_key.push(res.key);
+        // this.$apply(); 
+        this.picsTotal.push(ele);
         this.$apply(); 
-
-        if( this.picCount>=pics.length){
-          pics.forEach(pic => {
-            this.picsTotal.push(pic);
-          });
-          this.$apply(); 
-          wepy.hideLoading();
-          wepy.showToast({
-            title: '上传成功', 
-            icon: 'success',
-            duration: 1000, 
-          });  
-        }
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '上传成功', 
+          icon: 'success',
+          duration: 1000, 
+        }); 
       }else{
         wepy.hideLoading();
         wepy.showToast({
@@ -354,7 +348,21 @@
     //发布信息
     publishInfo(value){
       let res = request.publishGoodsMsg(value);
-      wepy.hideLoading();
+      if(res){
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '发布成功', 
+          icon: 'success', 
+          duration: 2000,
+        });  
+      }else {
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '发布失败', 
+          icon: 'none', 
+          duration: 2000,
+        });
+      } 
     }
 
     events = {}

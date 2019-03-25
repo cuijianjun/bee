@@ -1,6 +1,7 @@
 <style lang="less">
   @import '../../style/base.less';
   @import './detail.less';
+
 </style>
 <template>
   <view class="container">
@@ -23,7 +24,8 @@
         </view>
         <view class="msg-img-wrap">
           <repeat for="{{info.productImage}}" key="index" index="index" item="item">
-            <image class="msg-img" src="{{item}}" lazy-load="{{true}}" @tap="previewImg({{item}},{{info.pics}})"></image>
+            <image class="msg-img" src="{{item}}" lazy-load="{{true}}" @tap="previewImg({{item}},{{info.pics}})">
+            </image>
           </repeat>
         </view>
 
@@ -35,7 +37,8 @@
           <text style="color: #3aa1c2;">{{info.pageView}}</text>人浏览
         </view>
         <view class=" address-wrap">
-          <image class="address-icon" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false"> </image>
+          <image class="address-icon" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false">
+          </image>
           <text class="address-text">{{info.address}}</text>
         </view>
         <view class="time">
@@ -73,7 +76,7 @@
 
 <script>
   import wepy from 'wepy'
- import request from '../../lib/api/request'
+  import request from '../../lib/api/request'
 
   export default class Index extends wepy.page {
     config = {
@@ -90,7 +93,7 @@
         avatar: '../../image/upload/photo.jpeg',
         weChatName: '用户名称',
         label: '家电',
-        address:'地址',
+        address: '地址',
         phoneNumber: '14311234567',
         description: '二手物品内容',
         productImage: [
@@ -101,10 +104,12 @@
         ],
         updated_at: '2018-11-24 10:40',
         pageView: '470',
-        collect: {isCollect:false}, //收藏状态
+        collect: {
+          isCollect: false
+        }, //收藏状态
       },
       collectIcon: '../../image/bg/icon_collect1.png',
-      collectTxt: '收藏', 
+      collectTxt: '收藏',
     }
 
     computed = {
@@ -145,27 +150,35 @@
       //点击收藏
       collect() {
         this.info.collect = !this.info.collect;
+        let info = this.info;
+        let data = {
+          user_id: info.user_id,
+          product_id: info.id,
+          isCollect: info.collect.isCollect,
+        }
+
         if (this.info.collect) {
           this.collectTxt = '已收藏';
           this.collectIcon = '../../image/bg/icon_collect2.png';
-          request.getCollectState(2, product_id,isCollect).then(()=>{
+
+          request.getCollectState(data).then(() => {
             wepy.showToast({
               title: '收藏成功',
-              icon: 'none', 
-              duration: 1000, 
-              mask: true, 
-            });   
+              icon: 'none',
+              duration: 1000,
+              mask: true,
+            });
           });
         } else {
           this.collectTxt = '收藏';
           this.collectIcon = '../../image/bg/icon_collect1.png';
-          request.getCollectState(2, product_id,isCollect).then(()=>{
+          request.getCollectState(data).then(() => {
             wepy.showToast({
               title: '取消收藏',
-              icon: 'none', 
-              duration: 1000, 
-              mask: true, 
-            });   
+              icon: 'none',
+              duration: 1000,
+              mask: true,
+            });
           });
         }
       },
@@ -184,16 +197,21 @@
 
     }
 
-    async onLoad() {
-      await this.$parent.login(); //获取用户信息
-      this.getGoodsDetail();//获取banner和类型
+    async onLoad(params) {
+      // await this.$parent.login(); //获取用户信息
+      console.log(params);
+      let data = {
+        product_id: params.product_id,
+        user_id: params.user_id,
+      }
+      this.getGoodsDetail(data); //获取商品信息
     }
 
     //获取信息
-    async getGoodsDetail(){
-      let list = await request.getGoodsLists(1,1);
-      console.log('列表信息',list);
-      if(list){
+    async getGoodsDetail(data) {
+      let list = await request.getGoodsDetail(data);
+      console.log('列表信息', list);
+      if (list) {
         // this.info=list;      
         this.$apply();
       }

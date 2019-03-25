@@ -12,120 +12,125 @@ class base {
   }
 
   //登录
-  async login(obj) {
-    let token = creatToken(obj);
+  async login(data) {
+    let token = creatToken(data);
     let header = Object.assign({
       'content-type': 'application/json' // 默认值
     }, token);
+
     let res = await wepy.request({
       url: this.HOSTURL + 'login',
-      data: obj,
+      data: data,
       method: 'POST',
       header: header,
     });
     console.log('data',res.data);
-    let data = res.data;
-    if(data){
-      return data;
+    let msg = res.data;
+    if(msg){
+      return msg;
     }else {
       return false;
     }  
   }
 
-  // //banner和类型
-  // async getBanner() {
+  //列表
+  async getGoodsLists(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + 'api/product_list/list',
+      data: data,
+      method: 'POST',
+      header: header,
+    });
+    let msg = res.data;
+    console.log('列表数据', msg);
+    if (msg.code == 201) {
+      return msg.data;
+    }
+  }
+
+  //详情
+  async getGoodsDetail(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + 'api/product_list/detail',
+      data: data,
+      header: header,
+    });
+    let msg = res.data;
+    console.log('详情数据', res);
+    // if (msg.code == 201) {
+    //   return msg.data;
+    // }
+  }
+
+  //收藏
+  // async getCollectState(data) {
+  //   let token = creatToken(data);
+  //   let header = Object.assign({
+  //     'content-type': 'application/json' // 默认值
+  //   }, token);
+
   //   let res = await wepy.request({
-  //     url: this.HOSTURL + 'api/banner/get',
+  //     url: this.HOSTURL + 'api/collect/collect',
+  //     data: data,
+  //     method: 'POST',
   //   });
-  //   let data = res.data;
-  //   // console.log('banner1',res);
-  //   if (data.code == 200) {
+  //   let msg = res.data;
+  //   console.log('详情数据', res);
+  //   if (msg.code == 200) {
   //     return data.data;
   //   }
   // }
 
-  //列表
-  async getGoodsLists(para) {
-    let res = await wepy.request({
-      url: this.HOSTURL + 'api/product_list/list',
-      data: para,
-      method: 'POST',
-    });
-    let data = res.data;
-    console.log('列表数据', res);
-    if (data.code == 200) {
-      return data.data;
-    }
-  }
-
-
-  //详情
-  async getGoodsDetail(product_id, user_id) {
-    let res = await wepy.request({
-      url: this.HOSTURL + 'api/product_list/detail',
-      data: {
-        product_id: product_id,
-        user_id: user_id,
-      },
-      method: 'POST',
-    });
-    let data = res.data;
-    console.log('详情数据', res);
-    if (data.code == 200) {
-      return data.data;
-    }
-  }
-
-  //收藏
-  async getCollectState(user_id, product_id, isCollect) {
-    let res = await wepy.request({
-      url: this.HOSTURL + 'api/collect/collect',
-      data: {
-        product_id: product_id,
-        user_id: user_id,
-        isCollect: isCollect,
-      },
-      method: 'POST',
-    });
-    let data = res.data;
-    console.log('详情数据', res);
-    if (data.code == 200) {
-      return data.data;
-    }
-  }
-
   //发布信息
   async publishGoodsMsg(data) {
     let token = creatToken(data);
-    let obj={'Accept-Datetime':33333333};
     let header = Object.assign({
       'Content-Type':'application/json',
     },token);
-// console.log(header);
+
     let res = await wepy.request({
       url: this.HOSTURL + 'api/product_list/create',
       data: data,
       method: 'POST',
       header: header,
     })
-    // let data = res.data;
-    console.log('发布信息结果', res);
-    // if (data.code == 0) {
-    //   return data.data;
-    // }
+    let msg = res.data;
+    // console.log('发布信息结果', msg);
+    if (msg.code == 201) {
+      return true;
+    }else {
+      return false;
+    }
   }
 
   //上传图片
-  async uploadImg(pic) {
+  async uploadImg(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'Content-Type':'multipart/form-data',
+    },token);
+
     let res = await wepy.uploadFile({
       url: this.HOSTURL + 'api/image/upload',
-      filePath: pic,
+      filePath: data,
       name: 'uploadFile',
+      method: 'POST',
+      header: header,
     })
-    let data = JSON.parse(res.data);
-    if(data.code==201){
-      console.log('上传图片返回值', data.data[0]);
-      return data.data[0]
+    let msg = JSON.parse(res.data);
+    if(msg.code==201){
+      // console.log('上传图片返回值', msg.data[0]);
+      return msg.data[0]
     }else {
       return false;
     }
@@ -133,12 +138,19 @@ class base {
   }
 
   //删除图片
-  async delPic(key) {
+  async delPic(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'Content-Type':'application/x-www-form-urlencoded',
+    },token);
+
     let res = await wepy.request({
-      url: this.HOSTURL + `api/image/delete/${key}`,
+      url: this.HOSTURL + `api/image/delete/${data}`,
+      header: header,
     });
-    console.log('删除结果', res.data);
-    if(res.data.code==201){
+    // console.log('删除结果', res.data);
+    let msg=res.data;
+    if(msg.code==201){
       return true;
     }else{
       return false;
@@ -146,15 +158,21 @@ class base {
   }
 
   //获取类型
-  async getTypeList() {
+  async getTypeList(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'Content-Type':'application/json',
+    },token);
+
     let res = await wepy.request({
       url: this.HOSTURL + 'api/banner/get',
+      header: header,
     });
 
-    let data=res.data;
+    let msg=res.data;
 
-    if(data.code==200){
-      return data.data
+    if(msg.code==200){
+      return msg.data
     }else {
       return false;
     }
