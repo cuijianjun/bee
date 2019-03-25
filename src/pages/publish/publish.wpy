@@ -180,10 +180,16 @@
           value.labelCode = (this.typeIndex-0)+1+'';
          console.log(typeof value.user_id); 
          console.log(typeof  value.labelCode); 
-          value.productImage='';
-          this.pics_key.forEach(ele => {
-            value.productImage=value.productImage+ele+','
-          });
+          // value.productImage='';
+          // this.pics_key.forEach((ele,idx) => {
+          //   if(idx<this.pics_key.length-1){
+          //     value.productImage=value.productImage+ele+','
+          //   }else {
+          //     value.productImage=value.productImage+ele
+          //   }
+            
+          // });
+          value.productImage=this.pics_key.join(',');
           console.log('图片字符串', value.productImage);
           console.log('发布信息value',value);
           this.publishInfo(value);
@@ -309,6 +315,7 @@
     async uploadImg(ele,pics){
       console.log('图片',ele,pics);
       let res=await request.uploadImg(ele);
+      console.log('上传图片',res);
       if(res){
         this.picCount++;
         console.log('key',res);

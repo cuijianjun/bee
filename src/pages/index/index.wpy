@@ -1,7 +1,7 @@
 <style lang="less">
   @import '../../style/base.less';
-  @import '../../style/list.less';
-  // @import '../../style/list-show.less';
+  // @import '../../style/list.less';
+  @import '../../style/list-show.less';
   @import './index.less';
 
 </style>
@@ -96,7 +96,7 @@
             <view class="see-detail" @tap="returnToDetail({{item.id}},{{item.user_id}})">查看详情</view>
           </view>
         </view>
-        <!-- <view class="publish-msg-item">
+        <view class="publish-msg-item">
           <view class="msg-top-wrap">
             <image class="pic" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
             <view class="title">{{item.title}}</view>
@@ -113,7 +113,7 @@
             <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
             <view class="name">{{item.user.nickName}}</view>
           </view>
-        </view> -->
+        </view>
       </repeat>
     </view>
 

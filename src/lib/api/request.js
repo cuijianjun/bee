@@ -61,8 +61,7 @@ class base {
     }, token);
 
     let res = await wepy.request({
-      url: this.HOSTURL + 'api/product_list/detail',
-      data: data,
+      url: this.HOSTURL + `api/product_list/detail/${data.product_id}/${data.user_id}`,
       header: header,
     });
     let msg = res.data;
