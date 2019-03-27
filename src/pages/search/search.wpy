@@ -1,7 +1,8 @@
 <style lang="less">
   @import '../../style/base.less';
-  @import '../../style/list.less';
+  @import '../../style/list-show.less';
   @import './search.less';
+
 </style>
 <template>
   <view class="container">
@@ -17,12 +18,12 @@
     </view>
 
     <!-- 热搜 -->
-    <view class="search-keyword-wrap" wx:if="{{noResult}}">
+    <view class="search-keyword-wrap" wx:if="{{isShowSearchHinit}}">
       <view class="title">热搜</view>
       <view class="list-wrap">
-        <repeat for="{{hotSearch}}" key="index" index="index" item="item">
-          <view class="search-item center-flex" @tap="search({{item}})">
-            {{item}}
+        <repeat for="{{hotWord}}" key="index" index="index" item="item">
+          <view class="search-item center-flex" @tap="search({{item.hot_search}})">
+            {{item.hot_search}}
           </view>
         </repeat>
       </view>
@@ -33,42 +34,28 @@
       没有您想要的内容
     </view>
 
-    <!-- 发表内容项 -->
-    <view class="publish-msg-wrap">
-      <repeat for="{{resultList}}" key="index" index="index" item="item">
-        <view class="publish-msg-item">
-          <view class="msg-top-wrap">
-            <view class="user-wrap">
-              <image class="user-photo" src="{{item.photo}}" lazy-load="{{true}}"></image>
-              <view class="user-msg-wrap">
-                <view class="user-name">{{item.name}}</view>
-                <view>
-                  <view class="msg-type">{{item.type}}</view>
+    <!-- 信息列表 -->
+    <view class="publish-msg-wrap" style="padding-top:20rpx;">
+      <repeat for="{{msgList}}" key="index" index="index" item="item">
+        <view class="publish-msg-item" @tap="returnToDetail({{item.id}},{{item.user_id}})">
+          <view class="item-inner-wrap">
+            <view class="pic-wrap">
+              <image class="pic" mode="aspectFill" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
+            </view>
+            <view class="content-wrap">
+              <view class="title cutText2">{{item.title}}</view>
+              <view class="middle-wrap">
+                <view class="price">￥{{item.price}}</view>
+                <view class="people">{{item.pageView}}人想要</view>
+              </view>
+              <view class="footer">
+                <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
+                <view class="msg-wrap">
+                  <view class="name cutText1">{{item.user.nickName}}</view>
+                  <view class="address">{{item.city}}</view>
                 </view>
               </view>
             </view>
-            <view class="msg-tell-wrap center-flex" @tap="makePhone({{item.tell}})">
-              <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
-              拨打电话
-            </view>
-          </view>
-          <view class="msg-content-wrap cutText3" @tap="returnToDetail()">
-            {{item.content}}
-          </view>
-          <view class="msg-img-wrap">
-            <repeat for="{{item.pics}}" key="index" index="index" item="item2">
-              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" @tap="previewImg({{item2}},{{item.pics}})"></image>
-            </repeat>
-          </view>
-          <view class="msg-time-wrap">
-            {{item.time}}发布
-          </view>
-          <view class="msg-see-wrap">
-            <view class="see-count-wrap">
-              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
-              <text style="color: #3aa1c2;">{{item.see}}</text>人浏览
-            </view>
-            <view class="see-detail" @tap="returnToDetail()">查看详情</view>
           </view>
         </view>
       </repeat>
@@ -78,7 +65,7 @@
 
 <script>
   import wepy from 'wepy'
-  // import testMixin from '../mixins/test'
+  import request from '../../lib/api/request'
 
   export default class Index extends wepy.page {
     config = {
@@ -92,14 +79,14 @@
     // mixins = [testMixin]
 
     data = {
-      resultList: [], //搜索结果
-      hotSearch: [
-        '家具', '家电', '互联网', '家具', '家电', '互联网', '家具', '家电', '互联网', '家具', '家电', '互联网',
-      ], //搜索热词
+      user_id: '',
+      page: 1,
+      limit: '20',
+      msgList: [], //搜索结果
+      hotWord: [], //搜索热词
       isShowSearchHinit: true, //是否显示热搜
       keyword: '', //搜索关键词,
-      location:[],//地址
-      noResultHinit:false,//没有搜索结果时显示
+      noResultHinit: false, //没有搜索结果时显示
     }
 
     computed = {
@@ -116,48 +103,28 @@
           mask: true,
         });
 
-        if (!keyword) {
-          this.resultList=[];
-          this.isShowSearchHinit=true;
-          wepy.showModal({
-            title: '提示',
-            content: '搜索关键词不能为空',
-            showCancel: false,
+        if (!keyword) { //搜索关键词为空
+          wepy.showToast({
+            title: '搜索关键词不能为空', 
+            icon: 'none', 
+            duration: 1500, 
           });
+          
         } else {
-          this.keyword=keyword;
-          this.resultList = [{ //列表信息
-              photo: '../../image/upload/photo.jpeg',
-              name: '用户名称用户名称',
-              type: '家电',
-              tell: '14311234567',
-              content: '首先举个身边的例子，大致剧情是：开发团队因为某某原因，感觉测试人员“有些多余”，测试工作可以自己做。于是不再让测试团队跟，于是这么进行了两三次后，实在受不了线上“控制不住的”问题，于是又把测试人员请了回来。',
-              pics: [
-                'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
-                'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
-                'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
-                'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
-              ],
-              time: '2018-11-24 10:40',
-              see: '470'
-            },
-            {
-              photo: '../../image/upload/photo.jpeg',
-              name: '用户名称',
-              type: '家电',
-              tell: '14311234567',
-              content: '二手物品内容',
-              pics: [
-                'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
-                'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
-                'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
-                'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
-              ],
-              time: '2018-11-24 10:40',
-              see: '470'
-            }
-          ]
-          this.isShowSearchHinit = false;
+          this.msgList=[];
+          this.keyword = keyword;
+          let data = {
+            limit: this.limit + '',
+            page: this.page + '',
+            user_id: this.user_id + '',
+            labelCode: '',
+            searchQuery: this.keyword,
+          }
+
+          this.getListMsg(data).then(() => {
+            this.isShowSearchHinit = false;
+            wepy.hideLoading();
+          })
         }
         wepy.hideLoading();
       },
@@ -173,9 +140,72 @@
 
     }
 
-    onLoad(options) {
-      console.log('onload',options);
-      this.location = options.location
+    // 获取列表信息
+    async getListMsg(data) {
+      let list = await request.getGoodsLists(data);
+      console.log('列表信息', list);
+      this.isShowSearchHinit=false;
+      if (list && list.length > 0) {
+        this.msgList = list;
+      } else {
+        if(this.page==1){
+          this.noResultHinit=true;
+        }
+        this.$apply();
+        wepy.hideLoading();
+        return;
+      }
+
+      if (this.page == 1) {
+        this.msgList = list;
+        this.noResultHinit=false;
+      } else {
+        this.noResultHinit=true;
+        this.msgList = this.msgList.concat(list);
+      }
+      this.$apply();
+      wepy.hideLoading();
+    }
+
+    //获取热词
+    async getHotWord() {
+      let word = await request.getHotWord();
+      console.log('获取热词', word);
+
+      if (word && word.length > 0) {
+        this.hotWord = word;
+        this.$apply();
+      }
+      wepy.hideLoading();
+    }
+
+    //滑动到底部加载更多
+    onReachBottom() {
+      this.page++;
+      wepy.showLoading({
+        title: '加载中...',
+        mask: true,
+      });
+      let data = {
+        limit: this.limit,
+        page: this.page + '',
+        user_id: this.user_id,
+        labelCode: '',
+        searchQuery: this.keyword,
+      }
+      this.getListMsg(data).then(() => {
+        wepy.hideLoading();
+      })
+    }
+
+    async onLoad(options) {
+      console.log('onload', options);
+      let userInfo = await this.$parent.login();
+      if (userInfo) {
+        this.user_id = userInfo.id + '';
+      }
+      this.getHotWord();
+      this.$apply();
     }
   }
 

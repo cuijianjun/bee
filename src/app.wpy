@@ -29,7 +29,6 @@
         'pages/search/search',
         'pages/detail/detail',
         'pages/publish/publish',
-        'pages/publish-detail/publish-detail',
         'pages/modify-detail/modify-detail',
         'pages/my/index',
         'pages/my/myPublish',
@@ -71,7 +70,7 @@
     }
 
     globalData = {
-      isLogin:false, //是否登录标示
+      // isLogin:false, //是否登录标示
       userData:null,//用户业务数据
     }
 
@@ -143,36 +142,35 @@
      *
      * return 登录成功返回数据
      * */
-    async login(userInfo) {
-      let self = this;
-      if (self.globalData.userData) {
-        return self.globalData.userData;
-      }
+    async login() {
       let loginRes = await wepy.login();
-      let data={};
-      if(userInfo){
-        data={
-          code      :loginRes.code,
-          nickName  :userInfo.nickName || '',
-          avatarUrl :userInfo.avatarUrl ||'' ,
-          gender    :userInfo.gender || '',
-          country   :userInfo.country || '',
-          city      :userInfo.city|| '',
-        };
-      }else {
-        data={
+      if (this.globalData.userData) {
+          console.log('已经登录过了');
+          return this.globalData.userData;
+        }
+      let data={
           code      :loginRes.code,
         };
-      }
-      
-        // console.log('用户信息',userInfo);
       let d = await request.login(data);
        console.log('执行登录',d.userInfo);
       if (d) {
-        self.globalData.userData = d.userInfo;
+        this.globalData.userData = d.userInfo;
         return d.userInfo;
       } else {
         console.log('登录失败');
+        return false
+      }
+    }
+
+    //更新用户信息
+    async updataUserInfo(userInfo) {
+      let d = await request.updataUserInfo(userInfo);
+       console.log('更新用户信息',d);
+      if (d) {
+        this.globalData.userData = d;
+        return d;
+      } else {
+        console.log('更新用户信息失败');
         return false
       }
     }

@@ -1,0 +1,41 @@
+<style lang="less">
+  @import '../../style/base.less';
+  .hinit {
+    width: 100%;
+    height: 200rpx;
+    font-size: 40rpx;
+    color: #999;
+  }
+</style>
+<template>
+  <!-- 底部按钮 -->
+  <view class="hinit center-flex">
+    没有数据
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class FooterBtns extends wepy.component {
+    props = {
+      rankData: {
+        type: Object,
+        default: {}
+      }
+    }
+
+    data = {}
+    events = {}
+    watch = {}
+    methods = {
+      //跳转首页
+      returnToIndex() {
+        wepy.switchTab({
+          url: '/pages/index/index',
+        });
+      },
+    }
+    onLoad() {}
+
+  }
+</script>

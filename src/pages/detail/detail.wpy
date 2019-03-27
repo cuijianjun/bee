@@ -10,17 +10,18 @@
       <view class="publish-msg-item">
         <view class="msg-top-wrap">
           <view class="user-wrap">
-            <image class="user-photo" src="{{info.avatar}}" lazy-load="{{true}}"></image>
+            <image class="user-photo" src="{{info.user.avatarUrl}}" lazy-load="{{true}}"></image>
             <view class="user-msg-wrap">
-              <view class="user-name">{{info.weChatName}}</view>
-              <view>
-                <view class="msg-type">{{info.label}}</view>
-              </view>
+              <view class="user-name">{{info.user.nickName}}</view>
+              <view class="publish-time">1小时前 发布于{{info.city}}</view>
             </view>
           </view>
         </view>
-        <view class="msg-content-wrap cutText3" @tap="returnToDetail()">
-          {{info.description}}
+        <view class="price" >
+          ￥{{info.price}}
+        </view>
+        <view class="msg-content-wrap">
+          {{info.title}} {{info.description}}
         </view>
         <view class="msg-img-wrap">
           <repeat for="{{info.productImage}}" key="index" index="index" item="item">
@@ -36,14 +37,6 @@
           <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
           <text style="color: #3aa1c2;">{{info.pageView}}</text>人浏览
         </view>
-        <view class=" address-wrap">
-          <image class="address-icon" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false">
-          </image>
-          <text class="address-text">{{info.address}}</text>
-        </view>
-        <view class="time">
-          发布时间：{{info.updated_at}}发布
-        </view>
       </view>
     </view>
 
@@ -54,11 +47,17 @@
         <view class="txt"> 首页</view>
       </view>
       <view class="btn btn-collect" @tap="collect">
-        <image class="icon" src="{{collectIcon}}" mode="widthFix" lazy-load="false"></image>
-        <view class="txt {{info.collect.isCollect?'collectColor':''}}"> {{collectTxt}}</view>
+        <image class="icon"
+          src="{{info.collect.isCollect?'../../image/bg/icon_collect2.png':'../../image/bg/icon_collect1.png'}}"
+          mode="widthFix" lazy-load="false"></image>
+        <view class="txt"> {{info.collect.isCollect?'已收藏':'收藏'}}</view>
       </view>
       <view class="btn btn-tell" @tap="makePhone({{info.phoneNumber}})">
-        <view class="tell-txt">一键拨号</view>
+        <view class="tell-txt">联系卖家</view>
+        <view class="tell-number">{{info.tell}}</view>
+      </view>
+      <view class="btn btn-tell buy-btn" @tap="buy">
+        <view class="tell-txt">马上买</view>
         <view class="tell-number">{{info.tell}}</view>
       </view>
     </view>
@@ -89,27 +88,7 @@
     // mixins = [testMixin]
 
     data = {
-      info: {
-        avatar: '../../image/upload/photo.jpeg',
-        weChatName: '用户名称',
-        label: '家电',
-        address: '地址',
-        phoneNumber: '14311234567',
-        description: '二手物品内容',
-        productImage: [
-          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=933099183,1061075383&fm=173&app=49&f=JPEG?w=218&h=146&s=8EBE518520024B51182C6DBE0300D013',
-          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2995808925,1874778432&fm=173&app=49&f=JPEG?w=218&h=146&s=9E9702CA688F0055066FAFBE0300500E',
-          'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=452601273,754089038&fm=173&app=49&f=JPEG?w=218&h=146&s=4E9404C0BC417B475E2A844B030040DB',
-          'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3517882432,2193665558&fm=173&app=25&f=JPEG?w=218&h=146&s=F59B1DD50C581AC24EB1113C03008073',
-        ],
-        updated_at: '2018-11-24 10:40',
-        pageView: '470',
-        collect: {
-          isCollect: false
-        }, //收藏状态
-      },
-      collectIcon: '../../image/bg/icon_collect1.png',
-      collectTxt: '收藏',
+      info: {},
     }
 
     computed = {
@@ -127,7 +106,7 @@
       //跳转详情页
       reurnToIndex() {
         wepy.switchTab({
-          url: '/pages/index'
+          url: '/pages/index/index'
         });
       },
 
@@ -149,36 +128,58 @@
 
       //点击收藏
       collect() {
-        this.info.collect = !this.info.collect;
+        let that = this;
         let info = this.info;
         let data = {
           user_id: info.user_id,
           product_id: info.id,
-          isCollect: info.collect.isCollect,
+          isCollect: !info.collect.isCollect,
         }
 
-        if (this.info.collect) {
-          this.collectTxt = '已收藏';
-          this.collectIcon = '../../image/bg/icon_collect2.png';
+        if (info.collect.isCollect) {
+          request.getCollectState(data).then((res) => {
+            console.log('取消收藏', res);
+            if (res) {
+              that.info.collect.isCollect = false;
+              that.$apply()
+              wepy.showToast({
+                title: '取消收藏',
+                icon: 'none',
+                duration: 2000,
+                mask: true,
+              });
+            }else {
+              wepy.showToast({
+                title: '操作失败',
+                icon: 'none',
+                duration: 2000,
+                mask: true,
+              });
+            }
 
-          request.getCollectState(data).then(() => {
-            wepy.showToast({
-              title: '收藏成功',
-              icon: 'none',
-              duration: 1000,
-              mask: true,
-            });
+
           });
         } else {
-          this.collectTxt = '收藏';
-          this.collectIcon = '../../image/bg/icon_collect1.png';
-          request.getCollectState(data).then(() => {
-            wepy.showToast({
-              title: '取消收藏',
-              icon: 'none',
-              duration: 1000,
-              mask: true,
-            });
+          request.getCollectState(data).then((res) => {
+            console.log('收藏', res);
+            if(res){
+              that.info.collect.isCollect = true;
+              that.$apply()
+              wepy.showToast({
+                title: '收藏成功',
+                icon: 'success',
+                duration: 2000,
+                mask: true,
+              });
+            }else {
+              wepy.showToast({
+                title: '操作失败',
+                icon: 'none',
+                duration: 2000,
+                mask: true,
+              });
+            }
+            
           });
         }
       },
@@ -198,7 +199,6 @@
     }
 
     async onLoad(params) {
-      // await this.$parent.login(); //获取用户信息
       console.log(params);
       let data = {
         product_id: params.product_id,
@@ -212,8 +212,10 @@
       let list = await request.getGoodsDetail(data);
       console.log('列表信息', list);
       if (list) {
-        // this.info=list;      
+        this.info = list;
         this.$apply();
+      } else {
+
       }
     }
   }

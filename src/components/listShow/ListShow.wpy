@@ -1,0 +1,61 @@
+<style lang="less">
+  @import '../../style/base.less';
+  @import '../../style/list-show.less';
+
+</style>
+<template>
+  <view class="publish-msg-wrap">
+    <repeat for="{{msgList}}" key="index" index="index" item="item">
+      <view class="publish-msg-item" @tap="returnToDetail({{item.id}},{{item.user_id}})">
+        <view class="item-inner-wrap" >
+          <view class="pic-wrap">
+            <image class="pic" mode="aspectFill" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
+          </view>
+          <view class="content-wrap">
+            <view class="title cutText2">{{item.title}}</view>
+            <view class="middle-wrap">
+              <view class="price">￥{{item.price}}</view>
+              <view class="people">{{item.pageView}}人想要</view>
+            </view>
+            <view class="footer">
+              <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
+              <view class="msg-wrap">
+                <view class="name cutText1">{{item.user.nickName}}</view>
+                <view class="address">{{item.city}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+   export default class ListShow extends wepy.component {
+    props = {
+      
+      msgList:{
+        
+      },
+    }
+
+    data = {}
+    events = {}
+    watch = {}
+    methods = {
+      //跳转详情页
+      returnToDetail(product_id,user_id) {
+        wepy.navigateTo({
+          url: `/pages/detail/detail?product_id=${product_id}&user_id=${user_id}`
+        });
+      },
+    }
+    onLoad(params) {
+      console.log('组件list-show',this.title);
+    } 
+  }
+
+</script>
