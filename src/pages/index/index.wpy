@@ -1,12 +1,11 @@
 <style lang="less">
   @import '../../style/base.less';
-  // @import '../../style/list.less';
   @import '../../style/list-show.less';
   @import './index.less';
 
 </style>
 <template>
-  <view class="container">
+  <view class="container" style="padding-top:{{position?214:114}}rpx;">
     <!-- 搜索框 -->
     <view class="search-wrap center-flex">
       <view class="location-wrap center-flex">
@@ -26,7 +25,7 @@
     </view>
 
     <!-- swiper -->
-    <view class="swiper-wrap" wx:if="{{swiperData.arr.length>0}}">
+    <view class="swiper-wrap" wx:if="{{swiperData.arr.length>0}}" id="swiper">
       <swiper class="swiper-inner-wrap" indicator-dots="{{swiperData.indicatorDots}}" autoplay="{{swiperData.autoplay}}"
         interval="{{swiperData.interval}}" duration="{{swiperData.duration}}" circular="{{swiperData.circular}}"
         indicator-color="rgba(240,240,240,1)" indicator-active-color="rgba(234,68,78,1)">
@@ -43,7 +42,7 @@
     </view>
 
     <!-- 信息类型-->
-    <view class="type-container">
+    <view class="type-container {{position?'type-style1':'type-style2'}}">
       <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
         <repeat for="{{type}}" key="index" index="index" item="item">
           <view class="type-item {{currentTypeIndex==index?'active-type':''}}"
@@ -52,69 +51,35 @@
       </scroll-view>
     </view>
 
-    <!-- 发表内容项 -->
+    <!-- 信息列表 -->
     <view class="publish-msg-wrap">
       <repeat for="{{msgList}}" key="index" index="index" item="item">
-        <view class="publish-msg-item">
-          <view class="msg-top-wrap">
-            <view class="user-wrap">
-              <image class="user-photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
-              <view class="user-msg-wrap">
-                <view class="user-name">{{item.user.nickName}}</view>
-                <view>
-                  <view class="msg-type">{{item.labels[0].labelName}}</view>
+        <view class="publish-msg-item" @tap="returnToDetail({{item.id}},{{item.user_id}})">
+          <view class="item-inner-wrap">
+            <view class="pic-wrap">
+              <image class="pic" mode="aspectFill" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
+            </view>
+            <view class="content-wrap">
+              <view class="title cutText2">{{item.title}}</view>
+              <view class="middle-wrap">
+                <view class="price">￥{{item.price}}</view>
+                <view class="people">{{item.pageView}}人想要</view>
+              </view>
+              <view class="footer">
+                <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
+                <view class="msg-wrap">
+                  <view class="name cutText1">{{item.user.nickName}}</view>
+                  <view class="address">{{item.city}}</view>
                 </view>
               </view>
             </view>
-            <view class="msg-tell-wrap center-flex" @tap="makePhone({{item.phoneNumber}})">
-              <image class="icon-tell" src="../../image/bg/icon-tell.png" lazy-load="{{true}}"></image>
-              拨打电话
-            </view>
-          </view>
-          <view class="msg-content-wrap cutText3" @tap="returnToDetail({{item.id}},{{item.user_id}})">
-            {{item.description}}
-          </view>
-          <view class="msg-img-wrap">
-            <repeat for="{{item.pics}}" key="index" index="index" item="item2">
-              <image class="msg-img" src="{{item2}}" lazy-load="{{true}}" @tap="previewImg({{item2}},{{item.pics}})">
-              </image>
-            </repeat>
-          </view>
-          <view class="msg-time-wrap">
-            {{item.updated_at}}发布
-          </view>
-          <view class=" address-wrap">
-            <image class="address-icon" src="../../image/bg/icon_location.png" mode="scaleToFill" lazy-load="false">
-            </image>
-            <text class="address-text">{{item.address}}</text>
-          </view>
-          <view class="msg-see-wrap">
-            <view class="see-count-wrap">
-              <image class="icon-see" src="../../image/bg/icon-see.png" mode="widthFix" lazy-load="false"></image>
-              <text style="color: #3aa1c2;">{{item.pageView}}</text>人浏览
-            </view>
-            <view class="see-detail" @tap="returnToDetail({{item.id}},{{item.user_id}})">查看详情</view>
-          </view>
-        </view>
-        <view class="publish-msg-item">
-          <view class="msg-top-wrap">
-            <image class="pic" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
-            <view class="title">{{item.title}}</view>
-            <view class="type-wrap">
-              <view class="label">{{item.labels[0].labelName}}</view>
-              <view class="address">{{item.city}}</view>
-            </view>
-            <view class="">
-              <view class="price">{{item.price}}</view>
-              <view class="people">{{item.pageView}}</view>
-            </view>
-          </view>
-          <view class="msg-bottom-wrap">
-            <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
-            <view class="name">{{item.user.nickName}}</view>
           </view>
         </view>
       </repeat>
+    </view>
+    <!-- 没有搜索结果提示 -->
+    <view class="no-result-hinit center-flex" wx:if="{{msgList<=0}}" style="font-size:40rpx;height:300rpx;">
+      没有您想要的内容
     </view>
 
     <!-- 侧边按钮 -->
@@ -133,6 +98,7 @@
 <script>
   import wepy from 'wepy'
   import request from '../../lib/api/request'
+  import noMsgHinit from '../../components/noMsgHinit/noMsgHinit'
 
   export default class Index extends wepy.page {
     config = {
@@ -159,9 +125,15 @@
       limit: '20',
       msgList: [],
       type: [], //信息产品类型
-      labelCode:'',//类型码
+      labelCode: '', //类型码
       currentTypeIndex: 0, //当前信息类型
       page: 1,
+      swiperHeight:'',
+      position:0,//类型块的定位方式 1为固定定位，0为相对定位
+    }
+
+    components = {
+      noMsgHinit: noMsgHinit, //没有数据提示块
     }
 
     computed = {
@@ -169,25 +141,11 @@
     }
 
     methods = {
-      //点击拨打电话
-      makePhone(tell) {
-        wepy.makePhoneCall({
-          phoneNumber: tell
-        });
-      },
 
       //跳转详情页
-      returnToDetail(product_id,user_id) {
+      returnToDetail(product_id, user_id) {
         wepy.navigateTo({
           url: `/pages/detail/detail?product_id=${product_id}&user_id=${user_id}`
-        });
-      },
-
-      //预览图片
-      previewImg(current, urls) {
-        wepy.previewImage({
-          current: current,
-          urls: urls,
         });
       },
 
@@ -201,10 +159,11 @@
 
       //切换信息类型
       getCurrentType(idx, labelCode) {
+        console.log('type', idx, labelCode);
         this.currentTypeIndex = idx;
-        this.labelCode=labelCode;
+        this.labelCode = labelCode;
         this.page = 1;
-        this.msgList=[];
+        this.msgList = [];
         let data = {
           limit: this.limit,
           page: this.page + '',
@@ -235,12 +194,44 @@
         } else {
           this.address = addressArr[1];
         }
-        this.searchQuery = addressArr.join('').replace(/全部/g, '');
+        let searchQuery = addressArr.join('').replace(/全部/g, '');
+        this.searchQuery = searchQuery;
+
+        let data = {
+          limit: this.limit,
+          page: this.page + '',
+          user_id: this.user_id,
+          labelCode: this.labelCode,
+          searchQuery: searchQuery,
+        }
+        this.getListMsg(data).then(() => {
+          wepy.hideLoading();
+        })
+      },
+
+      //滑动
+      onPageScroll(e){
+        console.log(e.scrollTop);
+        let scrollTop=e.scrollTop;
+        if(scrollTop>=this.swiperHeight){
+          this.position=1;
+        }else {
+          this.position=0;
+        }
       }
     }
 
-    events = {
+    getSwiperHeight(){
+      let that = this;
+      wx.createSelectorQuery().select('#swiper').boundingClientRect(function (rect) {
+        console.log('rect',rect);
+        that.swiperHeight=rect.height;
+        that.$apply();
+      }).exec()
+    }
 
+    events = {
+      
     }
 
     async onLoad() {
@@ -248,25 +239,30 @@
       //   title: '加载中', 
       //   mask: true, 
       // });
+      // console.log(ListShow);
+      let userInfo = await this.$parent.login();
+      if (userInfo) {
+        this.user_id = userInfo.id + '';
+      }  
+      this.$apply();
       this.getBanner(); //获取banner和类型
     }
 
     // 获取banner和类型
     async getBanner() {
       let res = await request.getTypeList();
-      console.log(res);
       if (res) {
         console.log('banner', res);
         this.swiperData.arr = res.rows;
         this.type = res.label.rows;
         this.labelCode = res.label.rows[0].code;
         this.$apply();
-  
+
         let data = {
-          limit: this.limit,
+          limit: this.limit + '',
           page: this.page + '',
-          user_id: this.user_id,
-          labelCode: this.labelCode,
+          user_id: this.user_id + '',
+          labelCode: this.labelCode + '',
           searchQuery: this.searchQuery,
         }
         this.getListMsg(data); //获取列表信息
@@ -277,7 +273,7 @@
     async getListMsg(data) {
       let list = await request.getGoodsLists(data);
       console.log('列表信息', list);
-      
+
       if (list && list.length > 0) {
         this.msgList = list;
       } else {
@@ -292,6 +288,7 @@
       }
       this.$apply();
       wepy.hideLoading();
+      this.getSwiperHeight();
     }
 
     //滑动到底部加载更多
@@ -311,6 +308,7 @@
       this.getListMsg(data).then(() => {
         wepy.hideLoading();
       })
+
     }
 
   }

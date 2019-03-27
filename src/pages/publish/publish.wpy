@@ -16,9 +16,9 @@
         <!-- 内容描述部分 -->
         <view class="publish-msg-wrap">
           <input name="title" class="brief title" placeholder="标题 品类品牌型号都是买家喜欢搜索的" value="{{tell}}" type="number"
-            maxlength="11"></input>
+            maxlength="50"></input>
           <view class="product-brief-wrap">
-            <textarea class="brief" maxlength="540" value="{{brief}}" placeholder="产品简介 请输入宝贝的详情" auto-height="true"
+            <textarea class="brief" maxlength="500" value="{{brief}}" placeholder="产品简介 请输入宝贝的详情" auto-height="true"
               name="description" />
             </view>
           <view class="product-pic">
@@ -76,8 +76,8 @@
       <!-- 发布按钮 -->
       <view class="publish-btn center-flex">
         发布
-        <button wx:if="{{true}}" form-type="submit" class="button-cover"></button>
-        <!-- <button  class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button> -->
+        <button wx:if="{{userInfo.nickName && userInfo.avatarUrl}}" form-type="submit" class="button-cover"></button>
+        <button wx:else class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
       </view>
     </form>
   </view>
@@ -111,7 +111,8 @@
       label: '',//类型
       address: '',//地址
       isAccredit: false,//获取位置是否授权
-      id: '',
+      accredit: false,//是否授权
+      userInfo:{},
     }
 
     computed = {}
@@ -122,73 +123,61 @@
       formSubmit(e) {
         let value = e.detail.value;
         if (!value.title) {
-          wepy.showModal({
-            title: '提示',
-            content: '标题不能为空',
-            showCancel: false,
-          });
-
+          wepy.showToast({
+            title: '标题不能为空', 
+            icon: 'none',
+            duration: 1500, 
+          });  
         } else if (!value.description) {
-          wepy.showModal({
-            title: '提示',
-            content: '简介不能为空',
-            showCancel: false,
-          });
+          wepy.showToast({
+            title: '简介不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          });  
         } else if (this.picsTotal.length<=0) {
-          wepy.showModal({
-            title: '提示',
-            content: '图片不能为空',
-            showCancel: false,
-          });
+          wepy.showToast({
+            title: '图片不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          });  
         } else if (!value.phoneNumber) {
-          wepy.showModal({
-            title: '提示',
-            content: '联系方式不能为空',
-            showCancel: false,
-          });
+          wepy.showToast({
+            title: '联系方式不能为空',
+            icon: 'none', 
+            duration: 1500, 
+          }); 
         } else if (!(/^1\d{10}$/.test(value.phoneNumber))) {
-          wepy.showModal({
-            title: '提示',
-            content: '联系方式有误',
-            showCancel: false,
-          });
+          wepy.showToast({
+            title: '联系方式有误', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
         } else if (!value.price) {
-          wepy.showModal({
-            title: '提示',
-            content: '价格不能为空',
-            showCancel: false,
-          });
+          wepy.showToast({
+            title: '价格不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
         } else if (!this.typeIndex) {
-          wepy.showModal({
-            title: '提示',
-            content: '类型不能为空',
-            showCancel: false,
-          });
+          wepy.showToast({
+            title: '类型不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
         } else if (!value.address || value.address=="请选择地址") {
-          wepy.showModal({
-            title: '提示',
-            content: '地址不能为空',
-            showCancel: false,
-          });
+          wepy.showToast({
+            title: '地址不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
         } else {
           wepy.showLoading({
             title: '发布中...',
             mask: true,
           });
           
-          value.user_id = this.id+'';
+          value.user_id = this.userInfo.id+'';
           value.labelCode = (this.typeIndex-0)+1+'';
-         console.log(typeof value.user_id); 
-         console.log(typeof  value.labelCode); 
-          // value.productImage='';
-          // this.pics_key.forEach((ele,idx) => {
-          //   if(idx<this.pics_key.length-1){
-          //     value.productImage=value.productImage+ele+','
-          //   }else {
-          //     value.productImage=value.productImage+ele
-          //   }
-            
-          // });
           value.productImage=this.pics_key.join(',');
           console.log('图片字符串', value.productImage);
           console.log('发布信息value',value);
@@ -198,8 +187,7 @@
 
       //获取价格
       getPrice(e){
-        let value=(e.detail.value)-0;
-        this.price=value.toFixed(2);
+        this.price=e.detail.value;
       },
 
       //选择地址
@@ -219,17 +207,20 @@
       //点击授权按钮，获取用户信息
       async getUserInfo(e) {
         if (e.detail.userInfo) {
-          // console.log(e.detail.userInfo);
-         let userInfo= await this.$parent.login(e.detail.userInfo); //获取用户信息
-         console.log('授权获取信息',userInfo);
-         this.id=userInfo.id;
-         this.$apply();
-         wepy.showToast({
-            title: '授权成功，请点击发布按钮发布信息', 
-            icon: 'none', 
-            showCancel: false,
-            duration:2000,
-         });
+          let userInfo=e.detail.userInfo;
+          userInfo.id=this.userInfo.id+'';
+          userInfo.gender= userInfo.gender+'';
+          let info= await this.$parent.updataUserInfo(userInfo); //获取用户信息
+          if(info){
+            this.userInfo=info;
+          }
+          this.$apply();
+          wepy.showToast({
+              title: '授权成功，请点击发布按钮发布信息', 
+              icon: 'none', 
+              showCancel: false,
+              duration:2000,
+          });
         } else {
           wepy.showModal({
             title: '温馨提示', 
@@ -353,8 +344,10 @@
     }
 
     //发布信息
-    publishInfo(value){
-      let res = request.publishGoodsMsg(value);
+    async publishInfo(value){
+      console.log('发布信息',value);
+      let res =await request.publishGoodsMsg(value);
+      console.log('发布信息2',res);
       if(res){
         wepy.hideLoading();
         wepy.showToast({
@@ -375,11 +368,7 @@
     events = {}
 
     async onLoad() {
-      // if (util.checkStorageLogin()) {
-      //   this.isLogin = true;
-      // }
-      let userData=await this.$parent.login();
-      this.id=userData.id;
+      this.userInfo=await this.$parent.login();
       this.getTypeList();//获取类型
       this.$apply();
     }

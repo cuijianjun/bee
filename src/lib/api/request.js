@@ -20,14 +20,36 @@ class base {
 
     let res = await wepy.request({
       url: this.HOSTURL + 'login',
-      data: data,
+      data: data || {},
       method: 'POST',
       header: header,
     });
-    console.log('data',res.data);
+    console.log('登录接口',res.data);
     let msg = res.data;
     if(msg){
       return msg;
+    }else {
+      return false;
+    }  
+  }
+
+  //更新用户信息
+  async updataUserInfo(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/x-www-form-urlencoded' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + 'api/user/update',
+      data: data || {},
+      method: 'POST',
+      header: header,
+    });
+    console.log('更新用户信息',res.data);
+    let msg = res.data;
+    if(msg.code==201){
+      return msg.data;
     }else {
       return false;
     }  
@@ -42,7 +64,7 @@ class base {
 
     let res = await wepy.request({
       url: this.HOSTURL + 'api/product_list/list',
-      data: data,
+      data: data || {},
       method: 'POST',
       header: header,
     });
@@ -53,6 +75,27 @@ class base {
     }
   }
 
+  //获取热词
+  async getHotWord(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + 'api/hot_search/list',
+      data: data || {},
+      header: header,
+    });
+    let msg = res.data;
+    console.log('获取热词', msg);
+    if (msg.code == 200) {
+      return msg.data;
+    }
+  }
+
+
+
   //详情
   async getGoodsDetail(data) {
     let token = creatToken(data);
@@ -62,33 +105,38 @@ class base {
 
     let res = await wepy.request({
       url: this.HOSTURL + `api/product_list/detail/${data.product_id}/${data.user_id}`,
+      data:data || {},
       header: header,
     });
     let msg = res.data;
     console.log('详情数据', res);
-    // if (msg.code == 201) {
-    //   return msg.data;
-    // }
+    if (msg.code == 200) {
+      return msg.data;
+    }else {
+      return false;
+    }
   }
 
   //收藏
-  // async getCollectState(data) {
-  //   let token = creatToken(data);
-  //   let header = Object.assign({
-  //     'content-type': 'application/json' // 默认值
-  //   }, token);
+  async getCollectState(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
 
-  //   let res = await wepy.request({
-  //     url: this.HOSTURL + 'api/collect/collect',
-  //     data: data,
-  //     method: 'POST',
-  //   });
-  //   let msg = res.data;
-  //   console.log('详情数据', res);
-  //   if (msg.code == 200) {
-  //     return data.data;
-  //   }
-  // }
+    let res = await wepy.request({
+      url: this.HOSTURL + 'api/collect/collect',
+      data: data,
+      method: 'POST',
+    });
+    
+    let msg = res.data;
+    if (msg.code == 200) {
+      return true;
+    }else {
+      return false;
+    }
+  }
 
   //发布信息
   async publishGoodsMsg(data) {
@@ -104,7 +152,7 @@ class base {
       header: header,
     })
     let msg = res.data;
-    // console.log('发布信息结果', msg);
+    console.log('发布信息结果', msg);
     if (msg.code == 201) {
       return true;
     }else {
@@ -162,7 +210,7 @@ class base {
     let header = Object.assign({
       'Content-Type':'application/json',
     },token);
-
+    console.log('调用获取类型函数');
     let res = await wepy.request({
       url: this.HOSTURL + 'api/banner/get',
       header: header,
