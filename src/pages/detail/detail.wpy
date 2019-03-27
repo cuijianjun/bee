@@ -136,11 +136,11 @@
           isCollect: !info.collect.isCollect,
         }
 
-        if (this.info.collect) {
+        if (info.collect.isCollect) {
           request.getCollectState(data).then((res) => {
             console.log('取消收藏', res);
             if (res) {
-              that.info.collect = false;
+              that.info.collect.isCollect = false;
               that.$apply()
               wepy.showToast({
                 title: '取消收藏',
@@ -163,7 +163,7 @@
           request.getCollectState(data).then((res) => {
             console.log('收藏', res);
             if(res){
-              that.info.collect = true;
+              that.info.collect.isCollect = true;
               that.$apply()
               wepy.showToast({
                 title: '收藏成功',

@@ -131,7 +131,7 @@ class base {
     });
     
     let msg = res.data;
-    if (msg.code == 200) {
+    if (msg.code == 201 || msg.code == 200) {
       return true;
     }else {
       return false;
