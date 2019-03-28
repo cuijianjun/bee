@@ -78,7 +78,7 @@
       </repeat>
     </view>
     <!-- 没有搜索结果提示 -->
-    <view class="no-result-hinit center-flex" wx:if="{{msgList<=0}}" style="font-size:40rpx;height:300rpx;">
+    <view class="no-result-hinit center-flex" wx:if="{{isShowHinit}}" style="font-size:40rpx;height:300rpx;">
       没有您想要的内容
     </view>
 
@@ -124,6 +124,7 @@
       user_id: '',
       limit: '20',
       msgList: [],
+      isShowHinit:false,//是否显示没信息时的提示
       type: [], //信息产品类型
       labelCode: '', //类型码
       currentTypeIndex: 0, //当前信息类型
@@ -277,6 +278,10 @@
       if (list && list.length > 0) {
         this.msgList = list;
       } else {
+        if(this.page==1){
+          this.isShowHinit=true;
+        }
+        this.$apply();
         wepy.hideLoading();
         return;
       }

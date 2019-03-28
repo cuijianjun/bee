@@ -13,7 +13,7 @@
             <image class="user-photo" src="{{info.user.avatarUrl}}" lazy-load="{{true}}"></image>
             <view class="user-msg-wrap">
               <view class="user-name">{{info.user.nickName}}</view>
-              <view class="publish-time">1小时前 发布于{{info.city}}</view>
+              <view class="publish-time">{{info.updated_at}} 发布于{{info.city}}</view>
             </view>
           </view>
         </view>
@@ -76,6 +76,7 @@
 <script>
   import wepy from 'wepy'
   import request from '../../lib/api/request'
+  import util from '../../lib/util'
 
   export default class Index extends wepy.page {
     config = {
@@ -212,6 +213,7 @@
       let list = await request.getGoodsDetail(data);
       console.log('列表信息', list);
       if (list) {
+        list.updated_at=util.formatTime(list.updated_at-0);
         this.info = list;
         this.$apply();
       } else {
