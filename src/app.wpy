@@ -192,25 +192,25 @@
       this.globalData.userData = await wepy.getUserInfo();
       console.log('用户信息',this.globalData.userData);
     }
-    //初始化登录状态
-    loginInit(){
-      let loginStroage  = util.checkStorageLogin()
-      if(!loginStroage){
-        console.log('无缓存，未登陆')
-        this.globalData.isLogin = false;
-      }else{
-        console.log('有缓存，已登陆')
-        this.globalData.isLogin = true;
-        this.globalData.userData = loginStroage;
-      }
-    }
+    // //初始化登录状态
+    // loginInit(){
+    //   let loginStroage  = util.checkStorageLogin()
+    //   if(!loginStroage){
+    //     console.log('无缓存，未登陆')
+    //     this.globalData.isLogin = false;
+    //   }else{
+    //     console.log('有缓存，已登陆')
+    //     this.globalData.isLogin = true;
+    //     this.globalData.userData = loginStroage;
+    //   }
+    // }
 
     onLaunch(options) {
       let self = this;
       self.globalData.scene = options.scene;//保存场景值
       self.uploadApp(); //更新小程序
       self.getSystemInfo(); //获取设备信息
-      self.loginInit();
+      // self.loginInit();
       // self.getWxInfo()
       // self.onLoad()  //登陆，获取用户信息
     }
