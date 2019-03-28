@@ -220,6 +220,15 @@
 
       }
     }
+
+    //分享
+    onShareAppMessage() {
+      return {
+        title: this.info.title,
+        path: '/pages/detail/detail',
+        imageUrl: this.info.productImage[0],
+      };
+    }
   }
 
 </script>

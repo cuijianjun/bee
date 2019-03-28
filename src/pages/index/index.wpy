@@ -316,6 +316,15 @@
 
     }
 
+     //分享
+    onShareAppMessage() {
+      return {
+        title: '优质二手资源等您来淘',
+        path: '/pages/index/index',
+        imageUrl: ''
+      };
+    }
+
   }
 
 </script>
