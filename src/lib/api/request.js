@@ -277,7 +277,7 @@ class base {
   //发起微信支付请求
   async reqPayment() {
     //先请求服务器接口获取五个参数
-    let payPara = await sendPayReq();
+    let payPara = await this.sendPayReq();
     //再通过五个参数发起微信支付请求
     let res = await wepy.requestPayment({
       timeStamp: payPara.timeStamp,
