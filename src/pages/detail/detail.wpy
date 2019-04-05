@@ -54,11 +54,9 @@
       </view>
       <view class="btn btn-tell" @tap="makePhone({{info.phoneNumber}})">
         <view class="tell-txt">联系卖家</view>
-        <view class="tell-number">{{info.tell}}</view>
       </view>
       <view class="btn btn-tell buy-btn" @tap="buy">
         <view class="tell-txt">马上买</view>
-        <view class="tell-number">{{info.tell}}</view>
       </view>
     </view>
 
@@ -184,6 +182,11 @@
           });
         }
       },
+
+      //马上买
+      buy(){
+        request.reqPayment();
+      }
 
     }
 
