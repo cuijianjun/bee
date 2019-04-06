@@ -1,97 +1,10 @@
 <style lang="less">
   @import '../../style/base.less';
-  @import '../../style/list-show.less';
-  @import './index.less';
 
 </style>
 <template>
   <view class="container" style="padding-top:{{position?214:114}}rpx;">
-    <!-- 搜索框 -->
-    <view class="search-wrap center-flex">
-      <view class="location-wrap center-flex">
-        <view class="address-txt">{{address}}</view>
-        <image class="more-icon" src="../../image/bg/icon_more.png" mode="widthFill" lazy-load="{{false}}"></image>
-        <picker class="button-cover" mode="region" @change="regionChange" value="{{region}}"
-          custom-item="{{customItem}}">
-          <view class="picker button-cover">
-            当前选择：{{region[0]}}，{{region[1]}}，{{region[2]}}
-          </view>
-        </picker>
-      </view>
-      <view class="search-inner-wrap center-flex" @tap="returnToSeach">
-        <image class="search-icon" src="../../image/bg/icon-search.png" lazy-load="{{false}}"></image>
-        <view class="search-text">请输入帖子内容搜索</view>
-      </view>
-    </view>
-
-    <!-- swiper -->
-    <view class="swiper-wrap" wx:if="{{swiperData.arr.length>0}}" id="swiper">
-      <swiper class="swiper-inner-wrap" indicator-dots="{{swiperData.indicatorDots}}" autoplay="{{swiperData.autoplay}}"
-        interval="{{swiperData.interval}}" duration="{{swiperData.duration}}" circular="{{swiperData.circular}}"
-        indicator-color="rgba(240,240,240,1)" indicator-active-color="rgba(234,68,78,1)">
-        <repeat for="{{swiperData.arr}}" key="{{index}}" index="index" item="item">
-          <swiper-item class="banner-item">
-            <image class="swiper-img" src="{{item.imageUrl}}" />
-            <view class="banner-shadow"></view>
-            <view class="banner-brief">
-              {{item.description}}
-            </view>
-          </swiper-item>
-        </repeat>
-      </swiper>
-    </view>
-
-    <!-- 信息类型-->
-    <view class="type-container {{position?'type-style1':'type-style2'}}">
-      <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
-        <repeat for="{{type}}" key="index" index="index" item="item">
-          <view class="type-item {{currentTypeIndex==index?'active-type':''}}"
-            @tap="getCurrentType({{index}},{{item.code}})">{{item.labelName}}</view>
-        </repeat>
-      </scroll-view>
-    </view>
-
-    <!-- 信息列表 -->
-    <view class="publish-msg-wrap">
-      <repeat for="{{msgList}}" key="index" index="index" item="item">
-        <view class="publish-msg-item" @tap="returnToDetail({{item.id}},{{item.user_id}})">
-          <view class="item-inner-wrap">
-            <view class="pic-wrap">
-              <image class="pic" mode="aspectFill" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
-            </view>
-            <view class="content-wrap">
-              <view class="title cutText2">{{item.title}}</view>
-              <view class="middle-wrap">
-                <view class="price">￥{{item.price}}</view>
-                <view class="people">{{item.pageView}}人想要</view>
-              </view>
-              <view class="footer">
-                <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
-                <view class="msg-wrap">
-                  <view class="name cutText1">{{item.user.nickName}}</view>
-                  <view class="address">{{item.city}}</view>
-                </view>
-              </view>
-            </view>
-          </view>
-        </view>
-      </repeat>
-    </view>
-    <!-- 没有搜索结果提示 -->
-    <view class="no-result-hinit center-flex" wx:if="{{isShowHinit}}" style="font-size:40rpx;height:300rpx;">
-      没有您想要的内容
-    </view>
-
-    <!-- 侧边按钮 -->
-    <view class="contact-wrap center-flex">
-      客服
-      <button class="contact-btn button-cover" open-type="contact"></button>
-    </view>
-
-    <!-- 返回顶部 -->
-    <view class="return-to-top center-flex" @tap="returnToTop">
-      <image class="icon-to-top" src="../../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"></image>
-    </view>
+     订单详情
   </view>
 </template>
 

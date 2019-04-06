@@ -30,7 +30,7 @@
         'pages/detail/detail',
         'pages/publish/publish',
         'pages/modify-detail/modify-detail',
-        'pages/my/index',
+        'pages/my/my',
         'pages/my/myPublish',
         'pages/my/myOrder',
         'pages/infoList/index',
@@ -63,7 +63,7 @@
           {
             iconPath: 'static/images/navigationBar/people.png',
             selectedIconPath: 'static/images/navigationBar/people_active.png',
-            pagePath: 'pages/my/index',
+            pagePath: 'pages/my/my',
             text: '我的'
           }
         ]

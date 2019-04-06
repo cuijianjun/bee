@@ -9,7 +9,7 @@ export default class MyIndex extends wepy.page {
   config = {};
 
   data = {
-    isLogin:false, //是否登录
+    user_id:'',
   };
   methods = {
     navigateTo(url) {
@@ -21,10 +21,12 @@ export default class MyIndex extends wepy.page {
   };
 
   events = {};
-  onLoad() {
+  async onLoad() {
     let self = this;
-    console.log('globalData',this.$parent.globalData);
-    self.userInfo = this.$parent.globalData.userData;
+    let userInfo = await this.$parent.login();
+      if (userInfo) {
+        this.user_id = userInfo.id + '';
+      }  
     self.$apply();
   }
 
@@ -54,12 +56,14 @@ export default class MyIndex extends wepy.page {
     bindgetuserinfo="bindGetUserInfo"></button>
 </view>
     <view class="user">
-     
-      
-      <view class="right">
-        
-        <view class="join">更新信息</view>
-      </view>
+     <view>
+       <image src="{{}}" mode="scaleToFill" lazy-load="false"></image>
+     </view>
+     <view>
+      <view>昵称</view>
+      <view>更新信息</view>
+     </view>
+       
     </view>
     <view class="myInfobox">
       <view class="item">
@@ -84,24 +88,12 @@ export default class MyIndex extends wepy.page {
           <view>我发布的</view>
         </view>
         <view class="item" @tap="navigateTo('/pages/my/myOrder')">
-        <i class="iconfont icon-wodedingdan"></i>
+          <i class="iconfont icon-wodedingdan"></i>
           <view>我的订单</view>
         </view>
-        <view class="item" hidden='true'>
-        <i class="iconfont icon-wodeqiaquanicon"></i>
-          <view>我的卡券</view>
-        </view>
-        <view class="item" hidden='true'>
-        <i class="iconfont icon-wodepintuan"></i>
-          <view>我的拼团</view>
-        </view>
-        <view class="item" hidden='true'>
-          <i class="iconfont icon-jifenshangcheng"></i>
-          <view>积分商城</view>
-        </view>
-        <view class="item" hidden='true'>
-          <i class="iconfont icon-wode-dizhi"></i>
-          <view>我的地址</view>
+        <view class="item" @tap="navigateTo('/pages/my/myOrder')">
+          <i class="iconfont icon-wodedingdan"></i>
+          <view>我的收藏</view>
         </view>
       </view>
     </view>
@@ -124,19 +116,8 @@ export default class MyIndex extends wepy.page {
       </view>
     </view>
 
-    <view class="btn-box" hidden='true'>
-      <view class="title"><i class="iconfont icon-star"></i>商家服务</view>
-      <view class="inner-list">
-        <view class="item">
-          <i class="iconfont icon-shanghu"></i>
-          <view>商家入口</view>
-        </view>
-
-      </view>
-    </view>
-
 </template>
 
 <style lang="less">
-@import 'index';
+@import 'my';
 </style>
