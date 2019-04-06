@@ -35,6 +35,7 @@
         'pages/my/myOrder',
         'pages/infoList/index',
         'pages/business/index',
+        'pages/order-detail/order-detail',
       ],
       window: {
         backgroundTextStyle: 'light',

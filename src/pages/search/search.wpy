@@ -133,6 +133,11 @@
       getSearchKeyword(e) {
         console.log(e);
         this.keyword = e.detail.value;
+        if(!e.detail.value){//关键词为空
+          this.msgList=[];
+          this.isShowSearchHinit=true;
+          this.noResultHinit=false;
+        }
       },
     }
 
