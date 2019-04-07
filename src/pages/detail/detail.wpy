@@ -186,7 +186,11 @@
 
       //马上买
       buy(){
-        request.reqPayment();
+        let data ={
+          user_id:this.user_id,
+          product_id:this.info.id,
+        }
+        request.reqPayment(data);
       }
 
     }
