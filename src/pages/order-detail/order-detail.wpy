@@ -31,8 +31,8 @@
     </view>
 
     <view class="footer-wrap">
-      <view class="money">付款合计：¥0.02</view>
-      <view class="pay-btn">去付款</view>
+      <view class="money">付款合计：¥20</view>
+      <view class="pay-btn center-flex">去付款</view>
     </view>
   </view>
 </template>
@@ -55,9 +55,7 @@
      
     }
 
-    components = {
-      noMsgHinit: noMsgHinit, //没有数据提示块
-    }
+    components = {}
 
     computed = {
 
@@ -65,41 +63,34 @@
 
     methods = {
 
-    
-      
-
-     
-
-
-      
-
-      
+      //付款
+      async payment(){
+        let data={};
+        let orderInfo = await request.reqPayment(data);
+      }  
     }
-
-    
 
     events = {
       
     }
 
-    async onLoad() {
-      // wepy.showLoading({
-      //   title: '加载中', 
-      //   mask: true, 
-      // });
-      // console.log(ListShow);
-      let userInfo = await this.$parent.login();
-      if (userInfo) {
-        this.user_id = userInfo.id + '';
-      }  
-      this.$apply();
-      // this.getBanner(); //获取banner和类型
+    async onLoad(params) {
+      wepy.showLoading({
+        title: '加载中', 
+        mask: true, 
+      }); 
+      let data={
+        user_id:params.user_id,
+        product_id:params.product_id,
+        total_count:params.total_count,
+      }
+      this.createOrder(data); //获取banner和类型
     }
 
-    // 获取列表信息
-    async getListMsg(data) {
-      let list = await request.getGoodsLists(data);
-      console.log('列表信息', list);
+    //生成订单
+    async createOrder(data) {
+      let orderInfo = await request.sendPayReq(data);
+      console.log('订单信息', orderInfo);
     }
   }
 

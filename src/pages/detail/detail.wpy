@@ -186,21 +186,11 @@
 
       //马上买
       buy(){
-        let data ={
-          user_id:this.user_id,
-          product_id:this.info.id,
-        }
-        request.reqPayment(data);
+        wepy.navigateTo({ 
+          url: `/pages/order-detail/order-detail?user_id=${this.user_id}&product_id=${this.info.id}&total_count=1`
+        }); 
       }
 
-    }
-
-    //分享
-    onShareAppMessage() {
-      return {
-        title: '标题',
-        path: `/pages/detail?id=${123}`
-      }
     }
 
     events = {

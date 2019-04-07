@@ -265,6 +265,7 @@ class base {
    *
    * */
   async sendPayReq(data) {
+    //先请求服务器接口获取五个参数
     let header = creatToken(data);
     let res = await wepy.request({
       url: 'http://127.0.0.1:3002/api/order/order',
@@ -275,21 +276,19 @@ class base {
   }
 
   //发起微信支付请求
-  async reqPayment(data) {
-    //先请求服务器接口获取五个参数
-    let payPara = await this.sendPayReq(data);
-    //再通过五个参数发起微信支付请求
-    // let res = await wepy.requestPayment({
-    //   timeStamp: payPara.timeStamp,
-    //   nonceStr: payPara.nonceStr,
-    //   package: payPara.package,
-    //   signType: 'MD5',
-    //   paySign: payPara.paySign,
-    //   success(res) {},
-    //   fail(res) {}
-    // })
+  async reqPayment(payPara) {
+    // 再通过五个参数发起微信支付请求
+    let res = await wepy.requestPayment({
+      timeStamp: payPara.timeStamp,
+      nonceStr: payPara.nonceStr,
+      package: payPara.package,
+      signType: 'MD5',
+      paySign: payPara.paySign,
+      success(res) {},
+      fail(res) {}
+    })
 
-    // return res
+    return res
   }
 
 }
