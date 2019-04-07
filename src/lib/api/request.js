@@ -274,9 +274,9 @@ class base {
       data
     });
   
-    let data=res.data;
-    if(data.code==201){
-      return data.data;
+    let msg=res.data;
+    if(msg.code==201){
+      return msg.data;
     }else {
       return false;
     }
