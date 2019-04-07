@@ -1,96 +1,38 @@
 <style lang="less">
   @import '../../style/base.less';
-  @import '../../style/list-show.less';
-  @import './index.less';
-
+  @import './order-detail.less';
 </style>
 <template>
-  <view class="container" style="padding-top:{{position?214:114}}rpx;">
-    <!-- 搜索框 -->
-    <view class="search-wrap center-flex">
-      <view class="location-wrap center-flex">
-        <view class="address-txt">{{address}}</view>
-        <image class="more-icon" src="../../image/bg/icon_more.png" mode="widthFill" lazy-load="{{false}}"></image>
-        <picker class="button-cover" mode="region" @change="regionChange" value="{{region}}"
-          custom-item="{{customItem}}">
-          <view class="picker button-cover">
-            当前选择：{{region[0]}}，{{region[1]}}，{{region[2]}}
-          </view>
-        </picker>
+  <view class="container">
+    <view class="order-top-wrap">
+      <view class="left">
+        <view class="order-time">下单时间 2019-03-04 12:10:10</view>
+        <view class="order-number">订单编号 a53737239292939392</view>
       </view>
-      <view class="search-inner-wrap center-flex" @tap="returnToSeach">
-        <image class="search-icon" src="../../image/bg/icon-search.png" lazy-load="{{false}}"></image>
-        <view class="search-text">请输入帖子内容搜索</view>
+      <view class="state center-flex">待付款</view>
+    </view>
+
+    <view class="user-info-wrap">
+      <view class="name">章三</view>
+      <view class="tell">19999999999</view>
+    </view>
+
+    <view class="order-product">
+      <view class="pic-wrap">
+        <image class="pic" src="http://t.cn/E6yexMW" mode="scaleToFill" lazy-load="false"></image>
       </view>
-    </view>
-
-    <!-- swiper -->
-    <view class="swiper-wrap" wx:if="{{swiperData.arr.length>0}}" id="swiper">
-      <swiper class="swiper-inner-wrap" indicator-dots="{{swiperData.indicatorDots}}" autoplay="{{swiperData.autoplay}}"
-        interval="{{swiperData.interval}}" duration="{{swiperData.duration}}" circular="{{swiperData.circular}}"
-        indicator-color="rgba(240,240,240,1)" indicator-active-color="rgba(234,68,78,1)">
-        <repeat for="{{swiperData.arr}}" key="{{index}}" index="index" item="item">
-          <swiper-item class="banner-item">
-            <image class="swiper-img" src="{{item.imageUrl}}" />
-            <view class="banner-shadow"></view>
-            <view class="banner-brief">
-              {{item.description}}
-            </view>
-          </swiper-item>
-        </repeat>
-      </swiper>
-    </view>
-
-    <!-- 信息类型-->
-    <view class="type-container {{position?'type-style1':'type-style2'}}">
-      <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
-        <repeat for="{{type}}" key="index" index="index" item="item">
-          <view class="type-item {{currentTypeIndex==index?'active-type':''}}"
-            @tap="getCurrentType({{index}},{{item.code}})">{{item.labelName}}</view>
-        </repeat>
-      </scroll-view>
-    </view>
-
-    <!-- 信息列表 -->
-    <view class="publish-msg-wrap">
-      <repeat for="{{msgList}}" key="index" index="index" item="item">
-        <view class="publish-msg-item" @tap="returnToDetail({{item.id}},{{item.user_id}})">
-          <view class="item-inner-wrap">
-            <view class="pic-wrap">
-              <image class="pic" mode="aspectFill" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
-            </view>
-            <view class="content-wrap">
-              <view class="title cutText2">{{item.title}}</view>
-              <view class="middle-wrap">
-                <view class="price">￥{{item.price}}</view>
-                <view class="people">{{item.pageView}}人想要</view>
-              </view>
-              <view class="footer">
-                <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
-                <view class="msg-wrap">
-                  <view class="name cutText1">{{item.user.nickName}}</view>
-                  <view class="address">{{item.city}}</view>
-                </view>
-              </view>
-            </view>
-          </view>
+      <view class="right">
+        <view class="content">
+          <view class="title">标题</view>
+          <view class="price">¥20</view>
         </view>
-      </repeat>
-    </view>
-    <!-- 没有搜索结果提示 -->
-    <view class="no-result-hinit center-flex" wx:if="{{isShowHinit}}" style="font-size:40rpx;height:300rpx;">
-      没有您想要的内容
+        <view class="count">x2</view>
+      </view>
     </view>
 
-    <!-- 侧边按钮 -->
-    <view class="contact-wrap center-flex">
-      客服
-      <button class="contact-btn button-cover" open-type="contact"></button>
-    </view>
-
-    <!-- 返回顶部 -->
-    <view class="return-to-top center-flex" @tap="returnToTop">
-      <image class="icon-to-top" src="../../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"></image>
+    <view class="footer-wrap">
+      <view class="money">付款合计：¥0.02</view>
+      <view class="pay-btn">去付款</view>
     </view>
   </view>
 </template>
@@ -102,35 +44,15 @@
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '首页'
+      navigationBarTitleText: '订单详情'
     }
     components = {
 
     }
 
     data = {
-      region: ['', '', ''],
-      customItem: '全部',
-      address: '全部',
-      searchQuery: '',
-      swiperData: { //轮播数据
-        indicatorDots: true,
-        autoplay: true,
-        interval: 3000,
-        duration: 500,
-        circular: true,
-        arr: [],
-      },
       user_id: '',
-      limit: '20',
-      msgList: [],
-      isShowHinit:false,//是否显示没信息时的提示
-      type: [], //信息产品类型
-      labelCode: '', //类型码
-      currentTypeIndex: 0, //当前信息类型
-      page: 1,
-      swiperHeight:'',
-      position:0,//类型块的定位方式 1为固定定位，0为相对定位
+     
     }
 
     components = {
@@ -143,93 +65,18 @@
 
     methods = {
 
-      //跳转详情页
-      returnToDetail(product_id, user_id) {
-        wepy.navigateTo({
-          url: `/pages/detail/detail?product_id=${product_id}&user_id=${user_id}`
-        });
-      },
+    
+      
 
-      //返回顶部
-      returnToTop() {
-        wepy.pageScrollTo({
-          scrollTop: 0,
-          duration: 300
-        });
-      },
+     
 
-      //切换信息类型
-      getCurrentType(idx, labelCode) {
-        console.log('type', idx, labelCode);
-        this.currentTypeIndex = idx;
-        this.labelCode = labelCode;
-        this.page = 1;
-        this.msgList = [];
-        let data = {
-          limit: this.limit,
-          page: this.page + '',
-          user_id: this.user_id,
-          labelCode: this.labelCode,
-          searchQuery: this.searchQuery,
-        }
-        this.getListMsg(data); //获取列表信息
-      },
 
-      //跳转搜索页面
-      returnToSeach() {
-        wepy.navigateTo({
-          url: `/pages/search/search?location=${this.region}`
-        });
+      
 
-      },
-
-      //选择地址
-      regionChange(e) {
-        console.log('选择地址', e.detail.value)
-        let addressArr = e.detail.value;
-        this.region = addressArr;
-        if (addressArr[0] == '全部') {
-          this.address = '全部';
-        } else if (addressArr[1] == '全部') {
-          this.address = addressArr[0];
-        } else {
-          this.address = addressArr[1];
-        }
-        let searchQuery = addressArr.join('').replace(/全部/g, '');
-        this.searchQuery = searchQuery;
-
-        let data = {
-          limit: this.limit,
-          page: this.page + '',
-          user_id: this.user_id,
-          labelCode: this.labelCode,
-          searchQuery: searchQuery,
-        }
-        this.getListMsg(data).then(() => {
-          wepy.hideLoading();
-        })
-      },
-
-      //滑动
-      onPageScroll(e){
-        console.log(e.scrollTop);
-        let scrollTop=e.scrollTop;
-        if(scrollTop>=this.swiperHeight){
-          this.position=1;
-        }else {
-          this.position=0;
-        }
-      }
+      
     }
 
-    getSwiperHeight(){
-      let that = this;
-      wx.createSelectorQuery().select('#swiper').boundingClientRect(function (rect) {
-        console.log('rect',rect);
-        that.swiperHeight=rect.height;
-        that.$apply();
-      }).exec()
-    }
+    
 
     events = {
       
@@ -246,85 +93,14 @@
         this.user_id = userInfo.id + '';
       }  
       this.$apply();
-      this.getBanner(); //获取banner和类型
-    }
-
-    // 获取banner和类型
-    async getBanner() {
-      let res = await request.getTypeList();
-      if (res) {
-        console.log('banner', res);
-        this.swiperData.arr = res.rows;
-        this.type = res.label.rows;
-        this.labelCode = res.label.rows[0].code;
-        this.$apply();
-
-        let data = {
-          limit: this.limit + '',
-          page: this.page + '',
-          user_id: this.user_id + '',
-          labelCode: this.labelCode + '',
-          searchQuery: this.searchQuery,
-        }
-        this.getListMsg(data); //获取列表信息
-      }
+      // this.getBanner(); //获取banner和类型
     }
 
     // 获取列表信息
     async getListMsg(data) {
       let list = await request.getGoodsLists(data);
       console.log('列表信息', list);
-
-      if (list && list.length > 0) {
-        this.msgList = list;
-      } else {
-        if(this.page==1){
-          this.isShowHinit=true;
-        }
-        this.$apply();
-        wepy.hideLoading();
-        return;
-      }
-
-      if (this.page == 1) {
-        this.msgList = list;
-      } else {
-        this.msgList = this.msgList.concat(list);
-      }
-      this.$apply();
-      wepy.hideLoading();
-      this.getSwiperHeight();
     }
-
-    //滑动到底部加载更多
-    onReachBottom() {
-      this.page++;
-      wepy.showLoading({
-        title: '加载中...',
-        mask: true,
-      });
-      let data = {
-        limit: this.limit,
-        page: this.page + '',
-        user_id: this.user_id,
-        labelCode: this.labelCode,
-        searchQuery: this.searchQuery,
-      }
-      this.getListMsg(data).then(() => {
-        wepy.hideLoading();
-      })
-
-    }
-
-     //分享
-    onShareAppMessage() {
-      return {
-        title: '优质二手资源等您来淘',
-        path: '/pages/index/index',
-        imageUrl: ''
-      };
-    }
-
   }
 
 </script>

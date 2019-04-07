@@ -1,0 +1,124 @@
+<script>
+  import wepy from 'wepy';
+  import util from '../../lib/util'
+
+  export default class MyIndex extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的'
+    };
+    config = {};
+
+    data = {
+      user_id: '',
+      avatarUrl: '',
+      nickName: '',
+    };
+    methods = {
+      navigateTo(url) {
+        wepy.navigateTo({
+          url: url,
+        });
+      },
+
+    };
+
+    events = {};
+    async onLoad() {
+      let self = this;
+      let userInfo = await this.$parent.login();
+      if (userInfo) {
+        this.user_id = userInfo.id + '';
+        this.avatarUrl = userInfo.avatarUrl;
+        this.nickName = userInfo.nickName;
+      }
+      self.$apply();
+    }
+
+    onShow() {
+      let self = this;
+      this.isLogin = this.$parent.globalData.isLogin;
+      self.$apply();
+    }
+
+    async bindGetUserInfo(data) {
+      let self = this;
+      await self.$parent.login(data.detail.userInfo); //获取用户信息
+      console.log('islogin', self.$parent.globalData.isLogin)
+      self.isLogin = self.$parent.globalData.isLogin;
+      self.$apply();
+    }
+    // Other properties
+  }
+
+</script>
+
+<template lang="wxml">
+  <!-- <view wx:if="{{true}}" class='login-modal'>
+    <button class='login-button' open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo"></button>
+  </view> -->
+  <view class="user">
+    <view class="userinfo-avatar">
+      <image src="{{avatarUrl}}" class="photo" lazy-load="false"></image>
+    </view>
+    <view>
+      <view class='nickname'>{{nickName}}</view>
+      <view class="update-btn center-flex">
+        更新信息
+        <!-- <button class='button-cover' open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo"></button> -->
+      </view>
+    </view>
+  </view>
+  <view class="myInfobox" wx:if="{{false}}">
+    <view class="item">
+      <text>0.00</text>
+      <text>钱包</text>
+    </view>
+    <view class="item">
+      <text>0</text>
+      <text>积分</text>
+    </view>
+  </view>
+
+  <view class="btn-box">
+    <view class="title"><i class="iconfont icon-star"></i>我的服务</view>
+    <view class="inner-list">
+      <view class="item" @tap="navigateTo('/pages/edit-info/edit-info')">
+        <i class="iconfont icon-wodetiezi"></i>
+        <view>我发布的</view>
+      </view>
+      <view class="item" @tap="navigateTo('/pages/my/myOrder')">
+        <i class="iconfont icon-wodedingdan"></i>
+        <view>我的订单</view>
+      </view>
+      <view class="item" @tap="navigateTo('/pages/collect/collect')">
+        <i class="iconfont icon-wodedingdan"></i>
+        <view>我的收藏</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-box">
+    <view class="title"><i class="iconfont icon-star"></i>平台服务</view>
+    <view class="inner-list">
+      <view class="item ">
+        <i class="iconfont icon-lianxikefu"></i>
+        <view>联系客服</view>
+      </view>
+      <view class="item">
+        <i class="iconfont icon-bangzhuzhongxin"></i>
+        <view>帮助中心</view>
+      </view>
+      <view class="item">
+        <i class="iconfont icon-guanyuwomen"></i>
+        <view>关于我们</view>
+      </view>
+    </view>
+  </view>
+
+</template>
+
+<style lang="less">
+  @import '../../style/base.less';
+  @import 'my';
+
+</style>

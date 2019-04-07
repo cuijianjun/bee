@@ -2,10 +2,23 @@ page {
   background-color: #f2f2f2;
 }
 
+.publish-hinit {
+  background-color: #EAF4FF;
+  color: #ee404a;
+  font-size: 24rpx;
+  padding: 20rpx;
+}
+
 //内容描述部分
 .publish-msg-wrap {
   background-color: #fff;
   padding: 20rpx;
+
+  // 标题
+  .title {
+    border-bottom:1rpx solid #f2f2f2;
+    margin-bottom: 20rpx;
+  }
 
   .product-title {
     font-size: 40rpx;
@@ -20,7 +33,7 @@ page {
     width: 100%;
     min-height: 100rpx;
     font-size: 32rpx;
-    color: #999;
+    color: #333;
     line-height: 1;
   }
 }
@@ -30,13 +43,21 @@ page {
   display: flex;
   flex-wrap:wrap;
 
-  .pic-wrap,.add_img{
+  .pic-wrap,.add-img-btn{
     position: relative;
     display: block;
     width: 170rpx;
     height: 170rpx;
-    margin-right: 10rpx;
-    margin-bottom: 10rpx;
+  }
+
+  .pic-wrap {
+    margin-right: 7rpx;
+    margin-bottom: 7rpx;
+  }
+
+  .add_img {
+    width: 100%;
+    height: 100%;
   }
 
   .add_img:nth-child(4n){
@@ -74,16 +95,49 @@ page {
   }
 
   .content {
+    position: relative;
     flex: 1;
+    height: 100%;
+    color: #333;
+  }
+
+  //类型项
+  .type-item {
+    height: 84rpx;
+    line-height: 84rpx;
+  }
+
+  .location-wrap,.location-img {
+    width: 90%;
+    height: 90%;
   }
 }
+
+.picker-absolute,.picker-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  z-index: 4;
+}
+
+.picker-txt {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+//placehoder颜色
 
 
 // 发布按钮
 .publish-btn {
-  position: fixed;
-  left: 0;
-  bottom: 0;
+  position: relative;
   width: 100%;
   height: 80rpx;
   font-size:30rpx;

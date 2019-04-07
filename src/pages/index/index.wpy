@@ -212,7 +212,7 @@
 
       //滑动
       onPageScroll(e){
-        console.log(e.scrollTop);
+        // console.log(e.scrollTop);
         let scrollTop=e.scrollTop;
         if(scrollTop>=this.swiperHeight){
           this.position=1;
@@ -222,10 +222,11 @@
       }
     }
 
+    //获取轮播图高度
     getSwiperHeight(){
       let that = this;
       wx.createSelectorQuery().select('#swiper').boundingClientRect(function (rect) {
-        console.log('rect',rect);
+        // console.log('rect',rect);
         that.swiperHeight=rect.height;
         that.$apply();
       }).exec()

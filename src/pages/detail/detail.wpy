@@ -88,6 +88,7 @@
 
     data = {
       info: {},
+      user_id:'',
     }
 
     computed = {
@@ -130,7 +131,7 @@
         let that = this;
         let info = this.info;
         let data = {
-          user_id: info.user_id,
+          user_id: this.user_id,
           product_id: info.id,
           isCollect: !info.collect.isCollect,
         }
@@ -204,6 +205,12 @@
 
     async onLoad(params) {
       console.log(params);
+      let userInfo = await this.$parent.login();
+      if (userInfo) {
+        this.user_id = userInfo.id + '';
+      }  
+      this.$apply();
+
       let data = {
         product_id: params.product_id,
         user_id: params.user_id,
@@ -228,7 +235,7 @@
     onShareAppMessage() {
       return {
         title: this.info.title,
-        path: '/pages/detail/detail',
+        path: `/pages/detail/detail?product_id=${this.info.id}&user_id=${this.info.user_id}`,
         imageUrl: this.info.productImage[0],
       };
     }

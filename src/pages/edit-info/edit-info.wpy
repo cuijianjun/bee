@@ -1,6 +1,6 @@
 <style lang="less">
   @import '../../style/base.less';
-  @import './publish.less';
+  @import './edit-info.less';
 
 </style>
 <template>
@@ -354,12 +354,7 @@
           title: '发布成功', 
           icon: 'success', 
           duration: 2000,
-        })
-        
-        setTimeout(() => {
-          wepy.switchTab({ url: '/pages/index/index' }); 
-        }, 2100);
-        
+        });  
       }else {
         wepy.hideLoading();
         wepy.showToast({

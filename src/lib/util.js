@@ -76,15 +76,15 @@ const compareVersion= function(v1, v2) {
   return 0
 };
 
-const checkStorageLogin = function(){
-  let data= wx.getStorageSync('userData');
-  return data || false
-};
+// const checkStorageLogin = function(){
+//   let data= wx.getStorageSync('userData');
+//   return data || false
+// };
 
 module.exports = {
   formatTime, //格式化时间 2018/11/11 10:10:10
   formatNum,  //格式化数字
   sitePic  ,   //格式化图片地址
   compareVersion,//比较小程序基带版本
-  checkStorageLogin,//检查是否已登陆有用户ID
+  // checkStorageLogin,//检查是否已登陆有用户ID
 }
