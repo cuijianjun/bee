@@ -273,6 +273,13 @@ class base {
       header,
       data
     });
+  
+    let data=res.data;
+    if(data.code==201){
+      return data.data;
+    }else {
+      return false;
+    }
   }
 
   //发起微信支付请求

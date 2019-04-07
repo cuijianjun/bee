@@ -30,6 +30,7 @@
         'pages/detail/detail',
         'pages/publish/publish',
         'pages/my/my',
+        // 'pages/collect/collect',
         'pages/order-detail/order-detail',
       ],
       window: {

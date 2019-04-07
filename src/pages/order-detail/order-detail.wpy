@@ -6,33 +6,34 @@
   <view class="container">
     <view class="order-top-wrap">
       <view class="left">
-        <view class="order-time">下单时间 2019-03-04 12:10:10</view>
-        <view class="order-number">订单编号 a53737239292939392</view>
+        <view class="order-time">下单时间 {{orderInfo.updated_at}}</view>
+        <view class="order-number">订单编号 {{orderInfo.order_no}}</view>
       </view>
-      <view class="state center-flex">待付款</view>
+      <view class="state center-flex" wx:if="{{orderInfo.status==1}}">待付款</view>
+      <view class="state center-flex" wx:if="{{orderInfo.status==2}}">已付款</view>
     </view>
 
     <view class="user-info-wrap">
-      <view class="name">章三</view>
-      <view class="tell">19999999999</view>
+      <view class="name">{{orderInfo.nickName}}</view>
+      <view class="tell">{{orderInfo.tell}}</view>
     </view>
 
     <view class="order-product">
       <view class="pic-wrap">
-        <image class="pic" src="http://t.cn/E6yexMW" mode="scaleToFill" lazy-load="false"></image>
+        <image class="pic" src="{{orderInfo.snap_img}}" mode="scaleToFill" lazy-load="false"></image>
       </view>
       <view class="right">
         <view class="content">
-          <view class="title">标题</view>
-          <view class="price">¥20</view>
+          <view class="title">{{orderInfo.snap_name}}</view>
+          <view class="price">¥{{orderInfo.total_price}}</view>
         </view>
-        <view class="count">x2</view>
+        <view class="count">x{{orderInfo.total_count}}</view>
       </view>
     </view>
 
     <view class="footer-wrap">
-      <view class="money">付款合计：¥20</view>
-      <view class="pay-btn center-flex">去付款</view>
+      <view class="money">付款合计：¥{{orderInfo.total_money}}</view>
+      <view class="pay-btn center-flex pay-money {{orderInfo.status>1?'pay-money':''}}" @tap="payment">{{orderInfo.status>1?'已付款':'去付款'}}</view>
     </view>
   </view>
 </template>
@@ -52,7 +53,7 @@
 
     data = {
       user_id: '',
-     
+      orderInfo:{},
     }
 
     components = {}
@@ -65,8 +66,17 @@
 
       //付款
       async payment(){
-        let data={};
-        let orderInfo = await request.reqPayment(data);
+        let orderInfo=this.orderInfo;
+        if(orderInfo.status>1){
+          return ;
+        }
+        // let data={
+        //   timeStamp:orderInfo.updated_at,
+        //   nonceStr:orderInfo.order_no,
+        //   package:orderInfo.prepay_id,
+        //   paySign:orderInfo.
+        // };
+        // let orderInfo = await request.reqPayment(data);
       }  
     }
 
@@ -91,6 +101,16 @@
     async createOrder(data) {
       let orderInfo = await request.sendPayReq(data);
       console.log('订单信息', orderInfo);
+      if(orderInfo){
+        this.orderInfo=orderInfo;
+      }else {
+        wepy.showToast({
+          title: '下单失败',
+          icon: 'none',
+          duration: 2000,
+        });  
+      }
+      
     }
   }
 
