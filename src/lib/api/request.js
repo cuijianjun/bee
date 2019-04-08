@@ -268,7 +268,7 @@ class base {
     //先请求服务器接口获取五个参数
     let header = creatToken(data);
     let res = await wepy.request({
-      url: 'http://127.0.0.1:3002/api/order/order',
+      url: this.HOSTURL+'api/order/order',
       method: 'POST',
       header,
       data

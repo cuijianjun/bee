@@ -121,6 +121,7 @@
   align-items: center;
 
   .btn {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -137,9 +138,20 @@
 
   .btn-index,.btn-collect {
     width: 25%;
-    height: 100%;
+    height: 100%;  
+  }
+
+  .btn-index {
     flex-direction: column;
     justify-content: center;
+  }
+
+  .collect-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .collectColor {
@@ -149,10 +161,14 @@
   .btn-tell {
     height: 100%;
     flex: 1;
-    flex-direction: column;
     background-color: #ea444e;
     color: #fff;
     
+  }
+
+  .tell-txt {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -242,4 +258,62 @@
     background-color: #F3B942 !important;
   }
 
+
+  // 底部转发
+  .shade-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.4);
+    display: flex;
+    flex-direction: column;
+    font-size: 30rpx;
+  }
+
+  .black-cancle-btn {
+    flex: 1;
+  }
+
+  .footer-share-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 400rpx;
+    background-color: #fff;
+
+    .title {
+      text-align: center;
+      padding-top: 34rpx;
+    }
+
+    .share-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .share-item-wrap {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .icon {
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: 50%;
+      background-color: green;
+      margin-bottom: 20rpx;
+    }
+
+    .cancle-btn {
+      width: 100%;
+      height: 94rpx;
+      background-color: #F2F2F2;
+    }
+  }
   

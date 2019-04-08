@@ -1,0 +1,165 @@
+<style lang="less">
+  @import '../../style/base.less';
+  @import '../../style/list-show.less';
+  @import './publish-list.less';
+
+</style>
+<template>
+  <view class="container">
+    <!-- 信息列表 -->
+    <view class="publish-msg-wrap">
+      <view class="item-wrap">
+        <view class="goods-wrap">
+          <view class="pic-wrap">
+            <image class="pic" src="http://t.cn/E6chaMi" mode="scaleToFill" lazy-load="false"></image>
+          </view>
+          <view class="product-content">
+            <view class="title">发起微信支付。了解更多信息，请查看微信支付接口文档</view>
+            <view class="price">¥10</view>
+          </view>
+        </view>
+        <view class="btn-wrap">
+          <view class="delete btn center-flex" @tap="deleteInfo">删除</view>
+          <view class="edit btn center-flex" @tap="editInfo">修改</view>
+        </view>
+      </view>
+    </view>
+    <!-- 没有搜索结果提示 -->
+    <view class="no-result-hinit center-flex" wx:if="{{isShowHinit}}" style="font-size:40rpx;height:300rpx;">
+      没有您想要的内容
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import request from '../../lib/api/request'
+  import noMsgHinit from '../../components/noMsgHinit/noMsgHinit'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '我发布的'
+    }
+    components = {
+
+    }
+
+    data = {
+      searchQuery: '',
+      user_id: '',
+      limit: '20',
+      msgList: [],
+      isShowHinit:false,//是否显示没信息时的提示
+      labelCode: '1', //类型码
+      currentTypeIndex: 0, //当前信息类型
+      page: 1,
+    }
+
+    components = {
+      noMsgHinit: noMsgHinit, //没有数据提示块
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+
+      //跳转详情页
+      returnToDetail(product_id, user_id) {
+        wepy.navigateTo({
+          url: `/pages/detail/detail?product_id=${product_id}&user_id=${user_id}`
+        });
+      },
+
+      //跳转发布详情页
+      editInfo(product_id, user_id) {
+        wepy.navigateTo({
+          url: `/pages/publish-edit/publish-edit?product_id=${product_id}&user_id=${user_id}`
+        });
+      },
+
+      //删除商品
+      deleteInfo(){
+        wx.showModal({
+          title: '提示',
+          content: '您要删除这条商品信息吗？',
+          success(res) {
+            if (res.confirm) {
+              console.log('用户点击确定')
+            } else if (res.cancel) {
+              console.log('用户点击取消')
+            }
+          }
+        })   
+      },
+    }
+
+    events = {
+      
+    }
+
+    async onLoad(params) {
+      // wepy.showLoading({
+      //   title: '加载中', 
+      //   mask: true, 
+      // });
+      
+      let data = {
+          limit: this.limit + '',
+          page: this.page + '',
+          user_id: params.user_id + '',
+          labelCode: this.labelCode + '',
+          searchQuery: this.searchQuery,
+        }
+        this.getListMsg(data); //获取列表信息
+    }
+
+    // 获取列表信息
+    async getListMsg(data) {
+      let list = await request.getGoodsLists(data);
+      console.log('列表信息', list);
+
+      if (list && list.length > 0) {
+        this.msgList = list;
+      } else {
+        if(this.page==1){
+          this.isShowHinit=true;
+        }
+        this.$apply();
+        wepy.hideLoading();
+        return;
+      }
+
+      if (this.page == 1) {
+        this.msgList = list;
+      } else {
+        this.msgList = this.msgList.concat(list);
+      }
+      this.$apply();
+      wepy.hideLoading();
+    }
+
+    //滑动到底部加载更多
+    onReachBottom() {
+      this.page++;
+      wepy.showLoading({
+        title: '加载中...',
+        mask: true,
+      });
+      let data = {
+        limit: this.limit,
+        page: this.page + '',
+        user_id: this.user_id,
+        labelCode: this.labelCode,
+        searchQuery: this.searchQuery,
+      }
+      this.getListMsg(data).then(() => {
+        wepy.hideLoading();
+      })
+
+    }
+  }
+
+</script>

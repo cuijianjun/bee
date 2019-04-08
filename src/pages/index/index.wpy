@@ -57,7 +57,7 @@
         <view class="publish-msg-item" @tap="returnToDetail({{item.id}},{{item.user_id}})">
           <view class="item-inner-wrap">
             <view class="pic-wrap">
-              <image class="pic" mode="aspectFill" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
+              <image class="pic" mode="widthFix" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
             </view>
             <view class="content-wrap">
               <view class="title cutText2">{{item.title}}</view>
@@ -212,7 +212,7 @@
 
       //滑动
       onPageScroll(e){
-        // console.log(e.scrollTop);
+        console.log(e.scrollTop);
         let scrollTop=e.scrollTop;
         if(scrollTop>=this.swiperHeight){
           this.position=1;
@@ -236,7 +236,7 @@
       
     }
 
-    async onLoad() {
+    async onShow() {
       // wepy.showLoading({
       //   title: '加载中', 
       //   mask: true, 
@@ -259,6 +259,7 @@
         this.type = res.label.rows;
         this.labelCode = res.label.rows[0].code;
         this.$apply();
+        this.getSwiperHeight();
 
         let data = {
           limit: this.limit + '',
@@ -294,7 +295,6 @@
       }
       this.$apply();
       wepy.hideLoading();
-      this.getSwiperHeight();
     }
 
     //滑动到底部加载更多
@@ -316,16 +316,6 @@
       })
 
     }
-
-     //分享
-    onShareAppMessage() {
-      return {
-        title: '优质二手资源等您来淘',
-        path: '/pages/index/index',
-        imageUrl: ''
-      };
-    }
-
   }
 
 </script>

@@ -1,0 +1,55 @@
+<script>
+  import wepy from 'wepy';
+
+  export default class MyIndex extends wepy.page {
+    config = {
+      navigationBarTitleText: '帮助中心'
+    };
+    config = {};
+    data = {};
+
+    methods = {};
+
+    events = {};
+
+    async onLoad() {}
+
+    onShow() {}
+  }
+
+</script>
+
+<template lang="wxml">
+  <view class="container">
+    <view class="problem-item-wrap">
+      <view class="title">1.发布二手信息时注意事项？</view>
+      <view class="answer">
+        <view>填写有特点的标题，可以吸引买家的注意力；</view>
+        <view>填写有详细真实的商品描述，有利于买家对商品的认知；</view>
+        <view>添加真实有效的商品图片，有利于商品的完整展示；</view>
+        <view>填写真实有效的手机号码，方便购买者与您联系；</view>
+        <view>授权获取您的信息，提高商品可信度；</view>
+        <view>选择真实的地址，便于购买者快速筛选需要的商品；</view>
+      </view>
+    </view>
+    <view class="problem-item-wrap">
+      <view class="title">2.购买二手商品时注意事项？</view>
+      <view class="answer">
+        <view>大部分商品只再本平台展示，不支持在本平台交易，卖家会提供联系方式，买家可以和卖家自主联系在线下完成交易。</view>
+        <view>务必授权获取您的信息和联系方式，方便卖家与您联系；</view>
+      </view>
+    </view>
+    <view class="problem-item-wrap">
+      <view class="title">3.用户如果有任何问题，怎么反馈？</view>
+      <view class="answer">
+        <view>用户在使用过程中，如果有意见或问题需要反馈，可以点击客服按钮进入对话框，进行留言工作人员会及时处理。</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<style lang="less">
+  @import '../../style/base.less';
+  @import 'help-center';
+
+</style>

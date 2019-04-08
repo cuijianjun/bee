@@ -1,0 +1,37 @@
+<script>
+  import wepy from 'wepy';
+
+  export default class MyIndex extends wepy.page {
+    config = {
+      navigationBarTitleText: '关于我们'
+    };
+    config = {};
+    data = {};
+
+    methods = {};
+
+    events = {};
+
+    async onLoad() {}
+
+    onShow() {}
+  }
+
+</script>
+
+<template lang="wxml">
+  <view class="container">
+    <view class="problem-item-wrap" >
+      我们是一家提供线上发布二手商品的平台，
+      目前所有的商品都可以免费发布，大部分商品不支持线上交易，
+      但是会提供卖家的联系方式，买卖双方可以自主联系，进行线下交易。
+      部分虚拟商品支持线上交易。
+    </view>
+  </view>
+</template>
+
+<style lang="less">
+  @import '../../style/base.less';
+  @import 'about-us';
+
+</style>

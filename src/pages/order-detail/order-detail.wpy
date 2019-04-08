@@ -33,7 +33,7 @@
 
     <view class="footer-wrap">
       <view class="money">付款合计：¥{{orderInfo.total_money}}</view>
-      <view class="pay-btn center-flex pay-money {{orderInfo.status>1?'pay-money':''}}" @tap="payment">{{orderInfo.status>1?'已付款':'去付款'}}</view>
+      <view class="pay-btn center-flex {{orderInfo.status>1?'pay-money':''}}" @tap="payment">{{orderInfo.status>1?'已付款':'立即支付'}}</view>
     </view>
   </view>
 </template>
@@ -85,10 +85,10 @@
     }
 
     async onLoad(params) {
-      wepy.showLoading({
-        title: '加载中', 
-        mask: true, 
-      }); 
+      // wepy.showLoading({
+      //   title: '加载中', 
+      //   mask: true, 
+      // }); 
       let data={
         user_id:params.user_id,
         product_id:params.product_id,
@@ -103,6 +103,7 @@
       console.log('订单信息', orderInfo);
       if(orderInfo){
         this.orderInfo=orderInfo;
+        this.$apply();
       }else {
         wepy.showToast({
           title: '下单失败',

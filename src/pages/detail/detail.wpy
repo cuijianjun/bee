@@ -17,7 +17,7 @@
             </view>
           </view>
         </view>
-        <view class="price" >
+        <view class="price">
           ￥{{info.price}}
         </view>
         <view class="msg-content-wrap">
@@ -25,7 +25,8 @@
         </view>
         <view class="msg-img-wrap">
           <repeat for="{{info.productImage}}" key="index" index="index" item="item">
-            <image class="msg-img" src="{{item}}" lazy-load="{{true}}" @tap="previewImg({{item}},{{info.pics}})">
+            <image mode="widthFix" class="msg-img" src="{{item}}" lazy-load="{{true}}"
+              @tap="previewImg({{item}},{{info.productImage}})">
             </image>
           </repeat>
         </view>
@@ -46,28 +47,57 @@
         <image class="icon" src="../../image/bg/icon_index.png" mode="widthFix" lazy-load="false"></image>
         <view class="txt"> 首页</view>
       </view>
-      <view class="btn btn-collect" @tap="collect">
-        <image class="icon"
-          src="{{info.collect.isCollect?'../../image/bg/icon_collect2.png':'../../image/bg/icon_collect1.png'}}"
-          mode="widthFix" lazy-load="false"></image>
-        <view class="txt"> {{info.collect.isCollect?'已收藏':'收藏'}}</view>
+      <view class="btn btn-collect">
+        <view class="collect-wrap" @tap="collect">
+          <image class="icon"
+            src="{{info.collect.isCollect?'../../image/bg/icon_collect2.png':'../../image/bg/icon_collect1.png'}}"
+            lazy-load="false"></image>
+          <view class="txt"> {{info.collect.isCollect?'已收藏':'收藏'}}</view>
+        </view>
+        <button wx:if="{{!avatarUrl || !nickName}}" class='button-cover' open-type="getUserInfo"
+          bindgetuserinfo="getUserInfo"></button>
       </view>
-      <view class="btn btn-tell" @tap="makePhone({{info.phoneNumber}})">
-        <view class="tell-txt">联系卖家</view>
+      <view class="btn btn-tell">
+        <view class="tell-txt center-flex" @tap="makePhone({{info.phoneNumber}})">联系卖家</view>
       </view>
-      <view class="btn btn-tell buy-btn" @tap="buy">
-        <view class="tell-txt">马上买</view>
+      <view class="btn btn-tell buy-btn">
+        <view class="tell-txt center-flex" @tap="buy">马上买</view>
+        <button wx:if="{{!avatarUrl || !nickName}}" class='button-cover' open-type="getUserInfo"
+          bindgetuserinfo="getUserInfo"></button>
+        <button wx:if="{{!tel}}" class='button-cover' open-type="getPhoneNumber"
+          bindgetphonenumber="getPhoneNumber"></button>
       </view>
     </view>
 
     <!-- 侧边按钮 -->
-    <view class="btn-wrap center-flex btn-share1">
+    <view class="btn-wrap center-flex btn-share1" @tap="showShare">
       转发
-      <button class="btn-btn button-cover" open-type="share"></button>
     </view>
     <!-- 侧边按钮 -->
     <view class="btn-wrap center-flex btn-share2" @tap="returnToTop">顶部</view>
 
+    <!-- 底部转发 -->
+    <view class="shade-wrap" wx:if="{{showShare}}">
+      <view class="black-cancle-btn" @tap="hideShare"></view>
+      <view class="footer-share-wrap">
+        <view class="title">邀请好友</view>
+        <view class="share-content">
+          <view class="share-item-wrap">
+            <view class="icon"></view>
+            <view class="txt">分享微信</view>
+            <button @tap="hideShare" class="btn-btn button-cover" open-type="share"></button>
+          </view>
+          <view class="share-item-wrap">
+            <view class="icon"></view>
+            <view class="txt">生成海报</view>
+          </view>
+        </view>
+        <view class="cancle-btn center-flex" @tap="hideShare">取消</view>
+      </view>
+    </view>
+
+    <!-- 绘制海报 -->
+    <!-- <canvas style="width: 400px; height: 500px;" canvas-id="productShare"></canvas> -->
   </view>
 </template>
 
@@ -88,7 +118,15 @@
 
     data = {
       info: {},
-      user_id:'',
+      user_id: '',
+      tel: '16666666666',
+      avatarUrl: '头像',
+      nickName: '昵称',
+      showShare: false, //是否展示分享
+      codeUrl1:'http://t.cn/E6MSTqS',//二维码临时地址
+      pic1:'http://t.cn/E6MadEC',//图片临时地址 
+      codeUrl2:'',//二维码临时地址
+      pic2:'',//图片临时地址
     }
 
     computed = {
@@ -148,7 +186,7 @@
                 duration: 2000,
                 mask: true,
               });
-            }else {
+            } else {
               wepy.showToast({
                 title: '操作失败',
                 icon: 'none',
@@ -162,16 +200,16 @@
         } else {
           request.getCollectState(data).then((res) => {
             console.log('收藏', res);
-            if(res){
+            if (res) {
               that.info.collect.isCollect = true;
               that.$apply()
               wepy.showToast({
                 title: '收藏成功',
-                icon: 'success',
+                icon: 'none',
                 duration: 2000,
                 mask: true,
               });
-            }else {
+            } else {
               wepy.showToast({
                 title: '操作失败',
                 icon: 'none',
@@ -179,18 +217,51 @@
                 mask: true,
               });
             }
-            
+
           });
         }
       },
 
+      //获取手机号
+      getPhoneNumber(e) {
+        console.log('手机号', e);
+      },
+
       //马上买
-      buy(){
-        wepy.navigateTo({ 
+      buy() {
+        wepy.navigateTo({
           url: `/pages/order-detail/order-detail?user_id=${this.user_id}&product_id=${this.info.id}&total_count=1`
-        }); 
+        });
+      },
+
+      // 展示分享
+      showShare() {
+        this.showShare = true;
+      },
+
+      // 隐藏分享
+      hideShare() {
+        this.showShare = false;
+      },
+
+      //生成海报
+      creatPoster() {
+        let that = this;
+        let context = wx.createCanvasContext('mycanvas');
+      },
+
+      //获取图片的临时地址
+      getCanvasImgUrl(){
+        let count=0;
+        wx.getImageInfo({
+          src: qrcodeUrl,
+          success: function (res) {
+
+          }
+        })
       }
 
+      
     }
 
     events = {
@@ -202,7 +273,7 @@
       let userInfo = await this.$parent.login();
       if (userInfo) {
         this.user_id = userInfo.id + '';
-      }  
+      }
       this.$apply();
 
       let data = {
@@ -217,7 +288,7 @@
       let list = await request.getGoodsDetail(data);
       console.log('列表信息', list);
       if (list) {
-        list.updated_at=util.formatTime(list.updated_at-0);
+        list.updated_at = util.formatTime(list.updated_at - 0);
         this.info = list;
         this.$apply();
       } else {
@@ -227,6 +298,7 @@
 
     //分享
     onShareAppMessage() {
+      this.showShare = false;
       return {
         title: this.info.title,
         path: `/pages/detail/detail?product_id=${this.info.id}&user_id=${this.info.user_id}`,

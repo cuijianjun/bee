@@ -1,0 +1,382 @@
+<style lang="less">
+  @import '../../style/base.less';
+  @import './publish-edit.less';
+
+</style>
+<template>
+  <view class="container">
+    <!-- 发表类型提醒 -->
+    <view class="publish-hinit">
+      <view>免责声明：平台发布的所有信息（收费、免费），平台只负责发布、展示，与平台本身无关，平台不负任何责任。</view>
+      <view>温馨提示：本平台可以发布各种二手售卖信息</view>
+    </view>
+
+    <form @submit="formSubmit">
+      <view class="publish-wrap">
+        <!-- 内容描述部分 -->
+        <view class="publish-msg-wrap">
+          <input name="title" class="brief title" placeholder="标题 品类品牌型号都是买家喜欢搜索的" value="{{tell}}" type="number"
+            maxlength="50"></input>
+          <view class="product-brief-wrap">
+            <textarea class="brief" maxlength="500" value="{{brief}}" placeholder="产品简介 请输入宝贝的详情" auto-height="true"
+              name="description" />
+            </view>
+          <view class="product-pic">
+            <repeat for="{{picsTotal}}" key="index" index="index" item="item">
+              <view class="pic-wrap">
+                <image class="add_img" src="{{item}}" lazy-load="false"></image>
+                <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png"
+                       lazy-load="false"></image>
+              </view>
+            </repeat>
+            <image wx:if="{{picsTotal.length<9}}" class="add-img-btn" @tap="addImg" src="../../image/bg/icon_add_img.png"
+                   lazy-load="false"></image>
+          </view>
+        </view>
+      </view>
+
+      <!-- 用户信息 -->
+      <view class="publish-user-msg">
+        <view class="user-group-wrap">
+          <view class="title">联系方式:</view>
+          <input name="phoneNumber" class="content" placeholder="请输入手机号" value="{{tell}}" type="number"
+                 maxlength="11"></input>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">价格:</view>
+          ￥<input name="price" class="content" type="number" placeholder="0.00" value="{{price}}" @blur="getPrice"></input>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">类型:</view>
+          <view class="content">
+            <picker class="picker-absolute" value="{{typeIndex}}" range="{{typeArr}}" @change="selectType">
+              <view class="picker-item">{{typeArr[typeIndex]}}</view>
+            </picker>
+            <input class="picker-txt" placeholder="请选择类型" value="{{typeArr[typeIndex]}}"></input>
+          </view>
+        </view>
+
+        <view class="user-group-wrap">
+          <view class="title">地址:</view>
+          <view class="content">
+            <picker class="picker-absolute"  mode="region" @change="regionChange" value="{{region}}" custom-item="{{customItem}}">
+              <view class="picker-item">
+                {{region[0]}} {{region[1]}} {{region[2]}}
+              </view>
+            </picker>
+            <input class="picker-txt" placeholder="请选择地址" value="{{address}}"></input>
+            <input name="address" class="content"  value="{{address}}" style="display:none;"></input>
+            <input name="city" class="content"  value="{{region[1]}}" style="display:none;"></input>
+          </view>
+        </view>
+      </view>
+
+      <!-- 发布按钮 -->
+      <view class="publish-btn center-flex">
+        发布
+        <button wx:if="{{userInfo.nickName && userInfo.avatarUrl}}" form-type="submit" class="button-cover"></button>
+        <button wx:else class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
+      </view>
+    </form>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import request from '../../lib/api/request'
+  import util from '../../lib/util'
+  import {REQUEST_HOST} from '../../lib/api/address'
+
+  export default class PublishDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: '发布信息页'
+    }
+    components = {}
+
+    data = {
+      region: ['', '', ''],
+      customItem:'请选择地址',
+      isLogin: false, //是否登录
+      title:'',//标题
+      brief: '',//产品简介
+      picsTotal:[],//总共上传的产品图片
+      picCount:'',//图片数
+      pics_key:[],//图片key值
+      tell: '',//联系方式
+      price: null,//价格
+      typeArr: [],//类型
+      typeIndex: null,//类型索引
+      label: '',//类型
+      address: '',//地址
+      isAccredit: false,//获取位置是否授权
+      accredit: false,//是否授权
+      userInfo:{},
+    }
+
+    computed = {}
+
+    methods = {
+
+      //点击我要发布信息
+      formSubmit(e) {
+        let value = e.detail.value;
+        if (!value.title) {
+          wepy.showToast({
+            title: '标题不能为空', 
+            icon: 'none',
+            duration: 1500, 
+          });  
+        } else if (!value.description) {
+          wepy.showToast({
+            title: '简介不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          });  
+        } else if (this.picsTotal.length<=0) {
+          wepy.showToast({
+            title: '图片不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          });  
+        } else if (!value.phoneNumber) {
+          wepy.showToast({
+            title: '联系方式不能为空',
+            icon: 'none', 
+            duration: 1500, 
+          }); 
+        } else if (!(/^1\d{10}$/.test(value.phoneNumber))) {
+          wepy.showToast({
+            title: '联系方式有误', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
+        } else if (!value.price) {
+          wepy.showToast({
+            title: '价格不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
+        } else if (!this.typeIndex) {
+          wepy.showToast({
+            title: '类型不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
+        } else if (!value.address || value.address=="请选择地址") {
+          wepy.showToast({
+            title: '地址不能为空', 
+            icon: 'none', 
+            duration: 1500, 
+          }); 
+        } else {
+          wepy.showLoading({
+            title: '发布中...',
+            mask: true,
+          });
+          
+          value.user_id = this.userInfo.id+'';
+          value.labelCode = (this.typeIndex-0)+1+'';
+          value.productImage=this.pics_key.join(',');
+          console.log('图片字符串', value.productImage);
+          console.log('发布信息value',value);
+          this.publishInfo(value);
+        }
+      },
+
+      //获取价格
+      getPrice(e){
+        this.price=e.detail.value;
+      },
+
+      //选择地址
+      regionChange(e) {
+        console.log('选择地址', e.detail.value)
+        let addressArr=e.detail.value;
+
+        if(addressArr.indexOf('请选择地址')>=0){
+          this.address='';
+          return;
+        }else {
+          this.region = addressArr;
+          this.address=addressArr.join(' ');
+        }  
+      },
+
+      //点击授权按钮，获取用户信息
+      async getUserInfo(e) {
+        if (e.detail.userInfo) {
+          let userInfo=e.detail.userInfo;
+          userInfo.id=this.userInfo.id+'';
+          userInfo.gender= userInfo.gender+'';
+          let info= await this.$parent.updataUserInfo(userInfo); //获取用户信息
+          if(info){
+            this.userInfo=info;
+          }
+          this.$apply();
+          wepy.showToast({
+              title: '授权成功，请点击发布按钮发布信息', 
+              icon: 'none', 
+              showCancel: false,
+              duration:2000,
+          });
+        } else {
+          wepy.showModal({
+            title: '温馨提示', 
+            content: '为了更好的为您服务，需要您的授权', 
+            showCancel: false,
+          });
+        }
+      },
+
+      //点击上传图片
+      addImg() {
+        let self = this;
+        let pLenght = self.picsTotal.length;
+        if (pLenght >= 9) {
+          wepy.showModal({
+            title: '提示',
+            content: '最多上传9张图片',
+            showCancel: false,
+          });
+          return
+        }
+        wx.chooseImage({
+          count: 9-pLenght, //可以添加的图片数量
+          success(res) {
+            let pics = res.tempFiles;
+            // console.log('图片地址',pics);
+
+            self.$apply();
+            wepy.showLoading({
+              title: '上传中',
+              mask: true, 
+            });
+            pics.forEach(ele => {
+              if(ele.size/(1024*1024)>10){
+                wepy.showToast({
+                  title: '请选择小于10M的图片上传',
+                  icon: 'none',
+                  duration: 2000,
+                });
+                return;   
+              }
+              self.uploadImg(ele.path,pics)
+            });
+          }
+        })
+      },
+      
+      // 删除图片
+      async deleteImg(idx) {
+        console.log('删除图片：',idx);
+         wepy.showLoading({
+           title: '删除中', //提示的内容,
+           mask: true, 
+         })
+        let key=this.pics_key[idx];
+        let res = await request.delPic(key);  //请求接口
+        if(res){ 
+          this.picsTotal.splice(idx, 1); //更新视图
+          this.pics_key.splice(idx, 1); //删除图片key值
+          this.$apply();
+          wepy.showToast({
+            title: '删除成功',
+            icon: 'success',
+            duration: 2000, 
+          });
+        }else {
+          wepy.showToast({
+            title: '删除失败', 
+            icon: 'none',
+            duration: 2000, 
+          }); 
+        }
+      },
+
+      //选择产品类型
+      selectType(e) {
+        console.log('产品类型', e.detail.value);
+        this.typeIndex = e.detail.value;
+      },
+    }
+
+    //上传图片
+    async uploadImg(ele,pics){
+      console.log('图片',ele,pics);
+      let res=await request.uploadImg(ele);
+      console.log('上传图片',res);
+      if(res){
+        this.picCount++;
+        console.log('key',res);
+        this.pics_key.push(res.key);
+        // this.$apply(); 
+        this.picsTotal.push(ele);
+        this.$apply(); 
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '上传成功', 
+          icon: 'success',
+          duration: 1000, 
+        }); 
+      }else{
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '上传失败', 
+          icon: 'none',
+          duration: 2000, 
+        });  
+      } 
+    }
+
+    //获取类型
+    async getTypeList(){
+      let res=await request.getTypeList();
+      if(res){
+        res.label.rows.forEach(ele => {
+          this.typeArr.push(ele.labelName)
+        });
+        this.$apply();
+      }else{
+        console.log('获取类型失败');
+      }  
+    }
+
+    //发布信息
+    async publishInfo(value){
+      console.log('发布信息',value);
+      let res =await request.publishGoodsMsg(value);
+      console.log('发布信息2',res);
+      if(res){
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '发布成功', 
+          icon: 'success', 
+          duration: 2000,
+        })
+        
+        setTimeout(() => {
+          wepy.switchTab({ url: '/pages/index/index' }); 
+        }, 2100);
+        
+      }else {
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '发布失败', 
+          icon: 'none', 
+          duration: 2000,
+        });
+      } 
+    }
+
+    events = {}
+
+    async onLoad() {
+      this.userInfo=await this.$parent.login();
+      this.getTypeList();//获取类型
+      this.$apply();
+    }
+  }
+
+</script>

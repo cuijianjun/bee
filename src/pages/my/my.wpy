@@ -14,10 +14,69 @@
       nickName: '',
     };
     methods = {
-      navigateTo(url) {
+
+      // 跳转我发布的页面
+      toPublishList() {
         wepy.navigateTo({
-          url: url,
+          url: `/pages/publish-list/publish-list?user_id=${this.user_id}`,
         });
+      },
+
+      // 跳转我的订单页面
+      toOrderList() {
+        wepy.navigateTo({
+          url: `/pages/order-list/order-list?user_id=${this.user_id}`,
+        });
+      },
+
+      // 跳转我的收藏页面
+      toCollectList() {
+        wepy.navigateTo({
+          url: `/pages/collect/collect?user_id=${this.user_id}`,
+        });
+      },
+
+      //跳转帮助中心
+      toHelpCenter(){
+        wepy.navigateTo({
+          url: `/pages/help-center/help-center`,
+        });
+      },
+
+      //跳转关于我们
+      toAboutUs() {
+        wepy.navigateTo({
+          url: `/pages/about-us/about-us`,
+        });
+      },
+
+      //点击授权按钮，获取用户信息
+      async getUserInfo(e) {
+        if (e.detail.userInfo) {
+          let userInfo=e.detail.userInfo;
+          userInfo.id=this.user_id+'';
+          userInfo.gender= userInfo.gender+'';
+          let info= await this.$parent.updataUserInfo(userInfo); //获取用户信息
+
+          if(info){
+            this.avatarUrl=info.avatarUrl;
+            this.nickName=info.nickName;
+          }
+          this.$apply();
+          wepy.showToast({
+              title: '更新资料成功', 
+              icon: 'none', 
+              showCancel: false,
+              duration:2000,
+          });
+        } else {
+          wepy.showToast({
+              title: '更新资料失败', 
+              icon: 'none', 
+              showCancel: false,
+              duration:2000,
+          });
+        }
       },
 
     };
@@ -39,32 +98,21 @@
       this.isLogin = this.$parent.globalData.isLogin;
       self.$apply();
     }
-
-    async bindGetUserInfo(data) {
-      let self = this;
-      await self.$parent.login(data.detail.userInfo); //获取用户信息
-      console.log('islogin', self.$parent.globalData.isLogin)
-      self.isLogin = self.$parent.globalData.isLogin;
-      self.$apply();
-    }
-    // Other properties
   }
 
 </script>
 
 <template lang="wxml">
-  <!-- <view wx:if="{{true}}" class='login-modal'>
-    <button class='login-button' open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo"></button>
-  </view> -->
+  <button wx:if="{{!avatarUrl || !nickName}}" class='button-cover' open-type="getUserInfo" bindgetuserinfo="getUserInfo"></button>
   <view class="user">
     <view class="userinfo-avatar">
-      <image src="{{avatarUrl}}" class="photo" lazy-load="false"></image>
+      <image src="{{avatarUrl || 'http://t.cn/E6q70ok'}}" class="photo" lazy-load="false"></image>
     </view>
     <view>
       <view class='nickname'>{{nickName}}</view>
       <view class="update-btn center-flex">
         更新信息
-        <!-- <button class='button-cover' open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo"></button> -->
+        <button class='button-cover' open-type="getUserInfo" bindgetuserinfo="getUserInfo"></button>
       </view>
     </view>
   </view>
@@ -82,15 +130,15 @@
   <view class="btn-box">
     <view class="title"><i class="iconfont icon-star"></i>我的服务</view>
     <view class="inner-list">
-      <view class="item" @tap="navigateTo('/pages/edit-info/edit-info')">
+      <view class="item" @tap="toPublishList()">
         <i class="iconfont icon-wodetiezi"></i>
         <view>我发布的</view>
       </view>
-      <view class="item" @tap="navigateTo('/pages/my/myOrder')">
+      <view class="item" @tap="toOrderList()">
         <i class="iconfont icon-wodedingdan"></i>
         <view>我的订单</view>
       </view>
-      <view class="item" @tap="navigateTo('/pages/collect/collect')">
+      <view class="item" @tap="toCollectList()">
         <i class="iconfont icon-wodedingdan"></i>
         <view>我的收藏</view>
       </view>
@@ -100,15 +148,16 @@
   <view class="btn-box">
     <view class="title"><i class="iconfont icon-star"></i>平台服务</view>
     <view class="inner-list">
-      <view class="item ">
+      <view class="item customer-service">
         <i class="iconfont icon-lianxikefu"></i>
         <view>联系客服</view>
+        <button class='button-cover' open-type="contact" bindcontact="handleContact"></button>
       </view>
-      <view class="item">
+      <view class="item" @tap="toHelpCenter">
         <i class="iconfont icon-bangzhuzhongxin"></i>
         <view>帮助中心</view>
       </view>
-      <view class="item">
+      <view class="item" @tap="toAboutUs">
         <i class="iconfont icon-guanyuwomen"></i>
         <view>关于我们</view>
       </view>
