@@ -32,7 +32,7 @@
     </view>
 
     <view class="footer-wrap">
-      <view class="money">付款合计：¥{{orderInfo.total_money}}</view>
+      <view class="money">付款合计：¥{{orderInfo.price}}</view>
       <view class="pay-btn center-flex {{orderInfo.status>1?'pay-money':''}}" @tap="payment">{{orderInfo.status>1?'已付款':'立即支付'}}</view>
     </view>
   </view>
