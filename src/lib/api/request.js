@@ -266,7 +266,11 @@ class base {
    * */
   async sendPayReq(data) {
     //先请求服务器接口获取五个参数
-    let header = creatToken(data);
+    let token = creatToken(data);
+    let header = Object.assign({
+      'Content-Type':'application/json',
+    },token);
+    
     let res = await wepy.request({
       url: this.HOSTURL+'api/order/order',
       method: 'POST',
@@ -283,19 +287,32 @@ class base {
   }
 
   //发起微信支付请求
-  async reqPayment(payPara) {
+  async reqPayment(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'Content-Type':'application/json',
+    },token);
+    let res = await wepy.request({
+      url: this.HOSTURL+'api/pay/unifiedOrder',
+      method: 'POST',
+      header,
+      data,
+    });
+    console.log('下单接口',res);
     // 再通过五个参数发起微信支付请求
-    let res = await wepy.requestPayment({
-      timeStamp: payPara.timeStamp,
-      nonceStr: payPara.nonceStr,
-      package: payPara.package,
-      signType: 'MD5',
-      paySign: payPara.paySign,
-      success(res) {},
-      fail(res) {}
-    })
+    // let res = await wepy.requestPayment({
+    //   timeStamp: payPara.timeStamp,
+    //   nonceStr: payPara.nonceStr,
+    //   package: payPara.package,
+    //   signType: 'MD5',
+    //   paySign: payPara.paySign,
+    //   success(res) {
+    //     console.log('发起支付',res);
+    //   },
+    //   fail(res) {}
+    // })
 
-    return res
+    // return res
   }
 
 }

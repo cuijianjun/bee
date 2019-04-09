@@ -66,17 +66,14 @@
 
       //付款
       async payment(){
-        let orderInfo=this.orderInfo;
-        if(orderInfo.status>1){
+        if(this.orderInfo.status>1){
           return ;
         }
-        // let data={
-        //   timeStamp:orderInfo.updated_at,
-        //   nonceStr:orderInfo.order_no,
-        //   package:orderInfo.prepay_id,
-        //   paySign:orderInfo.
-        // };
-        // let orderInfo = await request.reqPayment(data);
+        let data={
+          total_price:this.orderInfo.total_price,
+          user_id:this.orderInfo.user_id,
+        }
+        let orderInfo = await request.reqPayment(data);
       }  
     }
 
