@@ -82,14 +82,8 @@
       没有您想要的内容
     </view>
 
-    <!-- 侧边按钮 -->
-    <view class="contact-wrap center-flex">
-      客服
-      <button class="contact-btn button-cover" open-type="contact"></button>
-    </view>
-
     <!-- 返回顶部 -->
-    <view class="return-to-top center-flex" @tap="returnToTop">
+    <view class="return-to-top center-flex" wx:if="{{isShowTop}}" @tap="returnToTop">
       <image class="icon-to-top" src="../../image/bg/icon-to-top.png" mode="widthFix" lazy-load="false"></image>
     </view>
   </view>
@@ -131,6 +125,7 @@
       page: 1,
       swiperHeight:'',
       position:0,//类型块的定位方式 1为固定定位，0为相对定位
+      isShowTop:false,//是否需要返回顶部
     }
 
     components = {
@@ -165,6 +160,8 @@
         this.labelCode = labelCode;
         this.page = 1;
         this.msgList = [];
+        this.isShowHinit=false;
+        this.$apply();
         let data = {
           limit: this.limit,
           page: this.page + '',
@@ -212,13 +209,21 @@
 
       //滑动
       onPageScroll(e){
-        console.log(e.scrollTop);
+        // console.log(e.scrollTop);
         let scrollTop=e.scrollTop;
         if(scrollTop>=this.swiperHeight){
           this.position=1;
         }else {
           this.position=0;
         }
+
+        setTimeout(() => {
+          if(scrollTop>0){
+            this.isShowTop=true;
+          }else {
+            this.isShowTop=false;
+          }
+        }, 1000);       
       }
     }
 

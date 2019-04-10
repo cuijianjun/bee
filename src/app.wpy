@@ -52,18 +52,18 @@
         list: [{
           pagePath: 'pages/index/index',
           text: '首页',
-          iconPath: 'static/images/navigationBar/homepage.png',
-          selectedIconPath: 'static/images/navigationBar/homepage_active.png'
+          iconPath: './image/homepage.png',
+          selectedIconPath: './image/homepage_active.png'
         },
           {
-            iconPath: 'static/images/navigationBar/add.png',
-            selectedIconPath: 'static/images/navigationBar/add_active.png',
+            iconPath: './image/add.png',
+            selectedIconPath: './image/add_active.png',
             pagePath: 'pages/publish/publish',
             text: '发布'
           },
           {
-            iconPath: 'static/images/navigationBar/people.png',
-            selectedIconPath: 'static/images/navigationBar/people_active.png',
+            iconPath: './image/people.png',
+            selectedIconPath: './image/people_active.png',
             pagePath: 'pages/my/my',
             text: '我的'
           }
@@ -74,6 +74,8 @@
     globalData = {
       // isLogin:false, //是否登录标示
       userData:null,//用户业务数据
+      openid:'onDPE5MGD0Kz-sEjr1GaqdJOQRPc',
+      // openid:"onDPE5Od19gZNs92nZZuBi-EHGCs",
     }
 
     constructor() {

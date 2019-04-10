@@ -57,10 +57,10 @@
         <button wx:if="{{!avatarUrl || !nickName}}" class='button-cover' open-type="getUserInfo"
           bindgetuserinfo="getUserInfo"></button>
       </view>
-      <view class="btn btn-tell">
+      <view class="btn btn-tell" wx:if="{{!isShowbtn}}">
         <view class="tell-txt center-flex" @tap="makePhone({{info.phoneNumber}})">联系卖家</view>
       </view>
-      <view class="btn btn-tell buy-btn">
+      <view class="btn btn-tell buy-btn"  wx:if="{{isShowbtn}}">
         <view class="tell-txt center-flex" @tap="buy">马上买</view>
         <button wx:if="{{!avatarUrl || !nickName}}" class='button-cover' open-type="getUserInfo"
           bindgetuserinfo="getUserInfo"></button>
@@ -70,11 +70,11 @@
     </view>
 
     <!-- 侧边按钮 -->
-    <view class="btn-wrap center-flex btn-share1" @tap="showShare">
-      转发
-    </view>
+    <view class="btn-wrap center-flex btn-share1 complain-btn" @tap="complain">投诉</view>
     <!-- 侧边按钮 -->
-    <view class="btn-wrap center-flex btn-share2" @tap="returnToTop">顶部</view>
+    <view class="btn-wrap center-flex btn-share1" @tap="showShare">转发</view>
+    <!-- 侧边按钮 -->
+    <view class="btn-wrap center-flex btn-share2" @tap="returnToTop" wx:if="{{isShowTop}}">顶部</view>
 
     <!-- 底部转发 -->
     <view class="shade-wrap" wx:if="{{showShare}}">
@@ -117,6 +117,7 @@
 
 <script>
   import wepy from 'wepy'
+  import address from '../../lib/api/address'
   import request from '../../lib/api/request'
   import util from '../../lib/util'
 
@@ -133,14 +134,17 @@
     data = {
       info: {},
       user_id: '',
+      openid:'',
       tel: '16666666666',
       avatarUrl: '头像',
       nickName: '昵称',
       showShare: false, //是否展示分享
       isShowPoster:false,//是否展示海报
       isCanSave:true,//是否已经授权保存图片
+      isShowbtn:false,//是否显示马上买和投诉
+      isShowTop:false,//是否显示返回顶部按钮
 
-      code1: 'http://t.cn/E6MSTqS', //二维码临时地址
+      code1: 'https://res.pplu.vip/fd1ded660c403d6d080a6f8c805cbb4f.jpeg', //二维码临时地址
       pic1: 'http://t.cn/E6aY1Ii', //图片临时地址 
       code2: '', //二维码临时地址
       pic2: '', //图片临时地址
@@ -271,16 +275,8 @@
       },
 
       //生成海报
-      creatPoster() {
-        let that = this;
-        that.showShare = false;
-        let context = wx.createCanvasContext('productShare');
-
-        this.drawBg(context) //绘制背景
-        this.drawTitle(context) //绘制标题
-        this.drawTime(context) //绘制发布日期
-        this.drawAddress(context) //绘制发布地址
-        this.drawPic(context) //绘制商品图片
+      creatPosterImg(){
+        this.creatPoster();
       },
 
       //取消保存图片
@@ -307,7 +303,37 @@
         }else {//已授权
           this.saveImg();
         } 
+      },
+
+      //惦记投诉
+      complain(){
+        console.log('点击投诉');
+      },
+
+      //滑动
+      onPageScroll(e){
+        // console.log(e.scrollTop);
+        setTimeout(() => {
+          if(e.scrollTop>0){
+            this.isShowTop=true;
+          }else {
+            this.isShowTop=false;
+          }
+        }, 1000);       
       }
+    }
+
+    //生成海报
+    creatPoster() {
+      let that = this;
+      that.showShare = false;
+      let context = wx.createCanvasContext('productShare');
+      this.drawBg(context) //绘制背景
+      this.drawTitle(context) //绘制标题
+      this.drawTime(context) //绘制发布日期
+      this.drawAddress(context) //绘制发布地址
+      this.drawHinitTxt(context) //绘制提示语
+      this.drawPic(context) //绘制商品图片
     }
 
     //保存图片
@@ -337,13 +363,13 @@
         })
     }
 
-    //tian
-    drawBg(context) {
-      console.log('绘制背景');
+    //tian8
+    drawBg(context){
+      console.log('绘制背景色');
       context.setFillStyle('#fff')
       context.fillRect(0, 0, 750, this.canvasHeight)
     }
-
+   
     //绘制标题
     drawTitle(context) {
       console.log('绘制标题');
@@ -355,41 +381,56 @@
 
     //绘制发布日期
     drawTime(context) {
+      console.log('绘制发布日期');
       context.setFontSize(30);
       context.setTextAlign('left');
-      context.setFillStyle('#333');
+      context.setFillStyle('#999');
       context.fillText(this.info.updated_at, 40, 160)
     }
 
     //绘制发布地址
     drawAddress(context) {
+      console.log('绘制发布地址');
       context.setFontSize(30);
       context.setTextAlign('left');
-      context.setFillStyle('#333');
+      context.setFillStyle('#999');
       context.fillText('发布于'+this.info.city, 40, 206)
+    }
+
+    //绘制提示语
+    drawHinitTxt(context) {
+      console.log('绘制提示语');
+      context.setFontSize(20);
+      context.setTextAlign('left');
+      context.setFillStyle('#999');
+      context.fillText('长按识别二维码查看详情', 500, 280)
     }
 
     //绘制商品图片
     drawPic(context) {
+      console.log('绘制商品图片');
       context.drawImage(this.info.productImage[0], 40, 300, this.picWidth, this.picHeight);
       this.drawCode(context);
     }
 
     //绘制二维码
     drawCode(context) {
+      console.log('绘制二维码');
       let that = this;
       context.drawImage(this.code2, 500, 40, 200, 200);
       context.draw(false, (e) => {
         console.log('绘制完成');
-        wx.canvasToTempFilePath({
-          canvasId: 'productShare',
-          success(res) {
-            console.log('图片地址', res.tempFilePath)
-            that.posterUrl = res.tempFilePath;
-            that.isShowPoster=true;
-            that.$apply();
-          }
-        })
+        setTimeout(() => {
+          wx.canvasToTempFilePath({
+            canvasId: 'productShare',
+            success(res) {
+              console.log('图片地址', res.tempFilePath)
+              that.posterUrl = res.tempFilePath;
+              that.isShowPoster=true;
+              that.$apply();
+            }
+          })
+        }, 500); 
       })
     }
 
@@ -397,13 +438,10 @@
     getCanvasImgUrl() {
       let count = 0;
       let that = this;
-      // let path=that.info.productImage[0];
-      // console.log('pic',path);
 
       wx.getImageInfo({
         src: that.info.productImage[0],
         success(res) {
-          console.log('pic1', res);
           that.pic2 = res.path;
 
           let radio = res.width / res.height;//图片的宽高比例
@@ -417,8 +455,17 @@
           let radio2=750/that.canvasHeight;
           console.log('radio',radio2);
           that.posterHeight=parseInt(that.winWidth/radio2);
+
           that.$apply();
+          count++;
+          if(count>=2){
+            wepy.hideLoading();
+          }
         },
+        fail(){
+          wepy.hideLoading();
+          console.log('获取产品图片临时地址失败');
+        }
       })
 
       wx.getImageInfo({
@@ -427,6 +474,14 @@
           console.log('res1', res);
           that.code2 = res.path;
           that.$apply();
+          count++
+          if(count>=2){
+            wepy.hideLoading();
+          }
+        },
+        fail(){
+          wepy.hideLoading();
+          console.log('获取小程序码临时地址失败');
         }
       })
     }
@@ -436,6 +491,11 @@
     }
 
     async onLoad(params) {
+      wepy.showLoading({
+        title: '加载中',
+        mask: true, 
+      });
+      
       console.log(params);
       let info = await this.$parent.getSystemInfo();
       console.log('info', info);
@@ -445,6 +505,7 @@
       let userInfo = await this.$parent.login();
       if (userInfo) {
         this.user_id = userInfo.id + '';
+        this.openid=userInfo.openid;
       }
       this.$apply();
 
@@ -458,19 +519,23 @@
     //获取信息
     async getGoodsDetail(data) {
       let list = await request.getGoodsDetail(data);
+      let openid=this.$parent.globalData.openid;
       console.log('列表信息', list);
       if (list) {
         list.updated_at = util.formatTime(list.updated_at - 0);
-        this.info = list;
+        if(this.openid==openid){
+          this.isShowbtn=true;
+        }
+        this.info = list;    
         this.$apply();
-        this.getCanvasImgUrl()
+        this.getCanvasImgUrl();
       } else {
+        wepy.hideLoading();
         wepy.showToast({
           title: '请求失败',
           icon: 'success',
           duration: 2000,
         });
-
       }
     }
 

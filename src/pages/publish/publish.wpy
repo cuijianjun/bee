@@ -97,6 +97,7 @@
     components = {}
 
     data = {
+      openid:'',
       region: ['', '', ''],
       customItem:'请选择地址',
       isLogin: false, //是否登录
@@ -334,10 +335,22 @@
     //获取类型
     async getTypeList(){
       let res=await request.getTypeList();
+      let openid=this.$parent.globalData.openid;
+      console.log('openid',openid);
+      let typeArr=[]
       if(res){
         res.label.rows.forEach(ele => {
-          this.typeArr.push(ele.labelName)
+         typeArr.push(ele.labelName)
         });
+
+        if(this.userInfo.openid==openid){
+          this.typeArr=typeArr.filter(o=>{
+            console.log(o);
+            return o!='互联网'
+          })
+        }else {
+          this.typeArr=typeArr;
+        }
         this.$apply();
       }else{
         console.log('获取类型失败');
