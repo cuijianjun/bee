@@ -73,7 +73,18 @@
           total_price:this.orderInfo.total_price,
           user_id:this.orderInfo.user_id,
         }
-        let orderInfo = await request.reqPayment(data);
+        let payParams = await request.getPaymentParams(data);
+        if(payParams){
+          console.log('payparams',payParams);
+          await request.Payment(payParams);
+        }else {
+          wepy.showToast({
+            title: '下单失败', 
+            icon: 'none', 
+            duration: 2000, 
+          });
+          
+        }
       }  
     }
 
@@ -87,16 +98,16 @@
       //   mask: true, 
       // }); 
       let data={
-        user_id:params.user_id,
-        product_id:params.product_id,
-        total_count:params.total_count,
+        user_id:params.user_id-0,
+        product_id:params.product_id-0,
+        total_price:params.total_count-0,
       }
       this.createOrder(data); //获取banner和类型
     }
 
     //生成订单
     async createOrder(data) {
-      let orderInfo = await request.sendPayReq(data);
+      let orderInfo = await request.creatOrder(data);
       console.log('订单信息', orderInfo);
       if(orderInfo){
         this.orderInfo=orderInfo;

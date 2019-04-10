@@ -80,6 +80,7 @@
         <button wx:else class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
       </view>
     </form>
+    <!-- <button  class="button-cover" open-type="feedback" lang="zh_CN" >反馈</button> -->
   </view>
 </template>
 

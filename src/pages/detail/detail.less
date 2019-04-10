@@ -316,4 +316,57 @@
       background-color: #F2F2F2;
     }
   }
+
+  //海报
+  .canvas-poster {
+    position: fixed;
+    left: -1000px;
+  }
+
+  .poster-window {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    background-color: rgba(0,0,0,.4);
+    display: flex;
+  }
+
+  .poster-img {
+    width: 100%;
+    transform: scale(.8);
+  }
+
+  // 操作图片按钮
+  .poster-btn-wrap {
+    position: fixed;
+    bottom: 40rpx;
+    left: 50%;
+    width: 80%;
+    transform: translate(-50%);
+    display: flex;
+    justify-content: space-between;
+    font-size: 30rpx;
+    color: #fff;
+    
+
+    .poster-btn {
+      width: 240rpx;
+      height: 80rpx;
+      border-radius: 45rpx;
+    }
+
+    .cancle {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .save {
+      background-color: #ea444e;
+      position: relative;
+    }
+  }
+
+
   

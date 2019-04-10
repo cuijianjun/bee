@@ -264,7 +264,7 @@ class base {
    * @para data.id{Number} 用户业务ID 查找openId
    *
    * */
-  async sendPayReq(data) {
+  async creatOrder(data) {
     //先请求服务器接口获取五个参数
     let token = creatToken(data);
     let header = Object.assign({
@@ -287,7 +287,7 @@ class base {
   }
 
   //发起微信支付请求
-  async reqPayment(data) {
+  async getPaymentParams(data) {
     let token = creatToken(data);
     let header = Object.assign({
       'Content-Type':'application/json',
@@ -298,22 +298,38 @@ class base {
       header,
       data,
     });
-    console.log('下单接口',res);
-    // 再通过五个参数发起微信支付请求
-    // let res = await wepy.requestPayment({
-    //   timeStamp: payPara.timeStamp,
-    //   nonceStr: payPara.nonceStr,
-    //   package: payPara.package,
-    //   signType: 'MD5',
-    //   paySign: payPara.paySign,
-    //   success(res) {
-    //     console.log('发起支付',res);
-    //   },
-    //   fail(res) {}
-    // })
-
-    // return res
+    
+    let msg =res.data;
+    if(msg.code==200){
+      return msg.data
+    }else {
+      return false
+    }
   }
+
+  //发起微信支付请求
+  async Payment(data) {
+    console.log('data',data);
+    // 再通过五个参数发起微信支付请求
+    let res = await wepy.requestPayment({
+      // appId: data.appId,
+      timeStamp: data.timeStamp,
+      nonceStr: data.nonceStr,
+      package: data.package,
+      signType: data.signType,
+      paySign: data.paySign,
+      success(res) {
+        console.log('发起支付成功',res);
+      },
+      fail(res) {
+        console.log('发起支付失败',res);
+      }
+    })
+  }
+
+
+
+  
 
 }
 /*

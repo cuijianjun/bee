@@ -87,7 +87,7 @@
             <view class="txt">分享微信</view>
             <button @tap="hideShare" class="btn-btn button-cover" open-type="share"></button>
           </view>
-          <view class="share-item-wrap">
+          <view class="share-item-wrap" @tap="creatPoster">
             <view class="icon"></view>
             <view class="txt">生成海报</view>
           </view>
@@ -96,8 +96,22 @@
       </view>
     </view>
 
+    <!-- 海报 -->
+    <view class=" poster-window" @tap="seePoster" wx:if="{{isShowPoster}}">
+      <image class="poster-img" style="display:block;width:{{winWidth}}px;height:{{posterHeight}}px;" src="{{posterUrl}}" mode="scaleToFit" lazy-load="false"></image>
+    </view>
+
     <!-- 绘制海报 -->
-    <!-- <canvas style="width: 400px; height: 500px;" canvas-id="productShare"></canvas> -->
+    <canvas class="canvas-poster" style="width: 750px; height: {{canvasHeight}}px;" canvas-id="productShare"></canvas>
+
+    <!-- 图片按钮 -->
+    <view class="poster-btn-wrap" wx:if="{{isShowPoster}}">
+      <view class="poster-btn center-flex cancle" @tap="cancel">取消</view>
+      <view class="poster-btn center-flex save" @tap="save">
+        保存
+        <button class="button-cover" open-type="openSetting" bindopensetting="handleSetting" wx:if="{{!isCanSave}}">打开授权设置页</button>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -108,7 +122,7 @@
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '首页'
+      navigationBarTitleText: '详情页'
     }
     components = {
 
@@ -123,10 +137,22 @@
       avatarUrl: '头像',
       nickName: '昵称',
       showShare: false, //是否展示分享
-      codeUrl1:'http://t.cn/E6MSTqS',//二维码临时地址
-      pic1:'http://t.cn/E6MadEC',//图片临时地址 
-      codeUrl2:'',//二维码临时地址
-      pic2:'',//图片临时地址
+      isShowPoster:false,//是否展示海报
+      isCanSave:true,//是否已经授权保存图片
+
+      code1: 'http://t.cn/E6MSTqS', //二维码临时地址
+      pic1: 'http://t.cn/E6aY1Ii', //图片临时地址 
+      code2: '', //二维码临时地址
+      pic2: '', //图片临时地址
+
+      posterUrl: '',//海报图片
+      picWidth: '',//画布中产品图片的宽度
+      picHeight: '',//画布中产品图片的高度
+      canvasHeight: '',//画布的宽度
+      winWidth: '',//屏幕的宽度
+      winHeight: '',//屏幕的宽度
+      posterHeight:'',//海报的高度
+
     }
 
     computed = {
@@ -247,21 +273,162 @@
       //生成海报
       creatPoster() {
         let that = this;
-        let context = wx.createCanvasContext('mycanvas');
+        that.showShare = false;
+        let context = wx.createCanvasContext('productShare');
+
+        this.drawBg(context) //绘制背景
+        this.drawTitle(context) //绘制标题
+        this.drawTime(context) //绘制发布日期
+        this.drawAddress(context) //绘制发布地址
+        this.drawPic(context) //绘制商品图片
       },
 
-      //获取图片的临时地址
-      getCanvasImgUrl(){
-        let count=0;
-        wx.getImageInfo({
-          src: qrcodeUrl,
-          success: function (res) {
+      //取消保存图片
+      cancel(){
+        console.log('点击取消');
+        this.isShowPoster=false;
+      },
 
+      //保存图片
+      save(){
+        this.saveImg();
+      },
+
+      //检测是否授权保存图片
+      handleSetting(e){
+        console.log('检测是否授权保存图片',e);
+        if(!e.detail.authSetting['scope.writePhotosAlbum']){//没有授权
+          wepy.showToast({
+            title: '若不打开授权，则无法将图片保存在相册中', 
+            icon: 'none', 
+            duration: 2000, 
+          });
+          
+        }else {//已授权
+          this.saveImg();
+        } 
+      }
+    }
+
+    //保存图片
+    saveImg(){
+      let that=this;
+        wx.saveImageToPhotosAlbum({
+          filePath:this.posterUrl,
+          success(res) { 
+            console.log('保存图片成功',res);
+            that.isShowPoster=false;
+            that.$apply();
+            wepy.showToast({
+              title: '保存图片成功', 
+              icon: 'success', 
+              duration: 2000, 
+            }); 
+          },
+          fail(){
+            that.isCanSave=false;
+            that.$apply();
+            wepy.showToast({
+              title: '保存图片失败', 
+              icon: 'none', 
+              duration: 2000, 
+            });
           }
         })
-      }
+    }
 
-      
+    //tian
+    drawBg(context) {
+      console.log('绘制背景');
+      context.setFillStyle('#fff')
+      context.fillRect(0, 0, 750, this.canvasHeight)
+    }
+
+    //绘制标题
+    drawTitle(context) {
+      console.log('绘制标题');
+      context.setFontSize(30);
+      context.setTextAlign('left');
+      context.setFillStyle('#333');
+      context.fillText(this.info.title, 40, 100)
+    }
+
+    //绘制发布日期
+    drawTime(context) {
+      context.setFontSize(30);
+      context.setTextAlign('left');
+      context.setFillStyle('#333');
+      context.fillText(this.info.updated_at, 40, 160)
+    }
+
+    //绘制发布地址
+    drawAddress(context) {
+      context.setFontSize(30);
+      context.setTextAlign('left');
+      context.setFillStyle('#333');
+      context.fillText('发布于'+this.info.city, 40, 206)
+    }
+
+    //绘制商品图片
+    drawPic(context) {
+      context.drawImage(this.info.productImage[0], 40, 300, this.picWidth, this.picHeight);
+      this.drawCode(context);
+    }
+
+    //绘制二维码
+    drawCode(context) {
+      let that = this;
+      context.drawImage(this.code2, 500, 40, 200, 200);
+      context.draw(false, (e) => {
+        console.log('绘制完成');
+        wx.canvasToTempFilePath({
+          canvasId: 'productShare',
+          success(res) {
+            console.log('图片地址', res.tempFilePath)
+            that.posterUrl = res.tempFilePath;
+            that.isShowPoster=true;
+            that.$apply();
+          }
+        })
+      })
+    }
+
+    //获取图片的临时地址
+    getCanvasImgUrl() {
+      let count = 0;
+      let that = this;
+      // let path=that.info.productImage[0];
+      // console.log('pic',path);
+
+      wx.getImageInfo({
+        src: that.info.productImage[0],
+        success(res) {
+          console.log('pic1', res);
+          that.pic2 = res.path;
+
+          let radio = res.width / res.height;//图片的宽高比例
+          console.log('radio',radio);
+          let picWidth = 750 - (40 * 2);//绘制图片的宽
+          let picHeight = parseInt(picWidth / radio);//绘制图片的高
+          that.picWidth =  picWidth;
+          that.picHeight = picHeight;
+          that.canvasHeight = picHeight + 340;
+
+          let radio2=750/that.canvasHeight;
+          console.log('radio',radio2);
+          that.posterHeight=parseInt(that.winWidth/radio2);
+          that.$apply();
+        },
+      })
+
+      wx.getImageInfo({
+        src: that.code1,
+        success(res) {
+          console.log('res1', res);
+          that.code2 = res.path;
+          that.$apply();
+        }
+      })
     }
 
     events = {
@@ -270,6 +437,11 @@
 
     async onLoad(params) {
       console.log(params);
+      let info = await this.$parent.getSystemInfo();
+      console.log('info', info);
+      this.winWidth = info.windowWidth;
+      this.winHeight = info.windowHeight;
+
       let userInfo = await this.$parent.login();
       if (userInfo) {
         this.user_id = userInfo.id + '';
@@ -280,7 +452,7 @@
         product_id: params.product_id,
         user_id: params.user_id,
       }
-      this.getGoodsDetail(data); //获取商品信息
+      this.getGoodsDetail(data); //获取商品信息 
     }
 
     //获取信息
@@ -291,7 +463,13 @@
         list.updated_at = util.formatTime(list.updated_at - 0);
         this.info = list;
         this.$apply();
+        this.getCanvasImgUrl()
       } else {
+        wepy.showToast({
+          title: '请求失败',
+          icon: 'success',
+          duration: 2000,
+        });
 
       }
     }
