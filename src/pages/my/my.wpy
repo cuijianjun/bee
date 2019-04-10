@@ -135,11 +135,11 @@
         <view>我发布的</view>
       </view>
       <view class="item" @tap="toOrderList()">
-        <i class="iconfont icon-wodedingdan"></i>
+        <i class="iconfont icon-wodetiezi"></i>
         <view>我的订单</view>
       </view>
       <view class="item" @tap="toCollectList()">
-        <i class="iconfont icon-wodedingdan"></i>
+        <i class="iconfont icon-wodetiezi"></i>
         <view>我的收藏</view>
       </view>
     </view>

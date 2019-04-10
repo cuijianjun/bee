@@ -165,9 +165,9 @@
         let data = {
           limit: this.limit,
           page: this.page + '',
-          user_id: this.user_id,
+          // user_id: this.user_id,
           labelCode: this.labelCode,
-          searchQuery: this.searchQuery,
+          // searchQuery: this.searchQuery,
         }
         this.getListMsg(data); //获取列表信息
       },
@@ -198,9 +198,9 @@
         let data = {
           limit: this.limit,
           page: this.page + '',
-          user_id: this.user_id,
+          // user_id: this.user_id,
           labelCode: this.labelCode,
-          searchQuery: searchQuery,
+          // searchQuery: searchQuery,
         }
         this.getListMsg(data).then(() => {
           wepy.hideLoading();
@@ -269,9 +269,9 @@
         let data = {
           limit: this.limit + '',
           page: this.page + '',
-          user_id: this.user_id + '',
+          // user_id: this.user_id + '',
           labelCode: this.labelCode + '',
-          searchQuery: this.searchQuery,
+          // searchQuery: this.searchQuery,
         }
         this.getListMsg(data); //获取列表信息
       }
