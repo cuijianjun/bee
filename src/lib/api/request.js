@@ -320,9 +320,11 @@ class base {
       paySign: data.paySign,
       success(res) {
         console.log('发起支付成功',res);
+        return true;
       },
       fail(res) {
         console.log('发起支付失败',res);
+        return false;
       }
     })
   }

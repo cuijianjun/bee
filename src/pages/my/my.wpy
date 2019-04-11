@@ -67,14 +67,14 @@
               title: '更新资料成功', 
               icon: 'none', 
               showCancel: false,
-              duration:2000,
+              duration:5000,
           });
         } else {
           wepy.showToast({
               title: '更新资料失败', 
               icon: 'none', 
               showCancel: false,
-              duration:2000,
+              duration:5000,
           });
         }
       },

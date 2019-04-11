@@ -57,10 +57,10 @@
         <button wx:if="{{!avatarUrl || !nickName}}" class='button-cover' open-type="getUserInfo"
           bindgetuserinfo="getUserInfo"></button>
       </view>
-      <view class="btn btn-tell" wx:if="{{!isShowbtn}}">
+      <view class="btn btn-tell" wx:if="{{info.labelCode!=5}}">
         <view class="tell-txt center-flex" @tap="makePhone({{info.phoneNumber}})">联系卖家</view>
       </view>
-      <view class="btn btn-tell buy-btn"  wx:if="{{isShowbtn}}">
+      <view class="btn btn-tell buy-btn"  wx:if="{{info.labelCode==5}}">
         <view class="tell-txt center-flex" @tap="buy">马上买</view>
         <button wx:if="{{!avatarUrl || !nickName}}" class='button-cover' open-type="getUserInfo"
           bindgetuserinfo="getUserInfo"></button>
@@ -70,7 +70,10 @@
     </view>
 
     <!-- 侧边按钮 -->
-    <view class="btn-wrap center-flex btn-share1 complain-btn" @tap="complain">投诉</view>
+    <view class="btn-wrap center-flex btn-share1 complain-btn" @tap="complain">
+      投诉
+      <button @tap="hideShare" class="button-cover" open-type="feedback"></button>
+    </view>
     <!-- 侧边按钮 -->
     <view class="btn-wrap center-flex btn-share1" @tap="showShare">转发</view>
     <!-- 侧边按钮 -->
@@ -111,7 +114,7 @@
         保存
         <button class="button-cover" open-type="openSetting" bindopensetting="handleSetting" wx:if="{{!isCanSave}}">打开授权设置页</button>
       </view>
-    </view>
+    </view> 
   </view>
 </template>
 
@@ -141,7 +144,7 @@
       showShare: false, //是否展示分享
       isShowPoster:false,//是否展示海报
       isCanSave:true,//是否已经授权保存图片
-      isShowbtn:false,//是否显示马上买和投诉
+      // isShowbtn:false,//是否显示马上买和投诉
       isShowTop:false,//是否显示返回顶部按钮
 
       code1: 'https://res.pplu.vip/fd1ded660c403d6d080a6f8c805cbb4f.jpeg', //二维码临时地址
@@ -213,14 +216,14 @@
               wepy.showToast({
                 title: '取消收藏',
                 icon: 'none',
-                duration: 2000,
+                duration: 5000,
                 mask: true,
               });
             } else {
               wepy.showToast({
                 title: '操作失败',
                 icon: 'none',
-                duration: 2000,
+                duration: 5000,
                 mask: true,
               });
             }
@@ -236,14 +239,14 @@
               wepy.showToast({
                 title: '收藏成功',
                 icon: 'none',
-                duration: 2000,
+                duration: 5000,
                 mask: true,
               });
             } else {
               wepy.showToast({
                 title: '操作失败',
                 icon: 'none',
-                duration: 2000,
+                duration: 5000,
                 mask: true,
               });
             }
@@ -297,7 +300,7 @@
           wepy.showToast({
             title: '若不打开授权，则无法将图片保存在相册中', 
             icon: 'none', 
-            duration: 2000, 
+            duration: 5000, 
           });
           
         }else {//已授权
@@ -313,13 +316,12 @@
       //滑动
       onPageScroll(e){
         // console.log(e.scrollTop);
-        setTimeout(() => {
-          if(e.scrollTop>0){
-            this.isShowTop=true;
-          }else {
-            this.isShowTop=false;
-          }
-        }, 1000);       
+        let scrollTop=e.scrollTop;
+        if(scrollTop>100){
+          this.isShowTop=true;
+        }else {
+          this.isShowTop=false;
+        }        
       }
     }
 
@@ -348,7 +350,7 @@
             wepy.showToast({
               title: '保存图片成功', 
               icon: 'success', 
-              duration: 2000, 
+              duration: 5000, 
             }); 
           },
           fail(){
@@ -357,7 +359,7 @@
             wepy.showToast({
               title: '保存图片失败', 
               icon: 'none', 
-              duration: 2000, 
+              duration: 5000, 
             });
           }
         })
@@ -409,7 +411,7 @@
     //绘制商品图片
     drawPic(context) {
       console.log('绘制商品图片');
-      context.drawImage(this.info.productImage[0], 40, 300, this.picWidth, this.picHeight);
+      context.drawImage(this.pic2, 40, 300, this.picWidth, this.picHeight);
       this.drawCode(context);
     }
 
@@ -519,13 +521,13 @@
     //获取信息
     async getGoodsDetail(data) {
       let list = await request.getGoodsDetail(data);
-      let openid=this.$parent.globalData.openid;
+      // let openid=this.$parent.globalData.openid;
       console.log('列表信息', list);
       if (list) {
         list.updated_at = util.formatTime(list.updated_at - 0);
-        if(this.openid==openid){
-          this.isShowbtn=true;
-        }
+        // if(this.openid==openid){
+        //   this.isShowbtn=true;
+        // }
         this.info = list;    
         this.$apply();
         this.getCanvasImgUrl();
@@ -534,7 +536,7 @@
         wepy.showToast({
           title: '请求失败',
           icon: 'success',
-          duration: 2000,
+          duration: 5000,
         });
       }
     }

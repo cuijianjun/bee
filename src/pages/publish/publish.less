@@ -48,11 +48,14 @@ page {
     display: block;
     width: 170rpx;
     height: 170rpx;
+    background-color: #F8F8F8;
   }
 
   .pic-wrap {
     margin-right: 7rpx;
     margin-bottom: 7rpx;
+    border-radius: 20rpx;
+    overflow: hidden;
   }
 
   .add_img {
@@ -62,6 +65,18 @@ page {
 
   .add_img:nth-child(4n){
     margin-right: 0;
+  }
+
+  .img-hinit {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 30rpx;
+    background-color: rgba(0,0,0,.4);
+    // border-radius: 20rpx;
+    font-size: 20rpx;
+    color: #fff;
   }
   
   .close-img {

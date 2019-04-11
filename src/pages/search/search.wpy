@@ -107,7 +107,7 @@
           wepy.showToast({
             title: '搜索关键词不能为空', 
             icon: 'none', 
-            duration: 1500, 
+            duration: 5000, 
           });
           
         } else {

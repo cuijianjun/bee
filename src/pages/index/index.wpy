@@ -155,7 +155,10 @@
 
       //切换信息类型
       getCurrentType(idx, labelCode) {
-        console.log('type', idx, labelCode);
+        // console.log('type', idx, labelCode);
+        if(this.currentTypeIndex == idx){
+          return false;
+        }
         this.currentTypeIndex = idx;
         this.labelCode = labelCode;
         this.page = 1;
@@ -217,13 +220,11 @@
           this.position=0;
         }
 
-        setTimeout(() => {
-          if(scrollTop>0){
-            this.isShowTop=true;
-          }else {
-            this.isShowTop=false;
-          }
-        }, 1000);       
+        if(scrollTop>100){
+          this.isShowTop=true;
+        }else {
+          this.isShowTop=false;
+        }      
       }
     }
 
@@ -320,6 +321,16 @@
         wepy.hideLoading();
       })
 
+    }
+
+    //分享
+    onShareAppMessage() {
+      this.showShare = false;
+      return {
+        title: this.info.title,
+        path: `/pages/index/index`,
+        imageUrl: '',
+      };
     }
   }
 

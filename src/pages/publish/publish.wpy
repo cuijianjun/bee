@@ -24,7 +24,8 @@
           <view class="product-pic">
             <repeat for="{{picsTotal}}" key="index" index="index" item="item">
               <view class="pic-wrap">
-                <image class="add_img" src="{{item}}" lazy-load="false"></image>
+                <view class="img-hinit center-flex" wx:if="{{index==0}}">主图</view>
+                <image class="add_img" src="{{item}}" mode="aspectFill" lazy-load="false"></image>
                 <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png"
                        lazy-load="false"></image>
               </view>
@@ -45,7 +46,7 @@
 
         <view class="user-group-wrap">
           <view class="title">价格:</view>
-          ￥<input name="price" class="content" type="number" placeholder="0.00" value="{{price}}" @blur="getPrice"></input>
+          ￥<input name="price" class="content" type="number" placeholder="0" value="{{price}}" @blur="getPrice"></input>
         </view>
 
         <view class="user-group-wrap">
