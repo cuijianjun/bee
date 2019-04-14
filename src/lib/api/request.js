@@ -98,14 +98,13 @@ class base {
 
   //详情
   async getGoodsDetail(data) {
-    let token = creatToken(data);
+    let token = creatToken();
     let header = Object.assign({
       'content-type': 'application/json' // 默认值
     }, token);
 
     let res = await wepy.request({
       url: this.HOSTURL + `api/product_list/detail/${data.product_id}/${data.user_id}`,
-      data:data || {},
       header: header,
     });
     let msg = res.data;

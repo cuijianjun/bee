@@ -70,7 +70,7 @@
     </view>
 
     <!-- 侧边按钮 -->
-    <view class="btn-wrap center-flex btn-share1 complain-btn" @tap="complain">
+    <view class="btn-wrap center-flex btn-share1 complain-btn" wx:if="{{info.labelCode==5}}" @tap="complain">
       投诉
       <button @tap="hideShare" class="button-cover" open-type="feedback"></button>
     </view>
@@ -535,7 +535,7 @@
         wepy.hideLoading();
         wepy.showToast({
           title: '请求失败',
-          icon: 'success',
+          icon: 'none',
           duration: 5000,
         });
       }

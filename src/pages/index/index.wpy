@@ -45,8 +45,8 @@
     <view class="type-container {{position?'type-style1':'type-style2'}}">
       <scroll-view class="scroll-view-wrap" scroll-x="true" bindscroll="scroll" style="width: 100%">
         <repeat for="{{type}}" key="index" index="index" item="item">
-          <view class="type-item {{currentTypeIndex==index?'active-type':''}}"
-            @tap="getCurrentType({{index}},{{item.code}})">{{item.labelName}}</view>
+          <view class="type-item {{labelCode==(index+1)?'active-type':''}}"
+            @tap="switchType({{item.code}})">{{item.labelName}}</view>
         </repeat>
       </scroll-view>
     </view>
@@ -120,8 +120,8 @@
       msgList: [],
       isShowHinit:false,//是否显示没信息时的提示
       type: [], //信息产品类型
-      labelCode: '', //类型码
-      currentTypeIndex: 0, //当前信息类型
+      labelCode: 1, //类型码
+      // currentTypeIndex: 0, //当前信息类型
       page: 1,
       swiperHeight:'',
       position:0,//类型块的定位方式 1为固定定位，0为相对定位
@@ -153,26 +153,10 @@
         });
       },
 
-      //切换信息类型
-      getCurrentType(idx, labelCode) {
-        // console.log('type', idx, labelCode);
-        if(this.currentTypeIndex == idx){
-          return false;
-        }
-        this.currentTypeIndex = idx;
-        this.labelCode = labelCode;
-        this.page = 1;
-        this.msgList = [];
-        this.isShowHinit=false;
-        this.$apply();
-        let data = {
-          limit: this.limit,
-          page: this.page + '',
-          // user_id: this.user_id,
-          labelCode: this.labelCode,
-          // searchQuery: this.searchQuery,
-        }
-        this.getListMsg(data); //获取列表信息
+      //切换类型
+      switchType(labelCode){
+        console.log('切换类型');
+        this.getCurrentType(labelCode);
       },
 
       //跳转搜索页面
@@ -263,16 +247,15 @@
         console.log('banner', res);
         this.swiperData.arr = res.rows;
         this.type = res.label.rows;
-        this.labelCode = res.label.rows[0].code;
+        // this.labelCode = res.label.rows[0].code;
+        this.getCurrentType(this.labelCode);
         this.$apply();
         this.getSwiperHeight();
 
         let data = {
           limit: this.limit + '',
           page: this.page + '',
-          // user_id: this.user_id + '',
           labelCode: this.labelCode + '',
-          // searchQuery: this.searchQuery,
         }
         this.getListMsg(data); //获取列表信息
       }
@@ -301,6 +284,26 @@
       }
       this.$apply();
       wepy.hideLoading();
+    }
+
+    //切换信息类型
+    getCurrentType(labelCode) {
+      // console.log('type', idx, labelCode);
+      if(this.labelCode == labelCode){
+        return false;
+      }
+      // this.currentTypeIndex = idx;
+      this.labelCode = labelCode;
+      this.page = 1;
+      this.msgList = [];
+      this.isShowHinit=false;
+      this.$apply();
+      let data = {
+        limit: this.limit,
+        page: this.page + '',
+        labelCode: this.labelCode,
+      }
+      this.getListMsg(data); //获取列表信息
     }
 
     //滑动到底部加载更多

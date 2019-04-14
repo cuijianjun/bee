@@ -15,8 +15,8 @@
       <view class="publish-wrap">
         <!-- 内容描述部分 -->
         <view class="publish-msg-wrap">
-          <input name="title" class="brief title" placeholder="标题 品类品牌型号都是买家喜欢搜索的" value="{{tell}}" type="number"
-            maxlength="50"></input>
+          <input name="title" class="brief title" placeholder="标题 品类品牌型号都是买家喜欢搜索的" value="{{tell}}" type="text"
+            maxlength="20"></input>
           <view class="product-brief-wrap">
             <textarea class="brief" maxlength="500" value="{{brief}}" placeholder="产品简介 请输入宝贝的详情" auto-height="true"
               name="description" />
