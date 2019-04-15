@@ -308,9 +308,18 @@
         } 
       },
 
-      //惦记投诉
-      complain(){
+      //点击投诉
+      async complain(){
         console.log('点击投诉');
+        let data={
+          product_id:this.info.id,
+          user_id:this.user_id,
+        }
+        let status = await request.deleteProductInfo(data);
+        console.log('删除',status);
+        if(list){
+
+        }
       },
 
       //滑动
@@ -365,7 +374,15 @@
         })
     }
 
-    //tian8
+    //获取小程序码
+    async getCode(){
+      let data={
+        scene:`user_id=${this.user_id}`
+      }
+      let codeUrl = await request.getCodeUrl(data);
+    }
+
+    //绘制背景
     drawBg(context){
       console.log('绘制背景色');
       context.setFillStyle('#fff')
@@ -516,6 +533,7 @@
         user_id: params.user_id,
       }
       this.getGoodsDetail(data); //获取商品信息 
+      this.getCode()//获取小程序码
     }
 
     //获取信息

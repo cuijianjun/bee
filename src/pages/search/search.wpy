@@ -139,6 +139,13 @@
           this.noResultHinit=false;
         }
       },
+
+      //跳转详情页
+      returnToDetail(product_id, user_id) {
+        wepy.navigateTo({
+          url: `/pages/detail/detail?product_id=${product_id}&user_id=${user_id}`
+        });
+      },
     }
 
     events = {

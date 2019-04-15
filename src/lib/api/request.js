@@ -94,9 +94,7 @@ class base {
     }
   }
 
-
-
-  //详情
+  //获取详情
   async getGoodsDetail(data) {
     let token = creatToken();
     let header = Object.assign({
@@ -132,6 +130,47 @@ class base {
     let msg = res.data;
     if (msg.code == 201 || msg.code == 200) {
       return true;
+    }else {
+      return false;
+    }
+  }
+
+  //点击投诉，删除商品信息
+  async deleteProductInfo(data) {
+    let token = creatToken();
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + `/api/product_list/delete/${data.product_id}/${data.user_id}`,
+      header: header,
+    });
+    let msg = res.data;
+    console.log('详情数据', res);
+    if (msg.code == 200) {
+      return msg.data;
+    }else {
+      return false;
+    }
+  }
+
+  //获取小程序码
+  async getCodeUrl(data) {
+    let token = creatToken();
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + `/api/weiXin/getUnlimited`,
+      header: header,
+      data:data
+    });
+    let msg = res.data;
+    console.log('详情数据', res);
+    if (msg.code == 200) {
+      return msg.data;
     }else {
       return false;
     }
