@@ -70,7 +70,7 @@
     </view>
 
     <!-- 侧边按钮 -->
-    <view class="btn-wrap center-flex btn-share1 complain-btn" wx:if="{{info.labelCode==5}}" @tap="complain">
+    <view class="btn-wrap center-flex btn-share1 complain-btn" @tap="complain">
       投诉
       <button @tap="hideShare" class="button-cover" open-type="feedback"></button>
     </view>
@@ -267,7 +267,19 @@
             code:loginRes.code,
           }
           console.log(data);
-          let msg=request.getUserTel(data);
+          let tel=request.getUserTel(data);
+          if(tel){
+            this.tel=tel;
+            this.$apply();
+          }else {
+            wepy.showToast({
+              title: '获取手机号失败', //提示的内容,
+              icon: 'success', //图标,
+              duration: 2000, 
+            });
+            
+          }
+
         }
       },
 
@@ -321,15 +333,17 @@
 
       //点击投诉
       async complain(){
-        console.log('点击投诉');
+        // console.log('点击投诉');
         let data={
-          product_id:this.info.id,
+          id:this.info.id+'',
           user_id:this.user_id,
         }
         let status = await request.deleteProductInfo(data);
         console.log('删除',status);
-        if(list){
-
+        if(status){
+          console.log('投诉成功');
+        }else {
+          console.log('投诉失败');
         }
       },
 
@@ -388,7 +402,8 @@
     //获取小程序码
     async getCode(){
       let data={
-        scene:`user_id=${this.user_id}`
+        scene:`user_id=${this.user_id}`,
+        page:'pages/detail/detail'
       }
       let codeUrl = await request.getCodeUrl(data);
     }

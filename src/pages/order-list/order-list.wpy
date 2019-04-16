@@ -122,7 +122,7 @@
       
     }
 
-    async onLoad() {
+    async onLoad(params) {
       // wepy.showLoading({
       //   title: '加载中', 
       //   mask: true, 
@@ -131,13 +131,60 @@
       let userInfo = await this.$parent.login();
       if (userInfo) {
         this.user_id = userInfo.id + '';
-      }  
+      }
       this.$apply();
-      
-    } 
+
+      console.log('收藏', params);
+      let data = {
+        user_id: this.user_id + '',
+      }
+
+      this.getListMsg(data); //获取列表信息
+    }
+
+    // 获取列表信息
+    async getListMsg(data) {
+      let list = await request.getOrderList(data);
+      console.log('列表信息', list);
+
+      if (list && list.length > 0) {
+        this.msgList = list;
+      } else {
+        if (this.page == 1) {
+          this.isShowHinit = true;
+        }
+        this.$apply();
+        wepy.hideLoading();
+        return;
+      }
+
+      if (this.page == 1) {
+        this.msgList = list;
+      } else {
+        this.msgList = this.msgList.concat(list);
+      }
+      this.$apply();
+      wepy.hideLoading();
+    }
 
     //滑动到底部加载更多
     onReachBottom() {
+      this.page++;
+      wepy.showLoading({
+        title: '加载中...',
+        mask: true,
+      });
+      let data = {
+        limit: this.limit,
+        page: this.page + '',
+        user_id: this.user_id,
+        labelCode: this.labelCode,
+        searchQuery: this.searchQuery,
+      }
+      this.getListMsg(data).then(() => {
+        wepy.hideLoading();
+      })
+
     }
   }
 

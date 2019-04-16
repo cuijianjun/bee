@@ -8,36 +8,24 @@
   <view class="container">
     <!-- 信息列表 -->
     <view class="publish-msg-wrap">
-      <view class="item-wrap">
-        <view class="goods-wrap">
-          <view class="pic-wrap">
-            <image class="pic" src="http://t.cn/E6chaMi" mode="scaleToFill" lazy-load="false"></image>
+      <repeat for="{{msgList}}" key="index" index="index" item="item">
+        <view class="item-wrap">
+          <view class="goods-wrap">
+            <view class="pic-wrap">
+              <image class="pic" src="{{item.productImage[0]}}" mode="aspectFill" lazy-load="false"></image>
+            </view>
+            <view class="product-content">
+              <view class="title">{{item.title}}</view>
+              <view class="price">¥{{item.price}}</view>
+            </view>
           </view>
-          <view class="product-content">
-            <view class="title">发起微信支付。了解更多信息，请查看微信支付接口文档</view>
-            <view class="price">¥10</view>
-          </view>
-        </view>
-        <view class="btn-wrap">
-          <view class="delete btn center-flex" @tap="deleteInfo">删除</view>
-          <view class="edit btn center-flex" @tap="editInfo">修改</view>
-        </view>
-      </view>
-      <view class="item-wrap">
-        <view class="goods-wrap">
-          <view class="pic-wrap">
-            <image class="pic" src="http://t.cn/E6chaMi" mode="scaleToFill" lazy-load="false"></image>
-          </view>
-          <view class="product-content">
-            <view class="title">发起微信支付。了解更多信息，请查看微信支付接口文档</view>
-            <view class="price">¥10</view>
+          <view class="btn-wrap">
+            <view class="delete btn center-flex" @tap="deleteInfo">删除</view>
+            <view class="edit btn center-flex" @tap="editInfo">修改</view>
           </view>
         </view>
-        <view class="btn-wrap">
-          <view class="delete btn center-flex" @tap="deleteInfo">删除</view>
-          <view class="edit btn center-flex" @tap="editInfo">修改</view>
-        </view>
-      </view>
+      </repeat>
+
     </view>
     <!-- 没有搜索结果提示 -->
     <view class="no-result-hinit center-flex" wx:if="{{isShowHinit}}" style="font-size:40rpx;height:300rpx;">
@@ -65,7 +53,7 @@
       user_id: '',
       limit: '20',
       msgList: [],
-      isShowHinit:false,//是否显示没信息时的提示
+      isShowHinit: false, //是否显示没信息时的提示
       labelCode: '1', //类型码
       currentTypeIndex: 0, //当前信息类型
       page: 1,
@@ -96,7 +84,7 @@
       },
 
       //删除商品
-      deleteInfo(){
+      deleteInfo() {
         wx.showModal({
           title: '提示',
           content: '您要删除这条商品信息吗？',
@@ -107,12 +95,12 @@
               console.log('用户点击取消')
             }
           }
-        })   
+        })
       },
     }
 
     events = {
-      
+
     }
 
     async onLoad() {
@@ -123,15 +111,15 @@
       let userInfo = await this.$parent.login();
       if (userInfo) {
         this.user_id = userInfo.id + '';
-      }  
+      }
       this.$apply();
 
       let data = {
-          limit: this.limit + '',
-          page: this.page + '',
-          user_id: this.user_id + '',
-        }
-        this.getListMsg(data); //获取列表信息
+        limit: this.limit + '',
+        page: this.page + '',
+        user_id: this.user_id + '',
+      }
+      this.getListMsg(data); //获取列表信息
     }
 
     // 获取列表信息
@@ -142,8 +130,8 @@
       if (list && list.length > 0) {
         this.msgList = list;
       } else {
-        if(this.page==1){
-          this.isShowHinit=true;
+        if (this.page == 1) {
+          this.isShowHinit = true;
         }
         this.$apply();
         wepy.hideLoading();

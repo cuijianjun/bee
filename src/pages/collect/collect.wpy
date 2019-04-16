@@ -108,7 +108,7 @@
 
     // 获取列表信息
     async getListMsg(data) {
-      let list = await request.getGoodsLists(data);
+      let list = await request.getCollectList(data);
       console.log('列表信息', list);
 
       if (list && list.length > 0) {

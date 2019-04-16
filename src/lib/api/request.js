@@ -71,7 +71,7 @@ class base {
     console.log('登录接口',res.data);
     let msg = res.data;
     if(msg){
-      return msg;
+      return msg.phoneNumber;
     }else {
       return false;
     }  
@@ -157,15 +157,53 @@ class base {
     }
   }
 
-  //点击投诉，删除商品信息
-  async deleteProductInfo(data) {
-    let token = creatToken();
+  //获取收藏列表
+  async getCollectList(data) {
+    let token = creatToken(data);
     let header = Object.assign({
       'content-type': 'application/json' // 默认值
     }, token);
 
     let res = await wepy.request({
-      url: this.HOSTURL + `/api/product_list/delete/${data.product_id}/${data.user_id}`,
+      url: this.HOSTURL + `api/collect/list/${data.user_id}`,
+      header: header,
+    });
+    let msg = res.data;
+    // console.log('获取热词', msg);
+    if (msg.code == 200) {
+      return msg.data;
+    }
+  }
+
+  //获取订单列表
+  async getOrderList(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + `api/order/getOrderList/${data.user_id}`,
+      header: header,
+    });
+    let msg = res.data;
+    // console.log('获取订单', msg);
+    if (msg.code == 200) {
+      return msg.data;
+    }
+  }
+
+
+  //点击投诉，删除商品信息
+  async deleteProductInfo(data) {
+    console.log(data);
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + `api/product_list/delete/${data.id}/${data.user_id}`,
       header: header,
     });
     let msg = res.data;
@@ -179,7 +217,7 @@ class base {
 
   //获取小程序码
   async getCodeUrl(data) {
-    let token = creatToken();
+    let token = creatToken(data);
     let header = Object.assign({
       'content-type': 'application/json' // 默认值
     }, token);
