@@ -115,18 +115,21 @@
       
     }
 
-    async onLoad(params) {
+    async onLoad() {
       // wepy.showLoading({
       //   title: '加载中', 
       //   mask: true, 
       // });
-      
+      let userInfo = await this.$parent.login();
+      if (userInfo) {
+        this.user_id = userInfo.id + '';
+      }  
+      this.$apply();
+
       let data = {
           limit: this.limit + '',
           page: this.page + '',
-          user_id: params.user_id + '',
-          labelCode: this.labelCode + '',
-          searchQuery: this.searchQuery,
+          user_id: this.user_id + '',
         }
         this.getListMsg(data); //获取列表信息
     }
@@ -167,8 +170,6 @@
         limit: this.limit,
         page: this.page + '',
         user_id: this.user_id,
-        labelCode: this.labelCode,
-        searchQuery: this.searchQuery,
       }
       this.getListMsg(data).then(() => {
         wepy.hideLoading();

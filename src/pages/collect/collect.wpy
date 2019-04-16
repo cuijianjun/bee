@@ -8,93 +8,30 @@
   <view class="container">
     <!-- 信息列表 -->
     <view class="publish-msg-wrap">
-      <view class="publish-msg-item" @tap="returnToDetail()">
-        <view class="item-inner-wrap">
-          <view class="pic-wrap">
-            <image class="pic" mode="aspectFill" src="https://res.pplu.vip/banner-1.jpg" lazy-load="{{true}}"></image>
-          </view>
-          <view class="content-wrap">
-            <view class="title cutText2">测试标题</view>
-            <view class="middle-wrap">
-              <view class="price">￥2</view>
-              <view class="people">200人想要</view>
+      <repeat for="{{msgList}}" key="index" index="index" item="item">
+        <view class="publish-msg-item" @tap="returnToDetail()">
+          <view class="item-inner-wrap">
+            <view class="pic-wrap">
+              <image class="pic" mode="aspectFill" src="{{item.productImage[0]}}" lazy-load="{{true}}"></image>
             </view>
-            <view class="footer">
-              <image class="photo" src="http://t.cn/EfSdFeN" lazy-load="{{true}}"></image>
-              <view class="msg-wrap">
-                <view class="name cutText1">昵称</view>
-                <view class="address">北京</view>
+            <view class="content-wrap">
+              <view class="title cutText2">{{item.title}}</view>
+              <view class="middle-wrap">
+                <view class="price">￥{{item.price}}</view>
+                <view class="people">{{item.pageView}}人想要</view>
+              </view>
+              <view class="footer">
+                <image class="photo" src="{{item.user.avatarUrl}}" lazy-load="{{true}}"></image>
+                <view class="msg-wrap">
+                  <view class="name cutText1">{{item.user.nickName}}</view>
+                  <view class="address">{{item.city}}</view>
+                </view>
               </view>
             </view>
           </view>
         </view>
-      </view>
+      </repeat>
 
-      <view class="publish-msg-item" @tap="returnToDetail()">
-        <view class="item-inner-wrap">
-          <view class="pic-wrap">
-            <image class="pic" mode="aspectFill" src="https://res.pplu.vip/banner-1.jpg" lazy-load="{{true}}"></image>
-          </view>
-          <view class="content-wrap">
-            <view class="title cutText2">测试标题</view>
-            <view class="middle-wrap">
-              <view class="price">￥2</view>
-              <view class="people">200人想要</view>
-            </view>
-            <view class="footer">
-              <image class="photo" src="http://t.cn/EfSdFeN" lazy-load="{{true}}"></image>
-              <view class="msg-wrap">
-                <view class="name cutText1">昵称</view>
-                <view class="address">北京</view>
-              </view>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <view class="publish-msg-item" @tap="returnToDetail()">
-        <view class="item-inner-wrap">
-          <view class="pic-wrap">
-            <image class="pic" mode="aspectFill" src="https://res.pplu.vip/banner-1.jpg" lazy-load="{{true}}"></image>
-          </view>
-          <view class="content-wrap">
-            <view class="title cutText2">测试标题</view>
-            <view class="middle-wrap">
-              <view class="price">￥2</view>
-              <view class="people">200人想要</view>
-            </view>
-            <view class="footer">
-              <image class="photo" src="http://t.cn/EfSdFeN" lazy-load="{{true}}"></image>
-              <view class="msg-wrap">
-                <view class="name cutText1">昵称</view>
-                <view class="address">北京</view>
-              </view>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <view class="publish-msg-item" @tap="returnToDetail()">
-        <view class="item-inner-wrap">
-          <view class="pic-wrap">
-            <image class="pic" mode="aspectFill" src="https://res.pplu.vip/banner-1.jpg" lazy-load="{{true}}"></image>
-          </view>
-          <view class="content-wrap">
-            <view class="title cutText2">测试标题</view>
-            <view class="middle-wrap">
-              <view class="price">￥2</view>
-              <view class="people">200人想要</view>
-            </view>
-            <view class="footer">
-              <image class="photo" src="http://t.cn/EfSdFeN" lazy-load="{{true}}"></image>
-              <view class="msg-wrap">
-                <view class="name cutText1">昵称</view>
-                <view class="address">北京</view>
-              </view>
-            </view>
-          </view>
-        </view>
-      </view>
     </view>
     <!-- 没有搜索结果提示 -->
     <view class="no-result-hinit center-flex" wx:if="{{isShowHinit}}" style="font-size:40rpx;height:300rpx;">
@@ -119,9 +56,7 @@
     data = {
       user_id: '',
       limit: '20',
-      labelCode: '1', //类型码
       page: 1,
-      searchQuery: '',
       msgList: [],
       isShowHinit: false, //是否显示没信息时的提示  
     }
@@ -155,19 +90,17 @@
       //   mask: true, 
       // });
       // console.log(ListShow);
-      // let userInfo = await this.$parent.login();
-      // if (userInfo) {
-      //   this.user_id = userInfo.id + '';
-      // }  
-      // this.$apply();
+      let userInfo = await this.$parent.login();
+      if (userInfo) {
+        this.user_id = userInfo.id + '';
+      }
+      this.$apply();
 
       console.log('收藏', params);
       let data = {
         limit: this.limit + '',
         page: this.page + '',
-        user_id: params.user_id + '',
-        labelCode: this.labelCode + '',
-        searchQuery: this.searchQuery,
+        user_id: this.user_id + '',
       }
 
       this.getListMsg(data); //获取列表信息

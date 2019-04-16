@@ -169,9 +169,10 @@
 
       //选择地址
       regionChange(e) {
-        console.log('选择地址', e.detail.value)
+        // console.log('选择地址', e.detail.value)
         let addressArr = e.detail.value;
         this.region = addressArr;
+        this.page=1;
         if (addressArr[0] == '全部') {
           this.address = '全部';
         } else if (addressArr[1] == '全部') {
@@ -181,14 +182,28 @@
         }
         let searchQuery = addressArr.join('').replace(/全部/g, '');
         this.searchQuery = searchQuery;
+        console.log('地址',searchQuery);
+        this.$apply();
 
-        let data = {
-          limit: this.limit,
-          page: this.page + '',
-          // user_id: this.user_id,
-          labelCode: this.labelCode,
-          // searchQuery: searchQuery,
+        let data={}
+        if(searchQuery){
+          data = {
+            limit: this.limit,
+            page: this.page + '',
+            // user_id: this.user_id,
+            labelCode: this.labelCode,
+            searchQuery: searchQuery,
+          }
+        }else {
+          data = {
+            limit: this.limit,
+            page: this.page + '',
+            // user_id: this.user_id,
+            labelCode: this.labelCode,
+            // searchQuery: searchQuery,
+          }
         }
+         
         this.getListMsg(data).then(() => {
           wepy.hideLoading();
         })
@@ -271,6 +286,7 @@
       } else {
         if(this.page==1){
           this.isShowHinit=true;
+          this.msgList=[];
         }
         this.$apply();
         wepy.hideLoading();
@@ -298,11 +314,22 @@
       this.msgList = [];
       this.isShowHinit=false;
       this.$apply();
-      let data = {
-        limit: this.limit,
-        page: this.page + '',
-        labelCode: this.labelCode,
-      }
+
+      let data={}
+        if(this.searchQuery){
+          data = {
+            limit: this.limit,
+            page: this.page + '',
+            labelCode: this.labelCode,
+            searchQuery: this.searchQuery,
+          }
+        }else {
+          data = {
+            limit: this.limit,
+            page: this.page + '',
+            labelCode: this.labelCode,
+          }
+        }
       this.getListMsg(data); //获取列表信息
     }
 
@@ -313,13 +340,25 @@
         title: '加载中...',
         mask: true,
       });
-      let data = {
-        limit: this.limit,
-        page: this.page + '',
-        user_id: this.user_id,
-        labelCode: this.labelCode,
-        searchQuery: this.searchQuery,
-      }
+     
+      let data={}
+        if(this.searchQuery){
+          data = {
+            limit: this.limit,
+            page: this.page + '',
+            // user_id: this.user_id,
+            labelCode: this.labelCode,
+            searchQuery: this.searchQuery,
+          }
+        }else {
+          data = {
+            limit: this.limit,
+            page: this.page + '',
+            // user_id: this.user_id,
+            labelCode: this.labelCode,
+            // searchQuery: searchQuery,
+          }
+        }
       this.getListMsg(data).then(() => {
         wepy.hideLoading();
       })

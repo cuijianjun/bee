@@ -138,7 +138,7 @@
       info: {},
       user_id: '',
       openid:'',
-      tel: '16666666666',
+      tel: '',
       avatarUrl: '头像',
       nickName: '昵称',
       showShare: false, //是否展示分享

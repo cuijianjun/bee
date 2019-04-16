@@ -97,7 +97,7 @@
       //点击搜索
       search(keyword) {
         console.log('点击搜索');
-        console.log('keyword', keyword);
+        // console.log('keyword', keyword);
         wepy.showLoading({
           title: '搜索中',
           mask: true,
@@ -116,8 +116,6 @@
           let data = {
             limit: this.limit + '',
             page: this.page + '',
-            // user_id: this.user_id + '',
-            // labelCode: '',
             searchQuery: this.keyword,
           }
 
@@ -201,8 +199,6 @@
       let data = {
         limit: this.limit,
         page: this.page + '',
-        // user_id: this.user_id,
-        // labelCode: '',
         searchQuery: this.keyword,
       }
       this.getListMsg(data).then(() => {

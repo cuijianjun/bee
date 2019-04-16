@@ -263,15 +263,19 @@ class base {
     }
   }
 
-  /*------------我发布的------------------*/
-  async getMyGoodsLists(data) {
+  //获取发布信息列表
+  async getPublishInfoLists(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'Content-Type':'application/json',
+    },token);
+
     let res = await wepy.request({
       url: this.HOSTURL + 'api/product_list/list',
       data: {
         limit: data.limit,
         page: data.page,
         user_id: data.user_id,
-        label: data.label,
       },
       method: 'POST',
     });
@@ -281,11 +285,26 @@ class base {
     }
   }
 
-  async deletePublishInfo(id) {
-    console.log('删除发布信息id:', id);
-    let header = creatToken({
-      id
+  //删除发布信息
+  async deletePublishInfo(data) {
+    let header = Object.assign({
+      'Content-Type':'application/json',
+    },token);
+    let res = await wepy.request({
+      url: this.HOSTURL + `api/product_list/update/${id}`,
+      method: 'GET',
+      header,
+      data:data
     });
+    console.log('删除返回', res);
+    return res
+  }
+
+  //修改发布信息
+  async editPublishInfo(id) {
+    let header = Object.assign({
+      'Content-Type':'application/json',
+    },token);
     let res = await wepy.request({
       url: this.HOSTURL + `api/product_list/delete/${id}`,
       method: 'GET',
@@ -365,12 +384,7 @@ class base {
         return false;
       }
     })
-  }
-
-
-
-  
-
+  }  
 }
 /*
  * 生成加密数据
