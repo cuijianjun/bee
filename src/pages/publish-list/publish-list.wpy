@@ -20,7 +20,7 @@
             </view>
           </view>
           <view class="btn-wrap">
-            <view class="delete btn center-flex" @tap="deleteInfo">删除</view>
+            <view class="delete btn center-flex" @tap="deleteInfo({{item.id}})">删除</view>
             <view class="edit btn center-flex" @tap="editInfo">修改</view>
           </view>
         </view>
@@ -49,13 +49,10 @@
     }
 
     data = {
-      searchQuery: '',
       user_id: '',
       limit: '20',
       msgList: [],
       isShowHinit: false, //是否显示没信息时的提示
-      labelCode: '1', //类型码
-      currentTypeIndex: 0, //当前信息类型
       page: 1,
     }
 
@@ -84,13 +81,32 @@
       },
 
       //删除商品
-      deleteInfo() {
+      deleteInfo(id) {
+        let that=this;
         wx.showModal({
           title: '提示',
           content: '您要删除这条商品信息吗？',
           success(res) {
             if (res.confirm) {
               console.log('用户点击确定')
+              let data={
+                id:id+'',
+                user_id:that.user_id,
+              }
+              let status=request.deleteProductInfo(data);
+              if(status){
+                wepy.showToast({
+                  title: '删除成功', //提示的内容,
+                  icon: 'success', //图标,
+                  duration: 2000,
+                });  
+              }else {
+                wepy.showToast({
+                  title: '删除失败', //提示的内容,
+                  icon: 'success', //图标,
+                  duration: 2000,
+                });
+              }
             } else if (res.cancel) {
               console.log('用户点击取消')
             }

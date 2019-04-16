@@ -8,42 +8,28 @@
   <view class="container">
     <!-- 信息列表 -->
     <view class="publish-msg-wrap">
-      <view class="item-wrap">
-        <view class="goods-wrap" @tap="toOrderDetail">
-          <view class="pic-wrap">
-            <image class="pic" src="http://t.cn/E6chaMi" mode="scaleToFill" lazy-load="false"></image>
+      <repeat for="{{msgList}}" key="index" index="index" item="item">
+        <view class="item-wrap">
+          <view class="goods-wrap" @tap="toOrderDetail">
+            <view class="pic-wrap">
+              <image class="pic" src="{{item.snap_img}}" mode="scaleToFill" lazy-load="false"></image>
+            </view>
+            <view class="product-content">
+              <view class="title">{{item.snap_name}}</view>
+              <view class="price">¥{{item.price}}</view>
+            </view>
           </view>
-          <view class="product-content">
-            <view class="title">发起微信支付。了解更多信息，请查看微信支付接口文档</view>
-            <view class="price">¥10</view>
+          <view class="product-money">
+            共{{item.total_count}}件商品 应支付: ¥<text class="total-money">{{item.total_price}}</text>
           </view>
-        </view>
-        <view class="product-money">
-          共1件商品 应支付: ¥<text class="total-money">10</text>
-        </view>
-        <view class="btn-wrap">
-          <view class="delete btn center-flex" @tap="deleteOrder">取消订单</view>
-          <view class="edit btn center-flex" @tap="payment">立即支付</view>
-        </view>
-      </view>
-      <view class="item-wrap">
-        <view class="goods-wrap" @tap="toOrderDetail">
-          <view class="pic-wrap">
-            <image class="pic" src="http://t.cn/E6chaMi" mode="scaleToFill" lazy-load="false"></image>
-          </view>
-          <view class="product-content">
-            <view class="title">发起微信支付。了解更多信息，请查看微信支付接口文档</view>
-            <view class="price">¥10</view>
+          <view class="btn-wrap">
+            <view class="delete btn center-flex" @tap="deleteOrder({{item.id}})">取消订单</view>
+            <view class="edit btn center-flex" @tap="payment">立即支付</view>
           </view>
         </view>
-        <view class="product-money">
-          共1件商品 应支付: ¥<text class="total-money">10</text>
-        </view>
-        <view class="btn-wrap">
-          <view class="delete btn center-flex" @tap="deleteOrder">取消订单</view>
-          <view class="edit btn center-flex" @tap="payment">立即支付</view>
-        </view>
-      </view>
+      </repeat>
+
+
     </view>
     <!-- 没有搜索结果提示 -->
     <view class="no-result-hinit center-flex" wx:if="{{isShowHinit}}" style="font-size:40rpx;height:300rpx;">
@@ -67,7 +53,11 @@
     }
 
     data = {
-      isShowHinit:false,//是否显示没信息时的提示
+      user_id: '',
+      limit: '20',
+      msgList: [],
+      isShowHinit: false, //是否显示没信息时的提示
+      page: 1,
     }
 
     components = {
@@ -87,25 +77,42 @@
       },
 
       //删除订单
-      deleteOrder(){
+     async deleteOrder(order_id) {
         wx.showModal({
           title: '提示',
           content: '您要取消这个订单吗？',
           success(res) {
             if (res.confirm) {
               console.log('用户点击确定')
+              let data={
+                order_id:order_id
+              }
+              let status=request.deleteOrderList(data);
+              if(status){
+                wepy.showToast({
+                  title: '删除成功', //提示的内容,
+                  icon: 'success', //图标,
+                  duration: 2000,
+                });  
+              }else {
+                wepy.showToast({
+                  title: '删除失败', //提示的内容,
+                  icon: 'success', //图标,
+                  duration: 2000,
+                });
+              }
             } else if (res.cancel) {
               console.log('用户点击取消')
             }
           }
-        })   
+        })
       },
 
       //付款
-      async payment(){
-        let orderInfo=this.orderInfo;
-        if(orderInfo.status>1){
-          return ;
+      async payment() {
+        let orderInfo = this.orderInfo;
+        if (orderInfo.status > 1) {
+          return;
         }
         // let data={
         //   timeStamp:orderInfo.updated_at,
@@ -114,12 +121,12 @@
         //   paySign:orderInfo.
         // };
         // let orderInfo = await request.reqPayment(data);
-      }  
+      }
 
     }
 
     events = {
-      
+
     }
 
     async onLoad(params) {

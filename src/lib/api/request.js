@@ -97,6 +97,27 @@ class base {
     }
   }
 
+  //点击投诉，删除商品信息
+  async deleteProductInfo(data) {
+    console.log(data);
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + `api/product_list/delete/${data.id}/${data.user_id}`,
+      header: header,
+    });
+    let msg = res.data;
+    console.log('详情数据', res);
+    if (msg.code == 200) {
+      return msg.data;
+    }else {
+      return false;
+    }
+  }
+
   //获取热词
   async getHotWord(data) {
     let token = creatToken(data);
@@ -193,23 +214,21 @@ class base {
     }
   }
 
-
-  //点击投诉，删除商品信息
-  async deleteProductInfo(data) {
-    console.log(data);
+  //删除订单列表
+  async deleteOrderList(data) {
     let token = creatToken(data);
     let header = Object.assign({
       'content-type': 'application/json' // 默认值
     }, token);
 
     let res = await wepy.request({
-      url: this.HOSTURL + `api/product_list/delete/${data.id}/${data.user_id}`,
+      url: this.HOSTURL + `api/order/delete/${data.order_id}`,
       header: header,
     });
     let msg = res.data;
-    console.log('详情数据', res);
+    // console.log('获取订单', msg);
     if (msg.code == 200) {
-      return msg.data;
+      return true;
     }else {
       return false;
     }
