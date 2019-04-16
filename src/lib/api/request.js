@@ -55,6 +55,28 @@ class base {
     }  
   }
 
+  //获取用户手机号
+  async getUserTel(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + 'api/weiXin/getPhoneNumber',
+      data: data || {},
+      method: 'POST',
+      header: header,
+    });
+    console.log('登录接口',res.data);
+    let msg = res.data;
+    if(msg){
+      return msg;
+    }else {
+      return false;
+    }  
+  }
+
   //列表
   async getGoodsLists(data) {
     let token = creatToken(data);
@@ -163,9 +185,10 @@ class base {
     }, token);
 
     let res = await wepy.request({
-      url: this.HOSTURL + `/api/weiXin/getUnlimited`,
+      url: this.HOSTURL + `api/weiXin/getUnlimited`,
       header: header,
-      data:data
+      method: 'POST',
+      data:data,
     });
     let msg = res.data;
     console.log('详情数据', res);

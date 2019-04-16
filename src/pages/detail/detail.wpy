@@ -256,8 +256,19 @@
       },
 
       //获取手机号
-      getPhoneNumber(e) {
+     async getPhoneNumber(e) {
         console.log('手机号', e);
+        let detail=e.detail;
+        if(detail && detail.encryptedData && detail.iv){
+          let loginRes = await wepy.login();
+          let data={
+            encryptedData:detail.encryptedData,
+            iv:detail.iv,
+            code:loginRes.code,
+          }
+          console.log(data);
+          let msg=request.getUserTel(data);
+        }
       },
 
       //马上买
