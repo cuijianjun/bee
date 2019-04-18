@@ -180,7 +180,7 @@
           
           value.user_id = this.userInfo.id+'';
           value.labelCode = (this.typeIndex-0)+1+'';
-          value.productImage=this.pics_key.join(',');
+          // value.productImage=this.pics_key.split('');
           console.log('图片字符串', value.productImage);
           console.log('发布信息value',value);
           this.publishInfo(value);
@@ -370,13 +370,13 @@
         this.tell=list.phoneNumber;
         this.price=list.price;
         this.address=list.address;
-        this.region=list.address.split('');
+        this.region=list.address.split(' ');
         this.typeIndex=list.labelCode-1;
         this.pics_key=list.productImage.forEach(ele => {
-          ele=ele.str.replace(/https://res.pplu.vip//g, '');
+          ele=ele.split('https://res.pplu.vip/')[1];
         });
         // this.label=list.labelCode;
-        this.info = list;    
+        // this.info = list;    
         this.$apply();
       } else {
         wepy.hideLoading();
