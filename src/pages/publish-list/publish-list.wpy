@@ -21,7 +21,7 @@
           </view>
           <view class="btn-wrap">
             <view class="delete btn center-flex" @tap="deleteInfo({{item.id}})">删除</view>
-            <view class="edit btn center-flex" @tap="editInfo">修改</view>
+            <view class="edit btn center-flex" @tap="editInfo({{item.id}},{{item.user_id}})">修改</view>
           </view>
         </view>
       </repeat>

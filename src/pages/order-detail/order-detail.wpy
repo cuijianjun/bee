@@ -77,7 +77,8 @@
         let payParams = await request.getPaymentParams(data);
         if(payParams){
           console.log('payparams',payParams);
-         let status= await request.Payment(payParams); 
+          let status= await request.Payment(payParams); 
+
          if(status){
            wepy.showToast({
              title: '支付成功', //提示的内容,
@@ -87,10 +88,9 @@
          }else {
            wepy.showToast({
              title: '支付失败', //提示的内容,
-             icon: 'none', //图标,
+             icon: 'success', //图标,
              duration: 5000,
            });
-           
          }
         }else {
           wepy.showToast({
@@ -98,7 +98,6 @@
             icon: 'none', 
             duration: 5000, 
           });
-          
         }
       }  
     }
@@ -112,12 +111,20 @@
       //   title: '加载中', 
       //   mask: true, 
       // }); 
-      let data={
-        user_id:params.user_id-0,
-        product_id:params.product_id-0,
-        total_price:params.total_count-0,
+
+      if(params.order_id){
+        let data={
+          order_id:params.order_id,
+        }
+        this.getOrderDetail(data); 
+      }else {
+        let data={
+          user_id:params.user_id-0,
+          product_id:params.product_id-0,
+          total_price:params.total_count-0,
+        }
+        this.createOrder(data); 
       }
-      this.createOrder(data); //获取banner和类型
     }
 
     //生成订单
@@ -133,8 +140,23 @@
           icon: 'none',
           duration: 5000,
         });  
-      }
-      
+      }  
+    }
+
+    //获取订单详情
+    async getOrderDetail(data) {
+      let orderInfo = await request.getOrderDetail(data);
+      console.log('订单信息', orderInfo);
+      if(orderInfo){
+        this.orderInfo=orderInfo;
+        this.$apply();
+      }else {
+        wepy.showToast({
+          title: '下单失败',
+          icon: 'none',
+          duration: 5000,
+        });  
+      }  
     }
   }
 

@@ -15,8 +15,8 @@
       <view class="publish-wrap">
         <!-- 内容描述部分 -->
         <view class="publish-msg-wrap">
-          <input name="title" class="brief title" placeholder="标题 品类品牌型号都是买家喜欢搜索的" value="{{tell}}" type="number"
-            maxlength="50"></input>
+          <input name="title" class="brief title" placeholder="标题 品类品牌型号都是买家喜欢搜索的" value="{{title}}" type="text"
+            maxlength="20"></input>
           <view class="product-brief-wrap">
             <textarea class="brief" maxlength="500" value="{{brief}}" placeholder="产品简介 请输入宝贝的详情" auto-height="true"
               name="description" />
@@ -24,9 +24,10 @@
           <view class="product-pic">
             <repeat for="{{picsTotal}}" key="index" index="index" item="item">
               <view class="pic-wrap">
-                <image class="add_img" src="{{item}}" lazy-load="false"></image>
+                <image class="add_img" src="{{item}}" mode="aspectFill" lazy-load="false"></image>
                 <image class="close-img" @tap="deleteImg({{index}})" src="../../image/bg/icon_close.png"
                        lazy-load="false"></image>
+                <view class="img-hinit center-flex" wx:if="{{index==0}}">主图</view>
               </view>
             </repeat>
             <image wx:if="{{picsTotal.length<9}}" class="add-img-btn" @tap="addImg" src="../../image/bg/icon_add_img.png"
@@ -45,7 +46,7 @@
 
         <view class="user-group-wrap">
           <view class="title">价格:</view>
-          ￥<input name="price" class="content" type="number" placeholder="0.00" value="{{price}}" @blur="getPrice"></input>
+          ￥<input name="price" class="content" type="number" placeholder="0" value="{{price}}" @blur="getPrice"></input>
         </view>
 
         <view class="user-group-wrap">
@@ -76,8 +77,7 @@
       <!-- 发布按钮 -->
       <view class="publish-btn center-flex">
         发布
-        <button wx:if="{{userInfo.nickName && userInfo.avatarUrl}}" form-type="submit" class="button-cover"></button>
-        <button wx:else class="button-cover" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo"></button>
+        <button form-type="submit" class="button-cover"></button>
       </view>
     </form>
   </view>
@@ -96,6 +96,7 @@
     components = {}
 
     data = {
+      openid:'',
       region: ['', '', ''],
       customItem:'请选择地址',
       isLogin: false, //是否登录
@@ -113,6 +114,7 @@
       isAccredit: false,//获取位置是否授权
       accredit: false,//是否授权
       userInfo:{},
+      info:{},
     }
 
     computed = {}
@@ -202,32 +204,6 @@
           this.region = addressArr;
           this.address=addressArr.join(' ');
         }  
-      },
-
-      //点击授权按钮，获取用户信息
-      async getUserInfo(e) {
-        if (e.detail.userInfo) {
-          let userInfo=e.detail.userInfo;
-          userInfo.id=this.userInfo.id+'';
-          userInfo.gender= userInfo.gender+'';
-          let info= await this.$parent.updataUserInfo(userInfo); //获取用户信息
-          if(info){
-            this.userInfo=info;
-          }
-          this.$apply();
-          wepy.showToast({
-              title: '授权成功，请点击发布按钮发布信息', 
-              icon: 'none', 
-              showCancel: false,
-              duration:2000,
-          });
-        } else {
-          wepy.showModal({
-            title: '温馨提示', 
-            content: '为了更好的为您服务，需要您的授权', 
-            showCancel: false,
-          });
-        }
       },
 
       //点击上传图片
@@ -333,10 +309,22 @@
     //获取类型
     async getTypeList(){
       let res=await request.getTypeList();
+      let openid=this.$parent.globalData.openid;
+      console.log('openid',openid);
+      let typeArr=[]
       if(res){
         res.label.rows.forEach(ele => {
-          this.typeArr.push(ele.labelName)
+         typeArr.push(ele.labelName)
         });
+
+        if(this.userInfo.openid==openid){
+          this.typeArr=typeArr.filter(o=>{
+            console.log(o);
+            return o!='互联网'
+          })
+        }else {
+          this.typeArr=typeArr;
+        }
         this.$apply();
       }else{
         console.log('获取类型失败');
@@ -370,12 +358,47 @@
       } 
     }
 
+    //获取信息
+    async getGoodsDetail(data) {
+      let list = await request.getGoodsDetail(data);
+      console.log('列表信息', list);
+      if (list) {
+        this.title=list.title;
+        this.brief=list.description;
+        this.picsTotal=list.productImage;
+        this.picCount=list.productImage.length;
+        this.tell=list.phoneNumber;
+        this.price=list.price;
+        this.address=list.address;
+        this.region=list.address.split('');
+        this.typeIndex=list.labelCode-1;
+        this.pics_key=list.productImage.forEach(ele => {
+          ele=ele.str.replace(/https://res.pplu.vip//g, '');
+        });
+        // this.label=list.labelCode;
+        this.info = list;    
+        this.$apply();
+      } else {
+        wepy.hideLoading();
+        wepy.showToast({
+          title: '请求失败',
+          icon: 'none',
+          duration: 5000,
+        });
+      }
+    }
+
     events = {}
 
-    async onLoad() {
+    async onLoad(params) {
       this.userInfo=await this.$parent.login();
       this.getTypeList();//获取类型
       this.$apply();
+      let data = {
+        product_id: params.product_id,
+        user_id: params.user_id,
+      }
+      this.getGoodsDetail(data); //获取商品信息 
     }
   }
 

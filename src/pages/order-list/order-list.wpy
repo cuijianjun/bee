@@ -10,7 +10,7 @@
     <view class="publish-msg-wrap">
       <repeat for="{{msgList}}" key="index" index="index" item="item">
         <view class="item-wrap">
-          <view class="goods-wrap" @tap="toOrderDetail">
+          <view class="goods-wrap" @tap="toOrderDetail({{item.id}})">
             <view class="pic-wrap">
               <image class="pic" src="{{item.snap_img}}" mode="scaleToFill" lazy-load="false"></image>
             </view>
@@ -24,7 +24,7 @@
           </view>
           <view class="btn-wrap">
             <view class="delete btn center-flex" @tap="deleteOrder({{item.id}})">取消订单</view>
-            <view class="edit btn center-flex" @tap="payment">立即支付</view>
+            <view class="edit btn center-flex" @tap="payment({{item.id}},{{item.user_id}},{{item.total_price}},{{item.status}})">立即支付</view>
           </view>
         </view>
       </repeat>
@@ -70,31 +70,31 @@
 
     methods = {
       //跳转订单详情页
-      toOrderDetail(product_id, user_id) {
+      toOrderDetail(order_id) {
         wepy.navigateTo({
-          url: `/pages/order-detail/order-detail?product_id=${product_id}&user_id=${user_id}`
+          url: `/pages/order-detail/order-detail?order_id=${order_id}`
         });
       },
 
       //删除订单
-     async deleteOrder(order_id) {
+      async deleteOrder(order_id) {
         wx.showModal({
           title: '提示',
           content: '您要取消这个订单吗？',
           success(res) {
             if (res.confirm) {
               console.log('用户点击确定')
-              let data={
-                order_id:order_id
+              let data = {
+                order_id: order_id
               }
-              let status=request.deleteOrderList(data);
-              if(status){
+              let status = request.deleteOrderList(data);
+              if (status) {
                 wepy.showToast({
                   title: '删除成功', //提示的内容,
                   icon: 'success', //图标,
                   duration: 2000,
-                });  
-              }else {
+                });
+              } else {
                 wepy.showToast({
                   title: '删除失败', //提示的内容,
                   icon: 'success', //图标,
@@ -109,19 +109,41 @@
       },
 
       //付款
-      async payment() {
-        let orderInfo = this.orderInfo;
-        if (orderInfo.status > 1) {
-          return;
+      async payment(id,user_id,total_price,status){
+        if(status>1){
+          return ;
         }
-        // let data={
-        //   timeStamp:orderInfo.updated_at,
-        //   nonceStr:orderInfo.order_no,
-        //   package:orderInfo.prepay_id,
-        //   paySign:orderInfo.
-        // };
-        // let orderInfo = await request.reqPayment(data);
-      }
+        let data={
+          total_price:total_price,
+          user_id:user_id,
+          order_id:id,
+        }
+        let payParams = await request.getPaymentParams(data);
+        if(payParams){
+          console.log('payparams',payParams);
+         let status= await request.Payment(payParams); 
+         if(status){
+           wepy.showToast({
+             title: '支付成功', //提示的内容,
+             icon: 'success', //图标,
+             duration: 5000,
+           });
+         }else {
+           wepy.showToast({
+             title: '支付失败', //提示的内容,
+             icon: 'none', //图标,
+             duration: 5000,
+           });
+           
+         }
+        }else {
+          wepy.showToast({
+            title: '下单失败', 
+            icon: 'none', 
+            duration: 5000, 
+          });
+        }
+      } 
 
     }
 

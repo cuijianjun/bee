@@ -147,8 +147,8 @@
       // isShowbtn:false,//是否显示马上买和投诉
       isShowTop:false,//是否显示返回顶部按钮
 
-      code1: 'https://res.pplu.vip/fd1ded660c403d6d080a6f8c805cbb4f.jpeg', //二维码临时地址
-      pic1: 'http://t.cn/E6aY1Ii', //图片临时地址 
+      code1: '', //二维码临时地址
+      // pic1: '', //图片临时地址 
       code2: '', //二维码临时地址
       pic2: '', //图片临时地址
 
@@ -405,7 +405,14 @@
         scene:`user_id=${this.user_id}`,
         page:'pages/detail/detail'
       }
-      let codeUrl = await request.getCodeUrl(data);
+      let code1 = await request.getCodeUrl(data);
+      if(code1){
+        this.code1='data:image/png;base64,'+code1;
+        this.$apply();
+        this.getCanvasImgUrl();
+      }else {
+        console.log('获取小程序码失败');
+      } 
     }
 
     //绘制背景
@@ -488,7 +495,6 @@
         src: that.info.productImage[0],
         success(res) {
           that.pic2 = res.path;
-
           let radio = res.width / res.height;//图片的宽高比例
           console.log('radio',radio);
           let picWidth = 750 - (40 * 2);//绘制图片的宽
@@ -559,22 +565,17 @@
         user_id: params.user_id,
       }
       this.getGoodsDetail(data); //获取商品信息 
-      this.getCode()//获取小程序码
     }
 
     //获取信息
     async getGoodsDetail(data) {
       let list = await request.getGoodsDetail(data);
-      // let openid=this.$parent.globalData.openid;
       console.log('列表信息', list);
       if (list) {
         list.updated_at = util.formatTime(list.updated_at - 0);
-        // if(this.openid==openid){
-        //   this.isShowbtn=true;
-        // }
         this.info = list;    
         this.$apply();
-        this.getCanvasImgUrl();
+        this.getCode()//获取小程序码
       } else {
         wepy.hideLoading();
         wepy.showToast({

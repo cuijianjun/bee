@@ -24,13 +24,13 @@ class base {
       method: 'POST',
       header: header,
     });
-    console.log('登录接口',res.data);
+    console.log('登录接口', res.data);
     let msg = res.data;
-    if(msg){
+    if (msg) {
       return msg;
-    }else {
+    } else {
       return false;
-    }  
+    }
   }
 
   //更新用户信息
@@ -46,13 +46,13 @@ class base {
       method: 'POST',
       header: header,
     });
-    console.log('更新用户信息',res.data);
+    console.log('更新用户信息', res.data);
     let msg = res.data;
-    if(msg.code==201){
+    if (msg.code == 201) {
       return msg.data;
-    }else {
+    } else {
       return false;
-    }  
+    }
   }
 
   //获取用户手机号
@@ -68,13 +68,13 @@ class base {
       method: 'POST',
       header: header,
     });
-    console.log('登录接口',res.data);
+    console.log('登录接口', res.data);
     let msg = res.data;
-    if(msg){
+    if (msg) {
       return msg.phoneNumber;
-    }else {
+    } else {
       return false;
-    }  
+    }
   }
 
   //列表
@@ -113,7 +113,7 @@ class base {
     console.log('详情数据', res);
     if (msg.code == 200) {
       return msg.data;
-    }else {
+    } else {
       return false;
     }
   }
@@ -152,7 +152,7 @@ class base {
     console.log('详情数据', res);
     if (msg.code == 200) {
       return msg.data;
-    }else {
+    } else {
       return false;
     }
   }
@@ -169,11 +169,11 @@ class base {
       data: data,
       method: 'POST',
     });
-    
+
     let msg = res.data;
     if (msg.code == 201 || msg.code == 200) {
       return true;
-    }else {
+    } else {
       return false;
     }
   }
@@ -229,10 +229,31 @@ class base {
     // console.log('获取订单', msg);
     if (msg.code == 200) {
       return true;
-    }else {
+    } else {
       return false;
     }
   }
+
+  //获取订单详情
+  async getOrderDetail(data) {
+    let token = creatToken(data);
+    let header = Object.assign({
+      'content-type': 'application/json' // 默认值
+    }, token);
+
+    let res = await wepy.request({
+      url: this.HOSTURL + `api/order/getOrderDetail/${data.order_id}`,
+      header: header,
+    });
+    let msg = res.data;
+    console.log('获取订单', msg);
+    if (msg.code == 200) {
+      return msg.data;
+    } else {
+      return false;
+    }
+  }
+
 
   //获取小程序码
   async getCodeUrl(data) {
@@ -245,13 +266,13 @@ class base {
       url: this.HOSTURL + `api/weiXin/getUnlimited`,
       header: header,
       method: 'POST',
-      data:data,
+      data: data,
     });
     let msg = res.data;
     console.log('详情数据', res);
-    if (msg.code == 200) {
+    if (msg.code == 201) {
       return msg.data;
-    }else {
+    } else {
       return false;
     }
   }
@@ -260,8 +281,8 @@ class base {
   async publishGoodsMsg(data) {
     let token = creatToken(data);
     let header = Object.assign({
-      'Content-Type':'application/json',
-    },token);
+      'Content-Type': 'application/json',
+    }, token);
 
     let res = await wepy.request({
       url: this.HOSTURL + 'api/product_list/create',
@@ -273,7 +294,7 @@ class base {
     console.log('发布信息结果', msg);
     if (msg.code == 201) {
       return true;
-    }else {
+    } else {
       return false;
     }
   }
@@ -282,8 +303,8 @@ class base {
   async uploadImg(data) {
     let token = creatToken(data);
     let header = Object.assign({
-      'Content-Type':'multipart/form-data',
-    },token);
+      'Content-Type': 'multipart/form-data',
+    }, token);
 
     let res = await wepy.uploadFile({
       url: this.HOSTURL + 'api/image/upload',
@@ -293,31 +314,31 @@ class base {
       header: header,
     })
     let msg = JSON.parse(res.data);
-    if(msg.code==201){
+    if (msg.code == 201) {
       // console.log('上传图片返回值', msg.data[0]);
       return msg.data[0]
-    }else {
+    } else {
       return false;
     }
-    
+
   }
 
   //删除图片
   async delPic(data) {
     let token = creatToken(data);
     let header = Object.assign({
-      'Content-Type':'application/x-www-form-urlencoded',
-    },token);
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }, token);
 
     let res = await wepy.request({
       url: this.HOSTURL + `api/image/delete/${data}`,
       header: header,
     });
     // console.log('删除结果', res.data);
-    let msg=res.data;
-    if(msg.code==201){
+    let msg = res.data;
+    if (msg.code == 201) {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
@@ -326,19 +347,19 @@ class base {
   async getTypeList(data) {
     let token = creatToken(data);
     let header = Object.assign({
-      'Content-Type':'application/json',
-    },token);
+      'Content-Type': 'application/json',
+    }, token);
     console.log('调用获取类型函数');
     let res = await wepy.request({
       url: this.HOSTURL + 'api/banner/get',
       header: header,
     });
 
-    let msg=res.data;
+    let msg = res.data;
 
-    if(msg.code==200){
+    if (msg.code == 200) {
       return msg.data
-    }else {
+    } else {
       return false;
     }
   }
@@ -347,8 +368,8 @@ class base {
   async getPublishInfoLists(data) {
     let token = creatToken(data);
     let header = Object.assign({
-      'Content-Type':'application/json',
-    },token);
+      'Content-Type': 'application/json',
+    }, token);
 
     let res = await wepy.request({
       url: this.HOSTURL + 'api/product_list/list',
@@ -368,13 +389,13 @@ class base {
   //删除发布信息
   async deletePublishInfo(data) {
     let header = Object.assign({
-      'Content-Type':'application/json',
-    },token);
+      'Content-Type': 'application/json',
+    }, token);
     let res = await wepy.request({
       url: this.HOSTURL + `api/product_list/update/${id}`,
       method: 'GET',
       header,
-      data:data
+      data: data
     });
     console.log('删除返回', res);
     return res
@@ -383,8 +404,8 @@ class base {
   //修改发布信息
   async editPublishInfo(id) {
     let header = Object.assign({
-      'Content-Type':'application/json',
-    },token);
+      'Content-Type': 'application/json',
+    }, token);
     let res = await wepy.request({
       url: this.HOSTURL + `api/product_list/delete/${id}`,
       method: 'GET',
@@ -405,20 +426,20 @@ class base {
     //先请求服务器接口获取五个参数
     let token = creatToken(data);
     let header = Object.assign({
-      'Content-Type':'application/json',
-    },token);
-    
+      'Content-Type': 'application/json',
+    }, token);
+
     let res = await wepy.request({
-      url: this.HOSTURL+'api/order/order',
+      url: this.HOSTURL + 'api/order/order',
       method: 'POST',
       header,
       data
     });
-  
-    let msg=res.data;
-    if(msg.code==201){
+
+    let msg = res.data;
+    if (msg.code == 201) {
       return msg.data;
-    }else {
+    } else {
       return false;
     }
   }
@@ -427,26 +448,26 @@ class base {
   async getPaymentParams(data) {
     let token = creatToken(data);
     let header = Object.assign({
-      'Content-Type':'application/json',
-    },token);
+      'Content-Type': 'application/json',
+    }, token);
     let res = await wepy.request({
-      url: this.HOSTURL+'api/pay/unifiedOrder',
+      url: this.HOSTURL + 'api/pay/unifiedOrder',
       method: 'POST',
       header,
       data,
     });
-    
-    let msg =res.data;
-    if(msg.code==200){
+
+    let msg = res.data;
+    if (msg.code == 200) {
       return msg.data
-    }else {
+    } else {
       return false
     }
   }
 
   //发起微信支付请求
   async Payment(data) {
-    console.log('data',data);
+    console.log('data', data);
     // 再通过五个参数发起微信支付请求
     let res = await wepy.requestPayment({
       // appId: data.appId,
@@ -456,15 +477,15 @@ class base {
       signType: data.signType,
       paySign: data.paySign,
       success(res) {
-        console.log('发起支付成功',res);
+        console.log('发起支付成功', res);
         return true;
       },
       fail(res) {
-        console.log('发起支付失败',res);
+        console.log('发起支付失败', res);
         return false;
       }
     })
-  }  
+  }
 }
 /*
  * 生成加密数据
